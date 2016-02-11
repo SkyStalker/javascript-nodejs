@@ -58,7 +58,7 @@ exports.post = function*() {
 
 
   // full access if user for himself OR accessKey is given
-  var isFullAccess = this.user && this.user.email == this.request.body.email.toLowerCase() ||
+  var isFullAccess = this.user && this.request.body.email && this.user.email == this.request.body.email.toLowerCase() ||
     subscription && subscription.accessKey == this.request.body.accessKey;
 
   function respond(message) {

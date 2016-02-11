@@ -14,7 +14,6 @@ block append head
 block content
 
   script var groupInfo = !{escapeJSON(groupInfo)};
-  script var rateUsdRub = #{rateUsdRub};
   script var orderNumber = #{order ? order.number : 'null'};
 
   - var step = !order ? '1' : (orderInfo.status != 'success' && orderInfo.status != 'pending' || changePaymentRequested) ? '3' : '4';

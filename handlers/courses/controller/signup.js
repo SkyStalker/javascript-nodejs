@@ -143,8 +143,6 @@ exports.get = function*() {
     });
   };
 
-  this.locals.rateUsdRub = money.convert(1, {from: 'USD', to: 'RUB'});
-
   var price = group.price;
 
   if (discount && discount.data.slug.test(group.slug)) {
