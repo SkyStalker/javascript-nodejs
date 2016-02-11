@@ -110,7 +110,7 @@ function addStandardHelpers(locals, ctx) {
   });
 
   locals.rateUsdRub = money.convert(1, {from: 'USD', to: 'RUB'});
-  
+
   locals.profileTabNames = {
     quiz:          'Тесты',
     orders:        'Заказы',

@@ -185,3 +185,11 @@ config.webpack = require('./webpack')(config);
 const t = require('i18n');
 t.requirePhrase('site', require(path.join(config.localesRoot, 'site', config.lang + '.yml')));
 
+if (process.env.NODE_ENV == 'test') {
+  require('money').rates = {
+    USD: 1,
+    EUR: 1,
+    UAH: 1,
+    RUB: 1
+  };
+}
