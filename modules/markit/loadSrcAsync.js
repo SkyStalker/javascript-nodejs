@@ -77,7 +77,7 @@ module.exports = function* (tokens, options) {
   }
 
   function* blocktag_iframe(token) {
-    if (token.blockTagAttrs.edit) {
+    if (token.blockTagAttrs.edit || token.blockTagAttrs.zip) {
       yield* src2plunk(token);
     }
   }

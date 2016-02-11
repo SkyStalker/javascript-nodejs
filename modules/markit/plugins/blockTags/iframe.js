@@ -64,7 +64,7 @@ module.exports = function(md) {
       let zipname = src.split('/').filter(Boolean).reverse()[0];
       let href = `/tutorial/zipview/${zipname}.zip?plunkId=${token.plunk.plunkId}`;
       toolbarHtml += `<div class="toolbar__tool">
-        <a href="${href}" target="_blank" title="${t('open.zip')}" class="toolbar__button toolbar__button_zip"></a>
+        <a href="${href}" target="_blank" title="${t('markit.iframe.open.download')}" class="toolbar__button toolbar__button_download"></a>
       </div>
       `;
     }
