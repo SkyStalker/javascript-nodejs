@@ -78,14 +78,13 @@ function addStandardHelpers(locals, ctx) {
   locals.yandexMetrika = config.yandexMetrika;
 
 
-
   // patterns to use in urls
   // no need to escape /
   // \s => \\s
   locals.validate = {
     patterns: {}
   };
-  for(var name in validate.patterns) {
+  for (var name in validate.patterns) {
     locals.validate.patterns[name] = validate.patterns[name].source.replace(/\\\//g, '/');
   }
 
@@ -94,14 +93,14 @@ function addStandardHelpers(locals, ctx) {
     var json = JSON.stringify(s);
     return json.replace(/\//g, '\\/')
       .replace(/[\u003c\u003e]/g,
-      function(c) {
-        return '\\u'+('0000'+c.charCodeAt(0).toString(16)).slice(-4).toUpperCase();
-      }
-    ).replace(/[\u007f-\uffff]/g,
-      function(c) {
-        return '\\u'+('0000'+c.charCodeAt(0).toString(16)).slice(-4);
-      }
-    );
+        function(c) {
+          return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4).toUpperCase();
+        }
+      ).replace(/[\u007f-\uffff]/g,
+        function(c) {
+          return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
+        }
+      );
   };
 
   Object.defineProperty(locals, "user", {
@@ -110,13 +109,15 @@ function addStandardHelpers(locals, ctx) {
     }
   });
 
+  locals.rateUsdRub = money.convert(1, {from: 'USD', to: 'RUB'});
+  
   locals.profileTabNames = {
-    quiz: 'Тесты',
-    orders: 'Заказы',
-    courses: 'Курсы',
-    aboutme: 'Публичный профиль',
+    quiz:          'Тесты',
+    orders:        'Заказы',
+    courses:       'Курсы',
+    aboutme:       'Публичный профиль',
     subscriptions: 'Уведомления',
-    account: 'Аккаунт'
+    account:       'Аккаунт'
   };
 
   // flash middleware may be attached later in the chain
@@ -183,13 +184,12 @@ function addStandardHelpers(locals, ctx) {
 
     throw new Error(`Not found pack name:${name} ext:${ext}`);
     /*
-    if (process.env.NODE_ENV == 'development') {
-      // webpack-dev-server url
-      versionName = process.env.STATIC_HOST + ':' + config.webpack.devServer.port + versionName;
-    }*/
+     if (process.env.NODE_ENV == 'development') {
+     // webpack-dev-server url
+     versionName = process.env.STATIC_HOST + ':' + config.webpack.devServer.port + versionName;
+     }*/
 
   };
-
 
 
   locals._hasStandardHelpers = true;
