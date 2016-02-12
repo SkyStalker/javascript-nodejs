@@ -85,7 +85,8 @@ AWS.EventListeners = {
 
     add('VALIDATE_PARAMETERS', 'validate', function VALIDATE_PARAMETERS(req) {
       var rules = req.service.api.operations[req.operation].input;
-      new AWS.ParamValidator().validate(rules, req.params);
+      var validation = req.service.config.paramValidation;
+      new AWS.ParamValidator(validation).validate(rules, req.params);
     });
 
     addAsync('COMPUTE_SHA256', 'afterBuild', function COMPUTE_SHA256(req, done) {
@@ -350,8 +351,7 @@ AWS.EventListeners = {
         if (resp.error.redirect && resp.redirectCount < resp.maxRedirects) {
           resp.error.retryDelay = 0;
         } else if (resp.retryCount < resp.maxRetries) {
-          var delays = this.service.retryDelays();
-          resp.error.retryDelay = delays[resp.retryCount] || 0;
+          resp.error.retryDelay = this.service.retryDelays(resp.retryCount) || 0;
         }
       }
     });
