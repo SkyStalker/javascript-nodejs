@@ -22,7 +22,8 @@ function doReplacementsInToken(inlineTokens) {
         .replace(/\(r\)/ig, '<sup>®</sup>')
         .replace(/\(tm\)/ig, '™')
         .replace(/(\s|;)\-(\s)/gi, '$1–$2')
-        .replace(/<->/gi, '↔').replace(/<-/gi, '←').replace(/(\s)->/gi, '$1→');
+        .replace(/<->/gi, '↔').replace(/<-/gi, '←').replace(/(\s)->/gi, '$1→')
+        .replace(/\s-(\w)/gim, '&#8209$1'); // non-breaking hyphen: -Infinity won't get line-broken
     }
   }
 }
