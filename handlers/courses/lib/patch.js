@@ -18,7 +18,7 @@ module.exports = function*() {
     return {email: p.user.email, user: p.user.profileName};
   }));
 
-  let participantsByEmail = _.indexBy(participants, function(participant) {
+  let participantsByEmail = _.keyBy(participants, function(participant) {
     return participant.user.email;
   });
 
@@ -29,7 +29,7 @@ module.exports = function*() {
 
   this.log.debug("invitesAccepted", invitesAccepted);
 
-  const invitesAcceptedByEmail = _.indexBy(invitesAccepted, 'email');
+  const invitesAcceptedByEmail = _.keyBy(invitesAccepted, 'email');
 
   if ("emails" in this.request.body) {
 
@@ -108,7 +108,7 @@ module.exports = function*() {
   }
 
   if (invites.length) {
-    let emails =  _.pluck(invites, 'email');
+    let emails = invites.map(invite => invite.email);
     this.body = 'Информация обновлена, приглашения высланы на адреса: ' + emails.join(", ") + '.';
   } else {
     this.body = 'Информация об участниках обновлена.';

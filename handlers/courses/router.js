@@ -29,6 +29,7 @@ router.get('/admin/orders/:orderNumber(\\d+)?', mustBeAdmin, require('./controll
 router.post('/admin/orders/:orderNumber(\\d+)', mustBeAdmin, require('./controller/admin/orders').post);
 
 router.post('/admin/invites', mustBeAdmin, require('./controller/admin/invites').post);
+router.get('/admin/groups', mustBeAdmin, require('./controller/admin/groups').get);
 
 router.get('/groups/:groupBySlug/info', mustBeParticipantOrTeacher, require('./controller/groupInfo').get);
 router.get('/groups/:groupBySlug/materials', mustBeParticipantOrTeacher, require('./controller/groupMaterials').get);

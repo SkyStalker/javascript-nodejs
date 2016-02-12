@@ -33,7 +33,7 @@ module.exports = function* formatCourseOrder(order) {
     accepted: true
   });
 
-  let invitesAcceptedByEmail = _.indexBy(invitesAccepted, 'email');
+  let invitesAcceptedByEmail = _.keyBy(invitesAccepted, 'email');
 
   let orderToShow = {
     created:      order.created,
