@@ -10,8 +10,6 @@ const User = require('users').User;
 const co = require('co');
 const request = require('request-promise');
 
-require('request-debug')(request);
-
 module.exports = registerParticipants;
 
 function* registerParticipants(group) {
