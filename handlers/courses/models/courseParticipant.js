@@ -123,6 +123,13 @@ var schema = new Schema({
     default: true
   },
 
+  registrantKey: { // gotowebinar api registrant key
+    type: String
+  },
+  joinUrl: {
+    type: String // gotowebinar api register joinUrl
+  },
+
   videoKey: {
     type: String
     // there may be groups without video & keys

@@ -8,10 +8,11 @@ const XmppClient = require('xmppClient');
 const VideoKey = require('videoKey').VideoKey;
 const User = require('users').User;
 const co = require('co');
+const request = require('request-promise');
 
-module.exports = grantKeysAndChatToGroup;
+module.exports = registerParticipants;
 
-function* grantKeysAndChatToGroup(group) {
+function* registerParticipants(group) {
   yield CourseGroup.populate(group, 'course');
 
   let participants = yield CourseParticipant.find({
@@ -23,16 +24,50 @@ function* grantKeysAndChatToGroup(group) {
   if (!teacher._id) teacher = yield User.findById(teacher);
 
   yield* grantXmppChatMemberships(group, participants, teacher);
+  yield* grantWebinar(group, participants, teacher);
 
   if (group.course.videoKeyTag) {
     yield *grantVideoKeys(group, participants);
   }
 }
 
+function* grantWebinar(group, participants, teacher) {
+
+  if (!group.webinarKey) return;
+
+  let participantsWithoutKeys = participants.filter(function(participant) {
+    return !participant.registrantKey;
+  });
+
+  let auth = config.gotowebinar.auth[teacher.profileName];
+
+  for (var i = 0; i < participantsWithoutKeys.length; i++) {
+    var participant = participantsWithoutKeys[i];
+
+    let response = yield request.post({
+      url: `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars/${group.webinarKey}/registrants`,
+      json: true,
+      headers: {
+        'Authorization': auth.accessToken,
+        'content-type': 'application/json;charset=utf-8'
+      },
+      body: {
+        firstName: participant.firstName,
+        lastName: participant.surname,
+        email: participant.user.profileName + '@javascript.ru'
+      }
+    });
+
+    participant.registrantKey = response.registrantKey;
+    participant.joinUrl = response.joinUrl;
+    yield participant.persist();
+  }
+
+}
 
 function* grantVideoKeys(group, participants) {
 
-  var participantsWithoutKeys = participants.filter(function(participant) {
+  let participantsWithoutKeys = participants.filter(function(participant) {
     return !participant.videoKey;
   });
 
@@ -150,7 +185,7 @@ User.schema.pre('save', function(next) {
 
     for (var i = 0; i < groups.length; i++) {
       var group = groups[i];
-      yield grantKeysAndChatToGroup(group);
+      yield registerParticipants(group);
     }
 
   }).catch(function(err) {
