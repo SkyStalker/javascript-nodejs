@@ -10,6 +10,8 @@ const User = require('users').User;
 const co = require('co');
 const request = require('request-promise');
 
+require('request-debug')(request);
+
 module.exports = registerParticipants;
 
 function* registerParticipants(group) {
@@ -24,11 +26,14 @@ function* registerParticipants(group) {
   if (!teacher._id) teacher = yield User.findById(teacher);
 
   yield* grantXmppChatMemberships(group, participants, teacher);
-  yield* grantWebinar(group, participants, teacher);
 
   if (group.course.videoKeyTag) {
     yield *grantVideoKeys(group, participants);
   }
+
+  // this we do last, because it's the least reliable
+  yield* grantWebinar(group, participants, teacher);
+
 }
 
 function* grantWebinar(group, participants, teacher) {
@@ -55,11 +60,19 @@ function* grantWebinar(group, participants, teacher) {
         firstName: participant.firstName,
         lastName: participant.surname,
         email: participant.user.profileName + '@javascript.ru'
-      }
+      },
+      resolveWithFullResponse: true,
+      simple: false
     });
 
-    participant.registrantKey = response.registrantKey;
-    participant.joinUrl = response.joinUrl;
+    if (response.statusCode != 409 && response.statusCode != 201) {
+      this.log.error("Gotowebinar register error", response.statusCode, response.body);
+      throw new Error("Gotowebinar register error: " + response.statusCode);
+    }
+
+    participant.registrantKey = response.body.registrantKey;
+    participant.joinUrl = response.body.joinUrl;
+
     yield participant.persist();
   }
 
