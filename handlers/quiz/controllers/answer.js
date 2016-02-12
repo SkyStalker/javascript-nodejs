@@ -97,7 +97,7 @@ exports.post = function*() {
     });
 
     self.log.debug(questionsAvailable);
-    sessionQuiz.questionCurrentId = _.sample(questionsAvailable, 1)[0]._id;
+    sessionQuiz.questionCurrentId = _.sampleSize(questionsAvailable, 1)[0]._id;
 
     this.locals.question = quiz.questions.id(sessionQuiz.questionCurrentId);
 
