@@ -30,7 +30,7 @@ function* createInvites(order) {
 
   // get existing invites, so that we won't recreate them
   var existingInvites = yield CourseInvite.find({ order: order._id }).exec();
-  var existingInviteByEmails = _.indexBy(existingInvites, 'email');
+  var existingInviteByEmails = _.keyBy(existingInvites, 'email');
 
   log.debug("existing invites", existingInviteByEmails);
 
@@ -39,7 +39,7 @@ function* createInvites(order) {
   yield CourseGroup.populate(group, 'participants');
   yield User.populate(group, 'participants.user');
 
-  var participantsByEmail = _.indexBy(_.pluck(group.participants, 'user'), 'email');
+  var participantsByEmail = _.keyBy(group.participants.map(p => p.user), 'email');
 
   var invites = [];
   for (var i = 0; i < emails.length; i++) {

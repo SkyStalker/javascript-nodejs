@@ -45,7 +45,7 @@ function* getFeedbackStats(course) {
     course: course.id
   });
 
-  let groupIds = _.pluck(groups, '_id');
+  let groupIds = groups.map(group => group._id);
 
   let stats = yield CourseFeedback.aggregate([
     {

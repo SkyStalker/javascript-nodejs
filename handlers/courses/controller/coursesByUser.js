@@ -34,7 +34,7 @@ exports.get = function*(next) {
 
   var groups;
   if (userParticipants) {
-    groups = _.pluck(userParticipants, 'group');
+    groups = userParticipants.map(p => p.group);
   } else {
     groups = [];
   }

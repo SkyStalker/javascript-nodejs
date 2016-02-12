@@ -54,7 +54,7 @@ module.exports = function() {
       });
 
       // filter out already received
-      var recipientsByEmail = _.indexBy(recipients, 'email');
+      var recipientsByEmail = _.keyBy(recipients, 'email');
 
       var label = group.slug + '/' + path.basename(args.templatePath);
 

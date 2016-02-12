@@ -166,7 +166,7 @@ function* readNewsletterIds() {
     }
   }).exec();
 
-  const newsletterIds = _.pluck(newsletters, '_id');
+  const newsletterIds = newsletters.map(n => n._id);
 
   return newsletterIds;
 }
