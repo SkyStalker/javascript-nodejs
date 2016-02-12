@@ -33,14 +33,14 @@ module.exports = function*() {
 
   if ("emails" in this.request.body) {
 
-    let emails = _.unique(this.request.body.emails.split(',').filter(Boolean)).map(String).map(s => s.toLowerCase());
+    let emails = _.uniq(this.request.body.emails.split(',').filter(Boolean)).map(String).map(s => s.toLowerCase());
 
     this.log.debug("Incoming emails", emails);
 
     // email belongs to a participant
     // if invite for it was accepted (user's email may change, but invite still was accepted)
     // OR if it's participant (for old orders, invite had no order)
-    let participatingEmails = _.unique(
+    let participatingEmails = _.uniq(
       Object.keys(participantsByEmail).concat(Object.keys(invitesAcceptedByEmail))
     );
 
