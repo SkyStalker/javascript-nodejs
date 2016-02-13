@@ -2,13 +2,13 @@ const clsNamespace = require("continuation-local-storage").getNamespace("app");
 
 const assert = require('assert');
 
-assert(clsNamespace);
-
 exports.init = function(app) {
 
   app.use(function*(next) {
-    var context = clsNamespace.createContext();
-    clsNamespace.enter(context);
+
+    yield new Promise(clsNamespace.bind(function (resolve) {
+      resolve();
+    }));
 
     // some modules like accessLogger await for this.res.on('finish'/'close'),
     // so let's bind these emitters to keep CLS context in handlers
@@ -26,7 +26,6 @@ exports.init = function(app) {
 
       // important: all request-related events must be finished within request
       // after request finished, the context is lost (kept by bindEmitter if any)
-      clsNamespace.exit(context);
     }
   });
 
