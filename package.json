@@ -69,7 +69,7 @@
     "koa-passport": "^1",
     "koa-router": "^5",
     "koa-send": "*",
-    "koa-session-mongoose": "git://github.com/iliakan/koa-session-mongoose#mongoose-4.0",
+    "koa-session-mongoose": "git://github.com/iliakan/koa-session-mongoose#master",
     "koa-views": "*",
     "lodash": "^4",
     "lru-cache": "*",

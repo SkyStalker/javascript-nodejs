@@ -8,6 +8,8 @@
  */
 
 var mongoose = require('mongoose');
+mongoose.Promise = Promise;
+
 var path = require('path');
 var fs = require('fs');
 var log = require('log')();
