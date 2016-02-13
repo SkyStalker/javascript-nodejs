@@ -2,6 +2,7 @@
 
 const sendMail = require('mailer').send;
 const CourseInvite = require('../models/courseInvite');
+const CourseParticipant = require('../models/courseParticipant');
 const _ = require('lodash');
 const log = require('log')();
 const sendInvite = require('./sendInvite');
@@ -36,10 +37,13 @@ function* createInvites(order) {
 
   // get existing participants, they don't need invites
   var group = yield CourseGroup.findById(order.data.group).exec();
-  yield CourseGroup.populate(group, 'participants');
-  yield User.populate(group, 'participants.user');
 
-  var participantsByEmail = _.keyBy(group.participants.map(p => p.user), 'email');
+  var participants = yield CourseParticipant.find({
+    group: group._id,
+    isActive: true
+  }).populate('user');
+
+  var participantsByEmail = _.keyBy(participants.map(p => p.user), 'email');
 
   var invites = [];
   for (var i = 0; i < emails.length; i++) {
