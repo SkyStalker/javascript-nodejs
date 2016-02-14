@@ -30,6 +30,6 @@
         = "\n"
         | к/сч 0000000000
     +e.item_hidden
-      +e('label').label(for="invoice-company-mail") Почтовый адрес (если нужен договор и акт почтой, иначе не заполнять):
-      +b('textarea').textarea-input.__textarea-addr#invoice-company-mail(name="invoiceCompanyMail" placeholder="заполняйте только если нужен бумажный договор и акт почтой")
+      +e('label').label(for="invoice-company-mail") Почтовый адрес (читайте <a href="/courses-mail-flow" target="_blank">регламент обмена документами</a>):
+      +b('textarea').textarea-input.__textarea-addr#invoice-company-mail(name="invoiceCompanyMail" placeholder="заполняйте только если нужен бумажный договор и акт почтой, детали по ссылке выше")
       +e.small-note Например: 141401, Москва, ул. Чкалова д.11 оф.3, ООО "Ромашка", в бухгалтерию.

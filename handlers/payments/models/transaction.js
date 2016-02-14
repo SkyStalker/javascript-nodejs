@@ -52,7 +52,7 @@ var schema = new Schema({
       contractHead: String,
       companyAddress: String,
       companyMail: String,
-      companyMailSent: Boolean,
+      companyMailSent: Boolean,  // true iff paper letter sent
       bankDetails: String
     },
     default: {}
