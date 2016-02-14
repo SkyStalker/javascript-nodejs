@@ -54,7 +54,7 @@ if lang=='ru'
             +e('li')(class=["section", section.slug && siteToolbarCurrentSection == section.slug && '_current' || undefined])
               +e('a').link(href=section.url ? section.url : ('/' + section.slug))= section.title
 
-          +e('li')(class=["section", "_dropdown", siteToolbarCurrentSection.startsWith('screencast') ? '_current' : undefined])
+          +e('li')(class=["section", "_dropdown", siteToolbarCurrentSection && siteToolbarCurrentSection.startsWith('screencast') ? '_current' : undefined])
             //- делаем пользователя кнопкой, так как она только раскрывает меню
             //- и никуда не ведет. Если предполагается функциональность ссылки
             //- потребуются минимальные доработки

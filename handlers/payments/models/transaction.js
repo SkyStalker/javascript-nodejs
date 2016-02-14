@@ -51,6 +51,8 @@ var schema = new Schema({
       agreementRequired: Boolean,
       contractHead: String,
       companyAddress: String,
+      companyMail: String,
+      companyMailSent: Boolean,  // true iff paper letter sent
       bankDetails: String
     },
     default: {}
