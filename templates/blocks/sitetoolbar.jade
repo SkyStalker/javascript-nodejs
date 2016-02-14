@@ -54,7 +54,7 @@ if lang=='ru'
             +e('li')(class=["section", section.slug && siteToolbarCurrentSection == section.slug && '_current' || undefined])
               +e('a').link(href=section.url ? section.url : ('/' + section.slug))= section.title
 
-          +e('li')(class=["section", "_dropdown", siteToolbarCurrentSection == 'screencast' ? '_current' : undefined])
+          +e('li')(class=["section", "_dropdown", siteToolbarCurrentSection.startsWith('screencast') ? '_current' : undefined])
             //- делаем пользователя кнопкой, так как она только раскрывает меню
             //- и никуда не ведет. Если предполагается функциональность ссылки
             //- потребуются минимальные доработки
@@ -93,8 +93,11 @@ if lang=='ru'
             each section in siteToolbarSections
               +e('option')(
                 value=(section.slug ? ('/' + section.slug) : section.url)
-                selected = (session.slug && siteToolbarCurrentSection == section.slug)
+                selected = (section.slug && siteToolbarCurrentSection == section.slug)
               )= section.title
+            +e('option')(value='/screencast/gulp' selected=(siteToolbarCurrentSection == 'screencast-gulp')) Скринкаст по Gulp
+            +e('option')(value='/screencast/webpack' selected=(siteToolbarCurrentSection == 'screencast-webpack')) Скринкаст по Webpack
+            +e('option')(value='/screencast/nodejs' selected=(siteToolbarCurrentSection == 'screencast-nodejs')) Скринкаст по Node.JS
 
       +e.line
         +e.content

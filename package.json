@@ -75,7 +75,7 @@
     "lru-cache": "*",
     "mandrill-api": "*",
     "map-stream": "*",
-    "markdown-it": "^5",
+    "markdown-it": "*",
     "markdown-it-container": "*",
     "markdown-it-deflist": "*",
     "mime": "*",

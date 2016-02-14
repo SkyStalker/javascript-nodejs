@@ -15,6 +15,11 @@ var handlers = [
   // before everything to make sure it log all
   'accessLogger',
 
+  // pure node.js examples from tutorial
+  // before session
+  // before form parsing, csrf checking or whatever, bare node
+  'nodeExample',
+
   // before anything that may deal with body
   // it parses JSON & URLENCODED FORMS,
   // it does not parse form/multipart
