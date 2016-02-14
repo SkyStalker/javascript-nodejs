@@ -13,7 +13,6 @@ const Newsletter = require('newsletter').Newsletter;
 const fs = require('mz/fs');
 
 exports.get = function*() {
-  this.locals.siteToolbarCurrentSection = "screencast";
 
   let slug = this.params.slug;
   this.locals.slug = slug;
@@ -21,6 +20,8 @@ exports.get = function*() {
   if (slug.includes('/') || slug.includes('.')) {
     this.throw(404);
   }
+
+  this.locals.siteToolbarCurrentSection = "screencast-"+slug;
 
   let hasTemplate = yield fs.exists(path.join(this.templateDir, slug + '.jade'));
 
