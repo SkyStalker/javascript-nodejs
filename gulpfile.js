@@ -99,6 +99,8 @@ gulp.task("payments:order:paid", lazyRequireTask('payments/tasks/orderPaid'));
 gulp.task("payments:transaction:paid", lazyRequireTask('payments/tasks/transactionPaid'));
 gulp.task("payments:order:cancelPending", lazyRequireTask('payments/tasks/orderCancelPending'));
 
+gulp.task('payments:yakassa:listOrders', lazyRequireTask('payments/yakassa/tasks/listOrders'));
+
 gulp.task("newsletter:send", lazyRequireTask('newsletter/tasks/send'));
 gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));
 
