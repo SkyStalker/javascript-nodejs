@@ -4,6 +4,7 @@
  */
 
 const gulp = require('gulp');
+const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
@@ -67,7 +68,8 @@ gulp.task("nodemon", lazyRequireTask('./tasks/nodemon', {
 
   nodeArgs: process.env.NODE_DEBUG  ? ['--debug'] : [],
   script: "./bin/server",
-  ignore: '**/client/', // ignore handlers' client code
+  //ignoreRoot: ['.git', 'node_modules'].concat(glob.sync('{handlers,modules}/**/client')), // ignore handlers' client code
+  ignore: ['**/client/', '**/photoCut/'], // ignore handlers' client code
   watch:  ["handlers", "modules"]
 }));
 
@@ -98,6 +100,8 @@ gulp.task("tutorial:edit", lazyRequireTask('tutorial/tasks/edit'));
 gulp.task("payments:order:paid", lazyRequireTask('payments/tasks/orderPaid'));
 gulp.task("payments:transaction:paid", lazyRequireTask('payments/tasks/transactionPaid'));
 gulp.task("payments:order:cancelPending", lazyRequireTask('payments/tasks/orderCancelPending'));
+
+gulp.task('payments:yakassa:listOrders', lazyRequireTask('payments/yakassa/tasks/listOrders'));
 
 gulp.task("newsletter:send", lazyRequireTask('newsletter/tasks/send'));
 gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));

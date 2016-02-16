@@ -19,7 +19,8 @@ module.exports = {
     yakassa: {
       shopId: secret.yakassa.shopId,
       scid: secret.yakassa.scid,
-      secret: secret.yakassa.secret
+      secret: secret.yakassa.secret,
+      certDir: secret.yakassa.certDir
     },
 
     payanyway: {

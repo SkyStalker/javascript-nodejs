@@ -53,8 +53,8 @@ module.exports = function(config) {
 
     watch: process.env.NODE_ENV == 'development',
 
-    devtool: process.env.NODE_ENV == 'development' ? "" : // try "eval" ?
-               process.env.NODE_ENV == 'production' ? 'source-map' : "",
+    devtool: process.env.NODE_ENV == 'development' ? "cheap-inline-module-source-map" : // try "eval" ?
+               process.env.NODE_ENV == 'production' ? 'source-map' : null,
 
     profile: true,
 

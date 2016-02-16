@@ -1,7 +1,7 @@
 const CanvasSelection = require('./canvasSelection');
 
 
-class PhotoCut {
+class PhotoSelector {
 
   constructor(canvas, {maxImageSize} = {}) {
     this.maxImageSize = maxImageSize || 200;
@@ -9,10 +9,10 @@ class PhotoCut {
     this.canvas = canvas;
 
     this.canvas.onmousedown = event => this.onMouseDown(event);
-    this.canvas.onmouseup = event => this.onMouseUp(event);
     this.canvas.onkeydown = event => this.onKeyDown(event);
 
-    document.addEventListener('mousemove', (event) => this.onMouseMove(event));
+    document.addEventListener('mouseup', event => this.onMouseUp(event));
+    document.addEventListener('mousemove', event => this.onMouseMove(event));
 
     this.ctx = canvas.getContext('2d');
 
@@ -46,10 +46,19 @@ class PhotoCut {
   }
 
   getEventCoordsRelativeCanvasImage(event) {
-    return {
+    let coords = {
       x: event.clientX - this.canvas.getBoundingClientRect().left - this.cornerSize,
       y: event.clientY - this.canvas.getBoundingClientRect().top - this.cornerSize
     };
+
+    // force-fit into image
+    if (coords.x <= 0.5) coords.x = 0;
+    if (coords.x >= this.width - 0.5) coords.x = this.width;
+    if (coords.y <= 0.5) coords.y = 0;
+    if (coords.y >= this.height - 0.5) coords.y = this.height;
+
+    return coords;
+
   }
 
 
@@ -171,12 +180,6 @@ class PhotoCut {
     // recalculate relative to canvas image edge
     var coords = this.getEventCoordsRelativeCanvasImage(event);
 
-    // force-fit into image
-    if (coords.x < 0) coords.x = 0;
-    if (coords.x > this.width) coords.x = this.width;
-    if (coords.y < 0) coords.y = 0;
-    if (coords.y > this.height) coords.y = this.height;
-
     switch (this.state) {
     case false:
       this.showCursorAtCoords(coords);
@@ -262,9 +265,9 @@ class PhotoCut {
     if (selection) {
       selection = Object.create(selection);
       if (this.selection) {
-        selection.x = selection.x || this.selection.x;
-        selection.y = selection.y || this.selection.y;
-        selection.size = selection.size || this.selection.size;
+        if (selection.x === undefined) selection.x = this.selection.x;
+        if (selection.y === undefined) selection.y = this.selection.y;
+        if (selection.size === undefined) selection.size = this.selection.size;
       }
 
       // round to make all rectangles pixel-perfect
@@ -287,6 +290,7 @@ class PhotoCut {
       Math.abs(this.selectionStartCoords.y - coords.y)
     );
 
+    //console.log("createSelection", this.selectionStartCoords, coords, maxDistance);
     var selection = {};
 
     if (coords.x >= this.selectionStartCoords.x) {
@@ -308,6 +312,7 @@ class PhotoCut {
         selection.x = this.selectionStartCoords.x - selection.size;
         selection.y = this.selectionStartCoords.y;
       } else {
+        //console.log("createSelection nw-resize", maxDistance);
         this.canvas.style.cursor = 'nw-resize';
         selection.size = Math.min(maxDistance, this.selectionStartCoords.x, this.selectionStartCoords.y);
         selection.x = this.selectionStartCoords.x - selection.size;
@@ -486,4 +491,4 @@ class PhotoCut {
   }
 }
 
-module.exports = PhotoCut;
+module.exports = PhotoSelector;

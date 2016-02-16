@@ -1,3 +1,2 @@
 require('./dom');
-
-
+require('./string');
