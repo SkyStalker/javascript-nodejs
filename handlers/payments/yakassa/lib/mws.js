@@ -17,7 +17,7 @@ exports.request = function* (method, params) {
   let result = yield request({
     method: 'POST',
     form: params, //  sets content-type "application/x-www-form-urlencoded";
-    url: 'https://penelope-demo.yamoney.ru:8083/webservice/mws/api/' + method,
+    url: 'https://penelope.yamoney.ru:443/webservice/mws/api/' + method,
     cert,
     key,
     ca
