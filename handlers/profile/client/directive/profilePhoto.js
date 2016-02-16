@@ -1,7 +1,7 @@
 var notification = require('client/notification');
 var angular = require('angular');
 var thumb = require('client/image').thumb;
-var promptSquarePhoto = require('photoCut').promptSquarePhoto;
+var photoCut = require('photoCut');
 
 angular.module('profile')
   .directive('profilePhoto', function(promiseTracker, $http) {
@@ -18,7 +18,7 @@ angular.module('profile')
 
         scope.changePhoto = function() {
 
-          promptSquarePhoto({
+          photoCut({
             minSize:   160,
             onSuccess: uploadPhoto
           });
@@ -27,6 +27,7 @@ angular.module('profile')
 
         function uploadPhoto(file) {
 
+          debugger;
           var formData = new FormData();
           formData.append("photo", file);
 

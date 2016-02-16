@@ -4,6 +4,7 @@
  */
 
 const gulp = require('gulp');
+const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
@@ -67,7 +68,8 @@ gulp.task("nodemon", lazyRequireTask('./tasks/nodemon', {
 
   nodeArgs: process.env.NODE_DEBUG  ? ['--debug'] : [],
   script: "./bin/server",
-  ignore: '**/client/', // ignore handlers' client code
+  //ignoreRoot: ['.git', 'node_modules'].concat(glob.sync('{handlers,modules}/**/client')), // ignore handlers' client code
+  ignore: ['**/client/', '**/photoCut/'], // ignore handlers' client code
   watch:  ["handlers", "modules"]
 }));
 

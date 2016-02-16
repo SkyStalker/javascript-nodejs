@@ -25,7 +25,7 @@
     "babel-loader": "^5",
     "babelfish": "^1.1.1",
     "bluebird": "*",
-    "blueimp-canvas-to-blob": "git://github.com/hugomrdias/JavaScript-Canvas-to-Blob",
+    "blueimp-canvas-to-blob": "*",
     "browser-pack": "*",
     "bunyan": "*",
     "bytes": "*",
