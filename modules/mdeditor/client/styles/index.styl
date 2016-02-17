@@ -3,6 +3,8 @@
 
 @require "~codemirror/lib/codemirror.css"
 
+@require "~styles/blocks/font/font-icons"
+
 .mdeditor
     width 100%
 
@@ -14,82 +16,81 @@
         border-right 1px solid #ccc
         height 36px
 
+    &__button-row
+        margin 2px 17px 0px 25px
+
     &__button
         width 20px
         height 20px
-        margin-left 5px
-        margin-right 5px
-        position absolute
-        background-repeat no-repeat
-        background-position 0px 0px
         display inline-block
         list-style none
 
-        &[data-action="Bold"]
-            left 0px
-            top 12px
+        &[data-action="Bold"]::before
+            @extend $font-bold
             &:hover
                 cursor pointer
 
-        $_italic
-            left 25px
-            top 12px
+        &[data-action="Italic"]::before
+            @extend $font-italic
             &:hover
                 cursor pointer
 
-        $_link
-            left 75px
-            top 12px
+        &[data-action="Link"]::before
+            @extend $font-link
             &:hover
                 cursor pointer
 
-        $_quote
-            left 100px
-            top 12px
+        &[data-action="Blockquote"]::before
+            @extend $font-link
             &:hover
                 cursor pointer
 
-        $_code
-            left 125px
-            top 12px
-
-        $_image
-            left 150px
-            top 12px
-
-        $_olist
-            left 200px
-            top 12px
+        &[data-action="Code"]::before
+            @extend $font-link
             &:hover
                 cursor pointer
 
-        $_ulist
-            left 225px
-            top 12px
+        &[data-action="Image"]::before
+            @extend $font-link
             &:hover
                 cursor pointer
 
-        $_heading
-            left 250px
-            top 12px
+        &[data-action="Olist"]::before
+            @extend $font-link
             &:hover
                 cursor pointer
 
-        $_hr
-            left 275px
-            top 12px
+        &[data-action="Ulist"]::before
+            @extend $font-link
             &:hover
                 cursor pointer
 
-        $_undo
-            left 325px
-            top 12px
+        &[data-action="Heading"]::before
+            @extend $font-link
             &:hover
                 cursor pointer
 
-        $_redo
-            left 350px
-            top 12px
+        &[data-action="Separator"]::before
+            @extend $font-link
+            &:hover
+                cursor pointer
+
+        &[data-action="Undo"]::before
+            @extend $font-link
+            &:hover
+                cursor pointer
+
+        &[data-action="Redo"]
+            &:hover
+                cursor pointer
+            &::before
+                @extend $font-link
+
+        &[data-action="Help"]
+            float right
+            margin-top 6px
+            &::before
+                @extend $font-link
             &:hover
                 cursor pointer
 
@@ -103,15 +104,15 @@
 
 
 
-    $__input
+    &__input
         height 200px
         background-color #fff
         border 1px solid #cccccc
 
-    $__preview
+    &__preview
         box-sizing border-box
-        padding 10px 0
+        padding 20px 0
         border-top 1px dotted #ccc
         border-bottom 1px dotted #ccc
         clear both
-        margin-top 20px
+        margin 20px 0px 20px 0px
