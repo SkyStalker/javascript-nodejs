@@ -16,7 +16,7 @@ const LANG = require('config').lang;
 
 t.requirePhrase('mdedit', require('../locales/' + LANG + '.yml'));
 
-class MdEdit {
+class MdEditor {
 
   actionBold() {
     this.replaceSelection("**", "**", 2, t("bold"));
@@ -118,17 +118,19 @@ class MdEdit {
       for (var i = 0; i < actions.length; i++) {
         buttons.push({action: actions[i], title: allButtons[actions[i]]});
       }
+      return buttons;
     }
 
     var buttons;
     switch (this.options.buttonSet) {
     default:
-      buttons = makeButtonsFromActions('Bold Italic Code Undo Redo FencedCode Link Ul Ol Heading Image').split(' ')
+      buttons = makeButtonsFromActions(
+        'Bold Italic Code Undo Redo FencedCode Link Ul Ol Heading Image'.split(' ')
+      );
     }
 
     textArea.insertAdjacentHTML("afterEnd", clientRender(template, {
-      buttons: buttons,
-      value:   this.value
+      buttons: buttons
     }));
 
     this.elem = textArea.nextElementSibling;
@@ -136,6 +138,7 @@ class MdEdit {
     let templateArea = this.elem.querySelector('textarea');
     templateArea.replace(textArea);
 
+    textArea.classList.remove('mdeditor');
     // move all classes from template textarea to the existing one
     for (var i = 0; i < templateArea.classList.length; i++) {
       var cls = templateArea.classList[i];
@@ -144,10 +147,11 @@ class MdEdit {
   }
 
   constructor(options) {
+    this.options = Object.create(options);
+    if (!options.buttonSet) this.options.buttonSet = 'standard';
+
     this.render(options.elem);
     this.value = this.elem.value;
-
-    this.options = options;
 
     this.delegate('[data-action]', function(e) {
       let actionName = 'action' + this.delegateTarget.getAtribute('data-action');
@@ -157,9 +161,11 @@ class MdEdit {
       this[actionName]();
     });
 
-    this.codemirror = CodeMirror.fromTextArea(elem.querySelector('textarea'), {
+    return;
+
+    this.codemirror = CodeMirror.fromTextArea(this.elem.querySelector('textarea'), {
       tabSize:     2,
-      lineNumbers: false,
+      //lineNumbers: false,
       mode:        'gfm'
     });
 
@@ -178,6 +184,6 @@ class MdEdit {
   }
 }
 
-delegate.delegateMixin(MdEdit.prototype);
+delegate.delegateMixin(MdEditor.prototype);
 
-module.export = MdEdit;
+module.exports = MdEditor;

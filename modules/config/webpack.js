@@ -69,7 +69,7 @@ module.exports = function(config) {
       profile:                   'profile/client',
       search:                    'search/client',
       quiz:                      'quiz/client',
-      mdedit:                    'mdedit/client',
+      mdeditor:                  'mdeditor/client',
       ebook:                     'ebook/client',
       donate:                    'donate/client',
       coursesCourse:             'courses/client/course',
