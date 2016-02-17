@@ -1,7 +1,7 @@
 'use strict';
 
 require('./styles');
-const MdEdit = require('./mdedit');
+const MdEditor = require('./mdeditor');
 
 
 function init() {
@@ -9,12 +9,13 @@ function init() {
 
   for (var i = 0; i < editorElems.length; i++) {
     var editorElem = editorElems[i];
-    new MdEdit({
+    new MdEditor({
       elem: editorElem
     });
   }
 }
 
-exports.init = init;
+// must be on document ready
+init();
 
 
