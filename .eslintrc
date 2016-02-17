@@ -53,8 +53,6 @@ rules:
   semi: 2
   ## require spaces operator like var sum = 1 + 1;
   space-infix-ops: 2
-  ## require spaces return, throw, case
-  space-return-throw-case: 2
   ## no space before function, eg. 'function()'
   space-before-function-paren: [2, "never"]
   ## require space before blocks, eg 'function() {'
@@ -68,7 +66,7 @@ rules:
   ## no trailing spaces
   no-trailing-spaces: 2
   # require space after keywords, eg 'for (..)'
-  space-after-keywords: 2
+  keyword-spacing: 2
 
   # Variables
   # list: https://github.com/eslint/eslint/tree/master/docs/rules#variables
@@ -85,4 +83,4 @@ globals:
   after: true
   beforeEach: true
   afterEach: true
-  
+

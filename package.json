@@ -34,6 +34,7 @@
     "co": "*",
     "co-busboy": "*",
     "co-request": "*",
+    "codemirror": "^5.11.0",
     "continuation-local-storage": "*",
     "css-loader": "*",
     "csv-parse": "*",
