@@ -37,7 +37,7 @@ exports.get = function*() {
   let group = this.groupBySlug;
   this.type = 'text/calendar; charset=utf-8';
 
-  this.body = this.render('ical', { group });
+  this.body = this.render('ical', {group});
 
 };
 

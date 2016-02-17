@@ -1,0 +1,22 @@
+
+extends /layouts/main
+
+block append variables
+  - var sitetoolbar = true
+  - var layout_main_class = "main_width-limit"
+  - var layout_header_class = "main__header_center"
+  - var content_class = '_center'
+
+block content
+
+
+  if !templates.length
+    p Шаблонов нет
+  else
+    ul
+      each template in templates
+        li
+          a(href="/courses/group-letter-templates/edit/" + template.id)= template.title
+
+
+  +e("a")(href="/courses/group-letter-templates/add") Создать новый

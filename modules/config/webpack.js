@@ -69,6 +69,7 @@ module.exports = function(config) {
       profile:                   'profile/client',
       search:                    'search/client',
       quiz:                      'quiz/client',
+      mdedit:                    'mdedit/client',
       ebook:                     'ebook/client',
       donate:                    'donate/client',
       coursesCourse:             'courses/client/course',
@@ -110,7 +111,7 @@ module.exports = function(config) {
           // babel shouldn't process modules which contain ws/browser.js,
           // which must not be run in strict mode (global becomes undefined)
           // babel would make all modules strict!
-          exclude: /node_modules\/(angular|prismjs|moment|blueimp-canvas-to-blob)/,
+          exclude: /node_modules\/(angular|prismjs|moment|blueimp-canvas-to-blob|codemirror)/,
           loaders: ['ng-annotate', 'babel'] // babel will work first
         },
         {

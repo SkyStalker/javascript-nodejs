@@ -1,0 +1,14 @@
+include /bem
+
++b.mdeditor
+  +e.button-bar
+    +e('ul').button-row
+      each button in buttons
+        +e('li').button(data-action=button.action title=button.title)
+          +e('i').button-icon
+
+  +e('textarea').input
+  +e.title-preview
+    +e('h2') Предпросмотр
+  +e.preview
+
