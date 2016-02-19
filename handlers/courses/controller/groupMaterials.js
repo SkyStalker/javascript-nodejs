@@ -6,7 +6,6 @@ var sendMail = require('mailer').send;
 var path = require('path');
 var CourseGroup = require('../models/courseGroup');
 var CourseParticipant = require('../models/courseParticipant');
-var _ = require('lodash');
 var multiparty = require('multiparty');
 var config = require('config');
 var fs = require('mz/fs');

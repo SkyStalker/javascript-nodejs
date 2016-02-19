@@ -18,6 +18,22 @@ exports.getList = function*() {
   this.body = this.render('groupLetter/templates');
 };
 
+function* loadTemplate(id) {
+  if (!ObjectId.isValid(id)) {
+    this.throw(400);
+  }
+
+  let letterTemplate = yield CourseGroupLetterTemplate.findById(id);
+  if (!letterTemplate) {
+    this.throw(404);
+  }
+  if (!this.isAdmin && !letterTemplate.user.equals(this.user._id)) {
+    this.throw(403);
+  }
+
+  return letterTemplate;
+}
+
 exports.post = function*() {
   if (!this.user || this.user.roles.indexOf('teacher') == -1) {
     this.throw(403);
@@ -25,16 +41,7 @@ exports.post = function*() {
 
   let letterTemplate;
   if (this.request.body.id) {
-    if (!ObjectId.isValid(this.request.body.id)) {
-      this.throw(400);
-    }
-    letterTemplate = yield CourseGroupLetterTemplate.findById(this.request.body.id);
-    if (!letterTemplate) {
-      this.throw(404);
-    }
-    if (!letterTemplate.user.equals(this.user._id)) {
-      this.throw(403);
-    }
+    letterTemplate = yield loadTemplate.call(this, this.request.body.id);
   } else {
 
     letterTemplate = new CourseGroupLetterTemplate({
@@ -74,7 +81,12 @@ exports.post = function*() {
 };
 
 exports.get = function*() {
+  let letterTemplate = yield loadTemplate.call(this, this.params.id);
 
+  this.body = {
+    title:   letterTemplate.title,
+    content: letterTemplate.content
+  };
 };
 
 exports.edit = function*() {
@@ -82,13 +94,7 @@ exports.edit = function*() {
   let letterTemplate;
 
   if (this.params.id) {
-    if (!ObjectId.isValid(this.params.id)) {
-      this.throw(400);
-    }
-    letterTemplate = yield CourseGroupLetterTemplate.findById(this.params.id);
-    if (!letterTemplate) {
-      this.throw(404);
-    }
+    letterTemplate = yield loadTemplate.call(this, this.params.id);
   }
 
   this.locals.title = letterTemplate ? "Редактировать шаблон" : "Создать шаблон";

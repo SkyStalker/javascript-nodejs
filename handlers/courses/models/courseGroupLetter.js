@@ -11,6 +11,12 @@ var schema = new Schema({
     required: true
   },
 
+  group: {
+    type:     Schema.Types.ObjectId,
+    ref:      'CourseGroup',
+    required: true
+  },
+
   title: {
     type:     String,
     required: true,
@@ -21,6 +27,17 @@ var schema = new Schema({
     type:     String,
     required: true,
     trim:     true
+  },
+
+  label: {
+    type: String,
+    default: function() {
+      return 'groupLetter:' + this.id;
+    }
+  },
+
+  sentAt: {
+    type: Date
   }
 });
 

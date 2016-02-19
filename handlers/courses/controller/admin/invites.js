@@ -7,6 +7,7 @@ const User = require('users').User;
 const CourseParticipant = require('../../models/courseParticipant');
 const CourseInvite = require('../../models/courseInvite');
 const CourseGroup = require('../../models/courseGroup');
+const registerParticipants = require('../../lib/registerParticipants');
 const assert = require('assert');
 const sendMail = require('mailer').send;
 
@@ -14,7 +15,7 @@ exports.post = function*() {
 
   let invite = yield CourseInvite.findById(this.request.body.id).populate('participant order');
 
-  console.log(this.request.body.group, invite.group.toString(), '!!!!');
+  this.log.debug("invite edit", this.request.body.group, invite.group.toString());
 
   if (this.request.body.group != invite.group.toString()) {
     // move person to another group
@@ -32,6 +33,8 @@ exports.post = function*() {
         group: this.request.body.group
       });
     }
+
+    yield* registerParticipants(invite.group);
 
     this.log.debug("transfer complete for invite", invite);
     if (this.request.body.notify) {

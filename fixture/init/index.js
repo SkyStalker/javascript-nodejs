@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const merge = require('lodash/merge');
 
-module.exports = _.merge(
+module.exports = merge(
   require('./user'),
   require('./newsletter'),
   require('./payments'),

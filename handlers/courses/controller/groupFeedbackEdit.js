@@ -6,8 +6,8 @@ const User = require('users').User;
 const CourseFeedback = require('../models/courseFeedback');
 const CourseGroup = require('../models/courseGroup');
 const CourseParticipant = require('../models/courseParticipant');
-const _ = require('lodash');
 const assert = require('assert');
+const pick = require('lodash/pick');
 
 exports.all = function*() {
 
@@ -96,7 +96,7 @@ exports.all = function*() {
   this.locals.countries = countries.all;
 
   if (this.method == 'POST') {
-    let feedbackData = _.pick(this.request.body,
+    let feedbackData = pick(this.request.body,
       'stars content country city isPublic recommend aboutLink occupation'.split(' ')
     );
 
@@ -105,7 +105,7 @@ exports.all = function*() {
 
     //console.log(this.request.body.photoId, feedbackData.photo, '!!!');
 
-    _.assign(courseFeedback, feedbackData);
+    Object.assign(courseFeedback, feedbackData);
 
     if (this.request.body.photoId) {
       var photo = yield ImgurImage.findOne({imgurId: this.request.body.photoId}).exec();

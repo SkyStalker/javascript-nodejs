@@ -3,115 +3,135 @@
 
 @require "~codemirror/lib/codemirror.css"
 
+@require "~styles/blocks/font/font-icons"
+
 .mdeditor
     width 100%
 
+    &__editor
+        border 1px solid #E2E2E2
+        border-radius 4px
+
+    &__footer
+        background-color #F2F2F2
+        border-top 1px solid #E2E2E2
+        height 11px
+
+    &__resize-handle
+        background url(resize-vertical.svg) center center no-repeat
+        height 11px
+        width 26px
+        margin auto
+        cursor ns-resize
+
+    &_resizing
+        //- whole editor has this cursor while resizi
+        cursor ns-resize
+
     &__button-bar
         width 100%
-        background-color #eeeeee
-        border-top 1px solid #ccc
-        border-left 1px solid #ccc
-        border-right 1px solid #ccc
-        height 36px
+        background-color #F2F2F2
+        border-bottom 1px solid #E2E2E2
+        height 38px
+        padding-left 16px
+        box-sizing: border-box
+        padding-top 3px
+
+    &__button-separator
+        width 20px
+        height 20px
+        display inline-block
 
     &__button
+        border 0
+        padding 0
+        background none
+        appearance none
         width 20px
         height 20px
-        margin-left 5px
-        margin-right 5px
-        position absolute
-        background-repeat no-repeat
-        background-position 0px 0px
         display inline-block
-        list-style none
+        color #666666
+        font-size 14px
+        margin-right 6px
+        &:focus
+            outline none
 
-        &[data-action="Bold"]
-            left 0px
-            top 12px
-            &:hover
-                cursor pointer
+        &:hover
+            color black
+            cursor pointer
 
-        $_italic
-            left 25px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="bold"]::before
+            @extend $font-bold
 
-        $_link
-            left 75px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="italic"]::before
+            @extend $font-italic
 
-        $_quote
-            left 100px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="link"]::before
+            @extend $font-link
 
-        $_code
-            left 125px
-            top 12px
+        &[data-action="quote"]::before
+            @extend $font-editor-quote
 
-        $_image
-            left 150px
-            top 12px
+        &[data-action="code"]::before
+            @extend $font-code
 
-        $_olist
-            left 200px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="fencedCode"]::before
+            @extend $font-fenced-code
 
-        $_ulist
-            left 225px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="image"]::before
+            @extend $font-image
 
-        $_heading
-            left 250px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="ol"]::before
+            @extend $font-ol
 
-        $_hr
-            left 275px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="ul"]::before
+            @extend $font-ul
 
-        $_undo
-            left 325px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="heading"]::before
+            @extend $font-heading
 
-        $_redo
-            left 350px
-            top 12px
-            &:hover
-                cursor pointer
+        &[data-action="undo"]::before
+            @extend $font-undo
 
-    &__button-icon
-        width 20px
-        height 20px
-        margin-left 5px
-        margin-right 5px
-        position absolute
-        display inline-block
+        &[data-action="redo"]::before
+            @extend $font-redo
+
+        &[data-action="help"]::before
+            @extend $font-link
 
 
 
-    $__input
+
+$font-code-multiline
+    @extend $font-icon
+    content '\E82F'
+
+$font-heading
+    @extend $font-icon
+    content '\E831'
+
+$font-image
+    @extend $font-icon
+    content '\E832'
+
+$font-code
+    @extend $font-icon
+    content '\E833'
+
+$font-editor-quote
+    @extend $font-icon
+    content '\E834'
+
+
+    &__input
         height 200px
         background-color #fff
         border 1px solid #cccccc
 
-    $__preview
+    &__preview
         box-sizing border-box
-        padding 10px 0
+        padding 20px 0
         border-top 1px dotted #ccc
         border-bottom 1px dotted #ccc
         clear both
-        margin-top 20px
+        margin 20px 0px 20px 0px

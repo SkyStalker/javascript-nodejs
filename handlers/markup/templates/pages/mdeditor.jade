@@ -1,22 +1,12 @@
 extends /layouts/main
 
+
+
+
 block content
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/codemirror.js")
   !=css('mdeditor')
-  //!=js("mdeditor", {defer: true})
+  !=js("mdeditor", {defer: true})
 
-  //- textarea.mdeditor Value
-
-  - var buttons = [{action:'Bold', title:'bold'}, {action:'Italic', title:'italic'}];
-
-  +b.mdeditor
-    +e.button-bar
-      +e('ul').button-row
-        each button in buttons
-          +e('li').button(data-action=button.action title=button.title)
-            +e('i').button-icon
-
-    +e('textarea').input BlaBlaBla
-    +e.title-preview
-      +e('h2') Предпросмотр
-    +e.preview
+  textarea.mdeditor Value
 

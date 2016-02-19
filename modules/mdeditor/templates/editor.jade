@@ -1,14 +1,20 @@
 include /bem
 
 +b.mdeditor
-  +e.button-bar
-    +e('ul').button-row
+  +e.editor
+    +e.button-bar
       each button in buttons
-        +e('li').button(data-action=button.action title=button.title)
-          +e('i').button-icon
+        if button == '|'
+          +e.button-separator
+        else
+          - var tooltip = t('mdeditor.buttons.'+ button);
+          - if (navigator.userAgent.indexOf('Mac OS X') != -1) tooltip = tooltip.replace('Ctrl', 'Cmd')
+          +e('button').button(data-action=button data-tooltip=tooltip)
 
-  +e('textarea').input
+    +e('textarea').input
+    +e.footer
+      +e.resize-handle(data-mdeditor-resize)
   +e.title-preview
     +e('h2') Предпросмотр
-  +e.preview
+  +e.preview(data-editor-preview)
 

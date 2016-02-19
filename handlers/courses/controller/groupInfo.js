@@ -1,6 +1,5 @@
 var Course = require('../models/course');
 var CourseParticipant = require('../models/courseParticipant');
-var _ = require('lodash');
 
 // Group info for a participant, with user instructions on how to login
 exports.get = function*() {
