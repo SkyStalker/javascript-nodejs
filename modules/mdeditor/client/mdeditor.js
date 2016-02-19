@@ -122,6 +122,7 @@ class MdEditor {
       this.textArea.selectionStart = before.length + prefix.length;
       this.textArea.selectionEnd = before.length + prefix.length + defaultText.length;
     }
+    this.renderPreviewTrottled();
   }
 
   render(textArea) {
@@ -194,7 +195,7 @@ class MdEditor {
     this.delegate('[data-mdeditor-resize]', 'mousedown', this.onResizeMouseDown);
 
     this.textArea.addEventListener("input", this.renderPreviewThrottled);
-
+    this.renderPreviewTrottled();
   }
 
   highlightInPreview() {
