@@ -1,9 +1,7 @@
 'use strict';
 
 const BasicParser = require('markit/basicParser');
-const CodeMirror = require('codemirror');
 const prism = require('client/prism');
-require('codemirror/mode/gfm/gfm');
 
 const template = require('../templates/editor.jade');
 const throttle = require('lodash/throttle');
@@ -19,7 +17,7 @@ const LANG = require('config').lang;
 t.requirePhrase('mdeditor', require('../locales/' + LANG + '.yml'));
 
 const buttonSets = {
-  standard: 'bold italic | link ul ol | code fencedCode | undo redo'.split(' ')
+  standard: 'bold italic | link ul ol | code fencedCode'.split(' ')
 };
 
 class MdEditor {
@@ -37,35 +35,19 @@ class MdEditor {
     this.replaceSelection("`", "`", t("mdeditor.text.code"));
   }
 
-  actionRedo() {
-    this.codemirror.redo();
-  }
-
-  actionUndo() {
-    this.codemirror.undo();
-  }
 
   actionFencedCode() {
-    let hadSelection = this.codemirror.getSelection();
     this.replaceSelection("\n```js\n", "\n```\n", t("mdeditor.text.fencedCode"));
-
-    let cursorPos = this.codemirror.getCursor();
-    let line = cursorPos.line - 2;
-    this.codemirror.setCursor(line, 9999);
-    if (!hadSelection) {
-      // select default
-      this.codemirror.setSelection(
-        {line, ch: 0},
-        {line, ch: 9999}
-      );
-    }
   }
 
   actionLink() {
     let text;
     let link;
 
-    let selection = this.codemirror.getSelection();
+    let value = this.textArea.value;
+    let hasSelection = (this.textArea.selectionStart != this.textArea.selectionEnd);
+
+    let selection = hasSelection ? value.slice(this.textArea.selectionStart, this.textArea.selectionEnd) : '';
 
     if (selection) {
       if (selection.match(/^https?:\/\//)) {
@@ -74,56 +56,41 @@ class MdEditor {
         text = selection;
       }
     }
-    let substitution = '[' + (text || t('mdeditor.text.link')) + '](' + (link || 'http://') + ')';
 
-    this.codemirror.replaceSelection(substitution);
+    let substitutionText = text || t('mdeditor.text.link'); // || link ?
+    let substitution = '[' + substitutionText + '](' + (link || 'http://') + ')';
 
-    let cursorPos = this.codemirror.getCursor();
+    let before = value.slice(0, this.textArea.selectionStart);
+    let after = value.slice(this.textArea.selectionEnd);
+    this.textArea.value = before + substitution + after;
 
     if (!text) {
-      this.codemirror.setCursor(cursorPos.line, cursorPos.ch - substitution.length + 1 + t('mdeditor.text.link').length);
-      this.codemirror.setSelection(
-        {line: cursorPos.line, ch: cursorPos.ch - substitution.length + 1},
-        {line: cursorPos.line, ch: cursorPos.ch -  substitution.length + 1 + t('mdeditor.text.link').length}
-      );
+      // select default text
+      this.textArea.selectionStart = before.length + 1;
+      this.textArea.selectionEnd = before.length + 1 + substitutionText.length;
     } else if (!link) {
-      this.codemirror.setCursor(cursorPos.line, cursorPos.ch - 1);
+      // place cursor after http://
+      this.textArea.selectionEnd = before.length + substitution.length - 1;
+      this.textArea.selectionStart = this.textArea.selectionEnd;
     }
 
   }
 
   actionOl() {
-    let cursorPos = this.codemirror.getCursor();
-    this.codemirror.setSelection(
-      {line: cursorPos.line, ch: 0},
-      {line: cursorPos.line, ch: 99999}
-    );
-
-    this.replaceSelection("1. ", "\n", t('mdeditor.text.ol'));
+    this.replaceSelection("\n\n1. ", "\n", t('mdeditor.text.ol'));
   }
 
   actionUl() {
-    let cursorPos = this.codemirror.getCursor();
-    this.codemirror.setSelection(
-      {line: cursorPos.line, ch: 0},
-      {line: cursorPos.line, ch: 99999}
-    );
-
-    this.replaceSelection("- ", "\n", t('mdeditor.text.ol'));
+    this.replaceSelection("\n\n- ", "\n", t('mdeditor.text.ol'));
   }
 
   actionHeading() {
-    let cursorPos = this.codemirror.getCursor();
-    this.codemirror.setSelection(
-      {line: cursorPos.line, ch: 0},
-      {line: cursorPos.line, ch: 99999}
-    );
-
-    this.replaceSelection("# ", "\n", t('mdeditor.text.heading'));
+    this.replaceSelection("\n\n# ", "\n", t('mdeditor.text.heading'));
   }
 
   actionImage() {
     // todo
+    /*
     let selection = this.codemirror.getSelection();
     let text = t("mdeditor.text.alt");
 
@@ -133,25 +100,27 @@ class MdEditor {
     this.codemirror.replaceSelection('![' + text + '](' + selection + ')');
     let cursorPos = this.codemirror.getCursor();
     this.codemirror.setCursor(cursorPos.line, cursorPos.ch - (1 + selection.length));
+    */
   }
 
-  replaceSelection(before, after, defaultText) {
 
-    let selection = this.codemirror.getSelection();
+  replaceSelection(prefix, suffix, defaultText) {
+    let value = this.textArea.value;
+    let hasSelection = (this.textArea.selectionStart != this.textArea.selectionEnd);
 
-    let defaultTextUsed = !selection;
+    let selection = hasSelection ? value.slice(this.textArea.selectionStart, this.textArea.selectionEnd) : '';
 
-    let substitution = defaultTextUsed ? (before + defaultText + after) : (before + selection + after);
-    this.codemirror.replaceSelection(substitution);
+    let substitution = hasSelection ?
+      (prefix + selection + suffix) :
+      (prefix + defaultText + suffix);
 
-    let cursorPos = this.codemirror.getCursor();
+    let before = value.slice(0, this.textArea.selectionStart);
+    let after = value.slice(this.textArea.selectionEnd);
+    this.textArea.value = before + substitution + after;
 
-    if (defaultTextUsed) {
-      this.codemirror.setCursor(cursorPos.line, cursorPos.ch - after.length);
-      this.codemirror.setSelection(
-        {line: cursorPos.line, ch: cursorPos.ch - defaultText.length - after.length},
-        {line: cursorPos.line, ch: cursorPos.ch - after.length}
-      );
+    if (!hasSelection) {
+      this.textArea.selectionStart = before.length + prefix.length;
+      this.textArea.selectionEnd = before.length + prefix.length + defaultText.length;
     }
   }
 
@@ -167,6 +136,7 @@ class MdEditor {
 
     let templateArea = this.elem.querySelector('textarea');
     templateArea.replace(textArea);
+    this.textArea = textArea;
 
     textArea.classList.remove('mdeditor');
     // move all classes from template textarea to the existing one
@@ -184,11 +154,9 @@ class MdEditor {
   }
 
   onResizeMouseMove(e) {
-    let editorElem = this.codemirror.getWrapperElement();
-    let height = e.clientY - editorElem.getBoundingClientRect().top;
-    console.log(height);
+    let height = e.clientY - this.textArea.getBoundingClientRect().top;
     if (height < 30) height = 30;
-    this.codemirror.setSize('100%', height);
+    this.textArea.style.height = height + 'px';
   }
 
   onResizeMouseUp(e) {
@@ -213,7 +181,7 @@ class MdEditor {
 
       e.preventDefault();
       this[actionName]();
-      this.codemirror.focus();
+      this.textArea.focus();
     });
 
 
@@ -222,25 +190,10 @@ class MdEditor {
     this.onResizeMouseUp = this.onResizeMouseUp.bind(this);
 
     this.renderPreviewThrottled = throttle(this.renderPreview.bind(this), 100);
-    this.highlightInPreviewThrottled = throttle(this.highlightInPreview.bind(this), 500);
 
     this.delegate('[data-mdeditor-resize]', 'mousedown', this.onResizeMouseDown);
 
-    this.codemirror = CodeMirror.fromTextArea(this.elem.querySelector('textarea'), {
-      tabSize: 2,
-      //lineNumbers: false,
-      mode:    'gfm'
-    });
-
-    this.codemirror.setOption("extraKeys", {
-      'Ctrl-B': () => this.actionBold(),
-      'Ctrl-I': () => this.actionItalic(),
-      'Cmd-B': () => this.actionBold(),
-      'Cmd-I': () => this.actionItalic()
-    });
-
-
-    this.codemirror.on("change", this.renderPreviewThrottled);
+    this.textArea.addEventListener("input", this.renderPreviewThrottled);
 
   }
 
@@ -249,10 +202,10 @@ class MdEditor {
   }
 
   renderPreview() {
-    let value = this.codemirror.getValue();
+    let value = this.textArea.value;
     let rendered = new BasicParser().render(value);
     this.elem.querySelector('[data-editor-preview]').innerHTML = rendered;
-    this.highlightInPreviewThrottled();
+    this.highlightInPreview();
   }
 
 }
