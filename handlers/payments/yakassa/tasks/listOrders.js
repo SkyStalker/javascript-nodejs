@@ -20,7 +20,7 @@ module.exports = function() {
         outputFormat:                       'XML',
         shopId:                             yakassaConfig.shopId,
         orderCreatedDatetimeLessOrEqual:    date.toJSON(),
-        orderCreatedDatetimeGreaterOrEqual: new Date(2016, 1, 1).toJSON()
+        //orderCreatedDatetimeGreaterOrEqual: new Date(2016, 1, 1).toJSON()
       };
 
       let result = yield* mws.sendFormRequest('listOrders', params);

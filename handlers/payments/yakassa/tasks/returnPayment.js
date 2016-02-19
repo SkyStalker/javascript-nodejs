@@ -4,8 +4,8 @@ const co = require('co');
 const mws = require('../lib/mws');
 const yakassaConfig = require('config').payments.modules.yakassa;
 const currencyRate = require('currencyRate');
-var Transaction = require('../models/transaction');
-var Order = require('../models/order');
+var Transaction = require('../../models/transaction');
+var Order = require('../../models/order');
 const ObjectId = require('mongoose').Types.ObjectId;
 /**
  * Mark TX as paid
