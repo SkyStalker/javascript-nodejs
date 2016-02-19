@@ -2,8 +2,6 @@
 
 const countries = require('countries');
 const CourseFeedback = require('../models/courseFeedback');
-const CourseParticipant = require('../models/courseParticipant');
-const _ = require('lodash');
 const BasicParser = require('markit').BasicParser;
 
 exports.patch = function*() {

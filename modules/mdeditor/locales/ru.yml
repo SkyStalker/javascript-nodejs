@@ -1,8 +1,25 @@
-heading: Заголовок
-bold: жирный текст
-italic: текст курсивом
-code: код
-code_multiline: несколько строк кода
-ol_item: Элемент списка
-ul_item: Элемент списка
-alt: Описание изображения
+text:
+  bold: жирный текст
+  italic: текст курсивом
+  code: code
+  heading: Заголовок
+  fencedCode: enter multiline code here
+  link: текст ссылки
+  ol: Элемент списка
+  ul: Элемент списка
+  alt: описание изображения
+
+
+buttons:
+  bold: жирный текст [Ctrl-B]
+  italic: текст курсивом [Ctrl-I]
+  code: строка кода
+  undo: отмена [Ctrl-Z]
+  redo: отменить отмену [Ctrl-Y]
+  fencedCode: несколько строк кода
+  link: ссылка
+  ul: список
+  ol: нумерованый список
+  heading: заголовок
+  image: вставить картинку
+

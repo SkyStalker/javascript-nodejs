@@ -23,11 +23,14 @@ router.get('/:course', require('./controller/course').get);
 
 
 router.get("/group-letter-templates", require('./controller/groupLetterTemplates').getList);
+router.get("/group-letter-templates/:id", require('./controller/groupLetterTemplates').get);
 router.get("/group-letter-templates/add", require('./controller/groupLetterTemplates').edit);
 router.post("/group-letter-templates", require('./controller/groupLetterTemplates').post);
-
 router.get("/group-letter-templates/edit/:id", require('./controller/groupLetterTemplates').edit);
-//router.get("/group-letter-templates/:id", require('./controller/groupLetterTemplates').get);
+
+router.get('/groups/:groupBySlug/letters', mustBeTeacherOrAdmin, require('./controller/groupLetters').getList);
+
+
 
 // same controller for new signups & existing orders
 router.get('/groups/:groupBySlug/signup', require('./controller/signup').get);

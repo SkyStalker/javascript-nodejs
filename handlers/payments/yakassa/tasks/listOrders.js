@@ -16,13 +16,14 @@ module.exports = function() {
 
       let date = new Date();
       let params = {
-        requestDT:                       date.toJSON(),
-        outputFormat:                    'XML',
-        shopId:                          yakassaConfig.shopId,
-        orderCreatedDatetimeLessOrEqual: date.toJSON()
+        requestDT:                          date.toJSON(),
+        outputFormat:                       'XML',
+        shopId:                             yakassaConfig.shopId,
+        orderCreatedDatetimeLessOrEqual:    date.toJSON(),
+        orderCreatedDatetimeGreaterOrEqual: new Date(2016, 1, 1).toJSON()
       };
 
-      let result = yield* mws.request('listOrders', params);
+      let result = yield* mws.sendFormRequest('listOrders', params);
 
       console.log(result);
 

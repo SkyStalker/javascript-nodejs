@@ -5,7 +5,7 @@ block append variables
   - var sitetoolbar = true
   - var layout_main_class = "main_width-limit"
   - var layout_header_class = "main__header_center"
-  - var breadcrumbs = [ { title: 'Учебник', url: '/' }, { title: 'Шаблоны рассылок', url: '/courses/group-letter-templates' }]
+  - var breadcrumbs = [ { title: 'Учебник', url: '/' }, { title: 'Рассылки', url: '/courses/group-letters' }]
   - var content_class = '_center'
 
 
@@ -17,11 +17,17 @@ block content
       +e('button').close(title="Закрыть")
 
 
-  +b("form")(method="POST" action="/courses/group-letter-templates")
+  +b("form").group-letter-form(method="POST" action="/courses/group-letters")
     input(type="hidden", name="_csrf", value=csrf())
     input(type="hidden", name="id", value=form.id)
 
     +e.form
+      +e.line
+        +e("label").label(for="title") Кому
+        +b("span")(class=['text-input', errors && errors.title && '_invalid'])
+          +e("input").control(type="text", minlength=10, required, name="title", id="title", value=form.title, autofocus)
+          if errors && errors.title
+            +e.err= errors.title
       +e.line
         +e("label").label(for="title") Тема
         +b("span")(class=['text-input', errors && errors.title && '_invalid'])

@@ -4,7 +4,6 @@ const CourseFeedback = require('../models/courseFeedback');
 const CourseParticipant = require('../models/courseParticipant');
 const CourseGroup = require('../models/courseGroup');
 const User = require('users').User;
-const _ = require('lodash');
 const renderFeedback = require('../lib/renderFeedback');
 
 exports.get = function*() {

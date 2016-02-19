@@ -8,100 +8,119 @@
 .mdeditor
     width 100%
 
+    &__editor
+        border 1px solid #E2E2E2
+        border-radius 4px
+
+    &__footer
+        background-color #F2F2F2
+        border-top 1px solid #E2E2E2
+        height 11px
+
+    &__resize-handle
+        background url(resize-vertical.svg) center center no-repeat
+        height 11px
+        width 26px
+        margin auto
+        cursor ns-resize
+
+    &_resizing
+        //- whole editor has this cursor while resizi
+        cursor ns-resize
+
     &__button-bar
         width 100%
-        background-color #eeeeee
-        border-top 1px solid #ccc
-        border-left 1px solid #ccc
-        border-right 1px solid #ccc
-        height 36px
+        background-color #F2F2F2
+        border-bottom 1px solid #E2E2E2
+        height 38px
+        padding-left 16px
+        box-sizing: border-box
+        padding-top 3px
 
-    &__button-row
-        margin 2px 17px 0px 25px
+    &__button-separator
+        width 20px
+        height 20px
+        display inline-block
 
     &__button
+        border 0
+        padding 0
+        background none
+        appearance none
         width 20px
         height 20px
         display inline-block
-        list-style none
+        color #666666
+        font-size 14px
+        margin-right 6px
+        &:focus
+            outline none
 
-        &[data-action="Bold"]::before
+        &:hover
+            color black
+            cursor pointer
+
+        &[data-action="bold"]::before
             @extend $font-bold
-            &:hover
-                cursor pointer
 
-        &[data-action="Italic"]::before
+        &[data-action="italic"]::before
             @extend $font-italic
-            &:hover
-                cursor pointer
 
-        &[data-action="Link"]::before
+        &[data-action="link"]::before
             @extend $font-link
-            &:hover
-                cursor pointer
 
-        &[data-action="Blockquote"]::before
+        &[data-action="quote"]::before
+            @extend $font-editor-quote
+
+        &[data-action="code"]::before
+            @extend $font-code
+
+        &[data-action="fencedCode"]::before
+            @extend $font-fenced-code
+
+        &[data-action="image"]::before
+            @extend $font-image
+
+        &[data-action="ol"]::before
+            @extend $font-ol
+
+        &[data-action="ul"]::before
+            @extend $font-ul
+
+        &[data-action="heading"]::before
+            @extend $font-heading
+
+        &[data-action="undo"]::before
+            @extend $font-undo
+
+        &[data-action="redo"]::before
+            @extend $font-redo
+
+        &[data-action="help"]::before
             @extend $font-link
-            &:hover
-                cursor pointer
 
-        &[data-action="Code"]::before
-            @extend $font-link
-            &:hover
-                cursor pointer
 
-        &[data-action="Image"]::before
-            @extend $font-link
-            &:hover
-                cursor pointer
 
-        &[data-action="Olist"]::before
-            @extend $font-link
-            &:hover
-                cursor pointer
 
-        &[data-action="Ulist"]::before
-            @extend $font-link
-            &:hover
-                cursor pointer
+$font-code-multiline
+    @extend $font-icon
+    content '\E82F'
 
-        &[data-action="Heading"]::before
-            @extend $font-link
-            &:hover
-                cursor pointer
+$font-heading
+    @extend $font-icon
+    content '\E831'
 
-        &[data-action="Separator"]::before
-            @extend $font-link
-            &:hover
-                cursor pointer
+$font-image
+    @extend $font-icon
+    content '\E832'
 
-        &[data-action="Undo"]::before
-            @extend $font-link
-            &:hover
-                cursor pointer
+$font-code
+    @extend $font-icon
+    content '\E833'
 
-        &[data-action="Redo"]
-            &:hover
-                cursor pointer
-            &::before
-                @extend $font-link
-
-        &[data-action="Help"]
-            float right
-            margin-top 6px
-            &::before
-                @extend $font-link
-            &:hover
-                cursor pointer
-
-    &__button-icon
-        width 20px
-        height 20px
-        margin-left 5px
-        margin-right 5px
-        position absolute
-        display inline-block
-
+$font-editor-quote
+    @extend $font-icon
+    content '\E834'
 
 
     &__input

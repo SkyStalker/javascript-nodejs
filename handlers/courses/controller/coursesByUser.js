@@ -4,7 +4,6 @@ const CourseInvite = require('../models/courseInvite');
 const CourseParticipant = require('../models/courseParticipant');
 const CourseGroup = require('../models/courseGroup');
 const CourseFeedback = require('../models/courseFeedback');
-const _ = require('lodash');
 
 /**
  * The order form is sent to checkout when it's 100% valid (client-side code validated it)

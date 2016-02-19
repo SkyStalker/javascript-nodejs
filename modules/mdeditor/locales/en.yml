@@ -1,8 +1,23 @@
-heading: Heading
-bold: bold text
-italic: italic text
-code: code
-code_multiline: multiline code here
-ol_item: List item
-ul_item: List item
-alt: Image desciption
+text:
+  bold: bold text
+  italic: italic text
+  code: code
+  heading: Heading
+  fencedCode: enter multiline code here
+  ol: List item
+  ul: List item
+  alt: Image desciption
+  link: link text
+
+buttons:
+  bold: bold [Ctrl-B]
+  italic: italic [Ctrl-I]
+  code: inline code
+  undo: undo [Ctrl-Z]
+  redo: redo [Ctrl-Y]
+  fencedCode: multiline code
+  link: insert link
+  ul: itemized list
+  ol: ordered list
+  heading: heading
+  image: insert image

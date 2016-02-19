@@ -6,7 +6,6 @@ let BasicParser = require('markit').BasicParser;
 
 filters.markit = function(html) {
   let parser = new BasicParser({
-
     html: true
   });
 

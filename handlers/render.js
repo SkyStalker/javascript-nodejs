@@ -7,7 +7,6 @@ const config = require('config');
 const fs = require('fs');
 const log = require('log')();
 const jade = require('lib/serverJade');
-const _ = require('lodash');
 const assert = require('assert');
 const t = require('i18n');
 const money = require('money');
@@ -34,8 +33,6 @@ function addStandardHelpers(locals, ctx) {
   if (locals._hasStandardHelpers) return;
 
   locals.moment = moment;
-
-  locals._ = _;
 
   locals.lang = config.lang;
 
@@ -204,7 +201,7 @@ exports.init = function(app) {
 
     var renderFileCache = {};
 
-    this.locals = _.assign({}, config.jade);
+    this.locals = Object.assign({}, config.jade);
 
     /**
      * Render template
@@ -223,11 +220,11 @@ exports.init = function(app) {
       addStandardHelpers(this.locals, this);
 
       // warning!
-      // _.assign does NOT copy defineProperty
+      // Object.assign does NOT copy defineProperty
       // so I use this.locals as a root and merge all props in it, instead of cloning this.locals
       var loc = Object.create(this.locals);
 
-      _.assign(loc, locals);
+      Object.assign(loc, locals);
 
       if (!loc.schema) {
         loc.schema = {};

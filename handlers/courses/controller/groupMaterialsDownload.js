@@ -3,7 +3,6 @@
 var bytes = require('bytes');
 var Course = require('../models/course');
 var CourseGroup = require('../models/courseGroup');
-var _ = require('lodash');
 var path = require('path');
 
 // Group info for a participant, with user instructions on how to login

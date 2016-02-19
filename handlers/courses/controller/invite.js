@@ -7,7 +7,7 @@ const CourseGroup = require('../models/courseGroup');
 const registerParticipants = require('../lib/registerParticipants');
 const User = require('users').User;
 const VideoKey = require('videoKey').VideoKey;
-const _ = require('lodash');
+const pick = require('lodash/pick');
 const countries = require('countries');
 const LOGIN_SUCCESSFUL = 1;
 const LOGGED_IN_ALREADY = 2;
@@ -148,7 +148,7 @@ function* askParticipantDetails(invite) {
   this.locals.countries = selectCountries;
 
   if (this.method == 'POST') {
-    var participantData = _.pick(this.request.body,
+    var participantData = pick(this.request.body,
       'photoId firstName surname country city aboutLink occupation purpose wishes'.split(' ')
     );
     participantData.user = this.user;
