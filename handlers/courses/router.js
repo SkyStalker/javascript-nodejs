@@ -21,18 +21,6 @@ router.get('/feedback-fetch', require('./controller/courseFeedbackFetch').get);
 
 router.get('/:course', require('./controller/course').get);
 
-
-router.get("/admin/group-letter-templates", require('./controller/admin/groupLetterTemplates').getList);
-router.post("/admin/group-letter-templates", require('./controller/admin/groupLetterTemplates').post);
-
-router.get("/admin/group-letter-templates/add", require('./controller/admin/groupLetterTemplates').edit);
-router.get("/admin/group-letter-templates/edit/:id", require('./controller/admin/groupLetterTemplates').edit);
-router.get("/admin/group-letter-templates/rest/:id", require('./controller/admin/groupLetterTemplates').get);
-
-router.get('/admin/groups/:groupBySlug/letters', mustBeTeacherOrAdmin, require('./controller/admin/groupLetters').getList);
-
-
-
 // same controller for new signups & existing orders
 router.get('/groups/:groupBySlug/signup', require('./controller/signup').get);
 router.get('/orders/:orderNumber(\\d+)', require('./controller/signup').get);

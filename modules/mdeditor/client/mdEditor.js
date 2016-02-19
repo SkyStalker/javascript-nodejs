@@ -116,7 +116,6 @@ class MdEditor {
 
 
   onResizeMouseDown(e) {
-    console.log("ERERERE!!!");
     this.elem.classList.add('mdeditor_resizing');
     document.addEventListener('mousemove', this.onResizeMouseMove);
     document.addEventListener('mouseup', this.onResizeMouseUp);
@@ -137,8 +136,11 @@ class MdEditor {
 
   constructor(options) {
     this.elem = options.elem;
-
     this.textarea = this.elem.querySelector('textarea');
+
+    // allow to use form.elements.content.editor.setValue()
+    this.elem.editor = this.textarea.editor = this;
+
     this.delegate('[data-action]', 'click', function(e) {
       let actionName = 'action' +
         e.delegateTarget.getAttribute('data-action')[0].toUpperCase() +

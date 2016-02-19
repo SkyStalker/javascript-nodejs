@@ -84,7 +84,7 @@ module.exports = function(config) {
       coursesFeedbackList:       'courses/client/feedbackList',
       coursesFeedbackShow:       'courses/client/feedbackShow',
       coursesFrontpage:          'courses/client/frontpage',
-      coursesAdmin:              'courses/client/admin',
+      newsletterAdmin:           'newsletter/client/admin',
       profileGuestAboutMe:       'profileGuest/client/aboutMe',
       footer:                    'client/footer',
       screencast:                'screencast/client',

@@ -373,7 +373,7 @@ UserSchema.pre('save', function(next) {
 });
 
 
-UserSchema.plugin(mongooseTimestamp, {useVirtual: false});
+UserSchema.plugin(mongooseTimestamp);
 
 // all references using mongoose.model for safe recreation
 // when I recreate model (for tests) => I can reload it from mongoose.model (single source of truth)

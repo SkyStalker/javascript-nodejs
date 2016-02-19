@@ -1,7 +1,6 @@
 'use strict';
 
-var CourseGroup = require('../../models/courseGroup');
-var CourseGroupLetterTemplate = require('../../models/courseGroupLetterTemplate');
+var NewsletterTemplate = require('../../models/newsletterTemplate');
 var ObjectId = require('lib/mongoose').Types.ObjectId;
 
 exports.getList = function*() {
@@ -11,11 +10,11 @@ exports.getList = function*() {
 
   this.locals.title = "Шаблоны групповых рассылок";
 
-  this.locals.templates = yield CourseGroupLetterTemplate.find({
+  this.locals.templates = yield NewsletterTemplate.find({
     user: this.user
   }).sort({created: -1});
 
-  this.body = this.render('admin/groupLetter/templates');
+  this.body = this.render('admin/newsletterTemplates');
 };
 
 function* loadTemplate(id) {
@@ -23,7 +22,7 @@ function* loadTemplate(id) {
     this.throw(400);
   }
 
-  let letterTemplate = yield CourseGroupLetterTemplate.findById(id);
+  let letterTemplate = yield NewsletterTemplate.findById(id);
   if (!letterTemplate) {
     this.throw(404);
   }
@@ -35,20 +34,26 @@ function* loadTemplate(id) {
 }
 
 exports.post = function*() {
-  if (!this.user || this.user.roles.indexOf('teacher') == -1) {
-    this.throw(403);
-  }
 
   let letterTemplate;
   if (this.request.body.id) {
     letterTemplate = yield loadTemplate.call(this, this.request.body.id);
   } else {
 
-    letterTemplate = new CourseGroupLetterTemplate({
+    letterTemplate = new NewsletterTemplate({
       user:    this.user
     });
 
   }
+
+  if (this.request.body.action == 'delete' && letterTemplate) {
+    yield letterTemplate.remove();
+    this.addFlashMessage('success', 'Шаблон удалён.');
+
+    this.redirect('/newsletter/admin/newsletter-templates');
+    return;
+  }
+
 
   let form = this.locals.form = {
     content: this.request.body.content,
@@ -63,7 +68,7 @@ exports.post = function*() {
     yield letterTemplate.persist();
     this.addFlashMessage('success', 'Шаблон успешно сохранён.');
 
-    this.redirect('/courses/admin/group-letter-templates');
+    this.redirect('/newsletter/admin/newsletter-templates');
   } catch (e) {
     if (e.name != 'ValidationError') throw e;
 
@@ -74,7 +79,7 @@ exports.post = function*() {
 
     this.locals.title = "Редактировать шаблон";
 
-    this.body = this.render('admin/groupLetter/template');
+    this.body = this.render('admin/newsletterTemplate');
   }
 
 
@@ -84,10 +89,14 @@ exports.get = function*() {
 
   let letterTemplate = yield* loadTemplate.call(this, this.params.id);
 
-  this.body = {
-    title:   letterTemplate.title,
-    content: letterTemplate.content
-  };
+  if (this.accepts('json')) {
+    this.body = {
+      title:   letterTemplate.title,
+      content: letterTemplate.content
+    };
+  } else {
+    this.throw(502);
+  }
 };
 
 exports.edit = function*() {
@@ -106,5 +115,5 @@ exports.edit = function*() {
     id: letterTemplate ? letterTemplate.id : ''
   };
 
-  this.body = this.render('admin/groupLetter/template');
+  this.body = this.render('admin/newsletterTemplate');
 };
