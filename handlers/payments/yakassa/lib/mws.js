@@ -29,7 +29,7 @@ function* sendRequest(method, params, type) {
 
   let body = typeof params == 'string' ? params : querystring.stringify(params);
 
-  log.debug("request cert " + method, params);
+  log.debug("MWS sendRequest " + method, params);
   let result = yield request({
     method: 'POST',
     headers: {
@@ -61,9 +61,9 @@ exports.sendPkcs7Request = function* (method, params) {
   }
   body += '/>';
 
-  body = yield signData(body);
+  let signedBody = yield signData(body);
 
-  return yield* sendRequest(method, body, 'pkcs7-mime');
+  return yield* sendRequest(method, signedBody, 'pkcs7-mime');
 };
 
 
@@ -74,19 +74,31 @@ function signData(data) {
     reject = rej;
   });
 
-  let process = spawn('openssl', `smime -sign -signer ${certPath} -inkey ${keyPath} -nochain -nocerts -outform PEM -nodetach`);
-  process.stderr.on('error', function(err) {
+  let args = `smime -sign -signer ${certPath} -inkey ${keyPath} -nochain -nocerts -outform PEM -nodetach`;
+  let process = spawn('openssl', args.split(' '), {stdio: 'pipe'});
+  process.stderr.setEncoding('utf-8');
+  process.stderr.on('data', function(err) {
+    log.error(err);
+    reject(err);
+  });
+  process.on('error', function(err) {
     log.error(err);
     reject(err);
   });
 
-  process.stdin.write(data);
+  process.stdin.end(data);
 
-  let result;
+  let result = '';
   process.stdout.setEncoding('utf-8');
-  process.stdout.on('data', chunk => result += chunk);
+  process.stdout.on('data', function(chunk) {
+    //console.log("DATA", chunk);
+    result += chunk;
+  });
 
-  process.stdout.on('end', () => resolve(result));
+  process.stdout.on('end', function() {
+    //console.log("END", arguments[0]);
+    resolve(result);
+  });
 
   return promise;
 }

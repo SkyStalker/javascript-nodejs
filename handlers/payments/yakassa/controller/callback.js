@@ -66,7 +66,7 @@ exports.paymentAviso = function* (next) {
   if (this.transaction.status != Transaction.STATUS_SUCCESS) {
     yield this.transaction.persist({
       paymentDetails: {
-        invoiceId: this.request.body.invoiceId
+        aviso: this.request.body
       }
     });
     this.log.debug("will call order onPaid module=" + this.order.module);
