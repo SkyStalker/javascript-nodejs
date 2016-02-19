@@ -24,7 +24,7 @@ var schema = new Schema({
   }
 });
 
-schema.plugin(mongooseTimestamp, {useVirtual: false});
+schema.plugin(mongooseTimestamp);
 
 module.exports = mongoose.model('CourseGroupLetterTemplate', schema);
 

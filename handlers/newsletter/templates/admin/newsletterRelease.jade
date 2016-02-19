@@ -1,0 +1,77 @@
+
+extends /layouts/main
+include /blocks/mdeditor
+
+block append variables
+  -
+    var sitetoolbar = true
+    var layout_main_class = "main_width-limit"
+    var layout_header_class = "main__header_center"
+    var breadcrumbs = [
+      { title: 'Учебник', url: '/' }, { title: 'Рассылки', url: '/newsletter/admin/newsletter-releases' }
+    ]
+
+block append head
+  !=js("newsletterAdmin", {defer: true})
+  !=css("newsletterAdmin")
+
+
+block content
+
+  if error
+    +b.notification._message._error
+      +e.content!= error
+      +e('button').close(title="Закрыть")
+
+
+  +b("form").newsletter-release-form(method="POST" action="/newsletter/admin/newsletter-releases")
+    input(type="hidden", name="_csrf", value=csrf())
+    input(type="hidden", name="id", value=form.id)
+
+    +e.form
+      +e.line
+        +e("label").label Шаблон
+        +e.select
+          +b('select').input-select._small.__control(data-newsletter-template-select)
+            +e('option').option(value='' selected) Загрузить
+            each template in templates
+              +e('option').option(value=template.id)= template.title
+        +e('a')(
+          href='/newsletter/admin/newsletter-templates'
+          onclick="return confirm('Текущие изменения будут потеряны, перейти?')"
+        ) Управление шаблонами
+
+      +e.line
+        +e("label").label Кому
+        +e.select
+          +b('select')(name="to").input-select._small.__control
+            each variant in toVariants
+              +e('option').option(value=variant.key)= variant.value
+          +e('a')(href='#' data-newsletter-to-include) [+]
+          +e('a')(href='#' data-newsletter-to-exclude) [-]
+
+
+      +e.line
+        +e("label").label(for="title") Тема
+        +b("span")(class=['text-input', errors && errors.title && '_invalid'])
+          +e("input").control(type="text", minlength=10, required, name="title", id="title", value=form.title, autofocus)
+          if errors && errors.title
+            +e.err= errors.title
+
+      +e.line
+        +e("label").label Сообщение
+        if errors && errors.content
+          +e.err= errors.content
+        +mdeditor({buttonSet: 'large', value: form.content, textareaName: "content", editorClass: "__mdeditor"})
+
+      +e.line
+        +b("button").button._action(type="submit")
+          +e("span").text Отправить
+
+  if form.id && !form.firstSentAt
+    +b("form").newsletter-template-form(method="POST" action="/newsletter/admin/newsletter-releases" onsubmit="return confirm('чё, правда удалить?')")
+      input(type="hidden", name="_csrf", value=csrf())
+      input(type="hidden", name="id", value=form.id)
+      +e.line
+        +b("button").button._action(type="submit" name="action" value="delete")
+          +e("span").text Удалить

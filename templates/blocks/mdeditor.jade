@@ -4,7 +4,8 @@ include /bem
 mixin mdeditor(options)
   -
     var buttonSets = {
-      standard: 'bold italic | link ul ol | code fencedCode'.split(' ')
+      standard: 'bold italic | link ul ol | code fencedCode'.split(' '),
+      large: 'bold italic | link ul ol | code fencedCode | heading'.split(' ')
     };
 
   +b.mdeditor(class=[options.editorClass || ''])

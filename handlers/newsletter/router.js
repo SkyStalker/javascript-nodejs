@@ -1,3 +1,5 @@
+'use strict';
+
 var Router = require('koa-router');
 var mustBeAuthenticated = require('auth').mustBeAuthenticated;
 
@@ -19,3 +21,23 @@ router.get("/subscriptions/:accessKey", frontpage.get);
 // for profile
 router.get('/profile/:userById', mustBeAuthenticated, require('./controllers/subscriptionsByUser').get);
 
+
+router.get("/admin/newsletter-templates", canMakeLetters, require('./controllers/admin/newsletterTemplates').getList);
+router.post("/admin/newsletter-templates", canMakeLetters, require('./controllers/admin/newsletterTemplates').post);
+
+router.get("/admin/newsletter-templates/add", canMakeLetters, require('./controllers/admin/newsletterTemplates').edit);
+router.get("/admin/newsletter-templates/edit/:id", canMakeLetters, require('./controllers/admin/newsletterTemplates').edit);
+router.get("/admin/newsletter-templates/rest/:id", canMakeLetters, require('./controllers/admin/newsletterTemplates').get);
+
+router.post("/admin/newsletter-releases", canMakeLetters, require('./controllers/admin/newsletterReleases').post);
+router.get('/admin/newsletter-releases', canMakeLetters, require('./controllers/admin/newsletterReleases').getList);
+router.get('/admin/newsletter-releases/add', canMakeLetters, require('./controllers/admin/newsletterReleases').edit);
+router.get('/admin/newsletter-releases/edit/:id', canMakeLetters, require('./controllers/admin/newsletterReleases').edit);
+
+function* canMakeLetters(next) {
+  let hasAccess = this.isAdmin || (this.user && this.user.roles.indexOf('teacher') >= 0);
+  if (!hasAccess) {
+    this.throw(403);
+  }
+  yield* next;
+}

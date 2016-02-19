@@ -168,6 +168,6 @@ schema.pre('save', function(next) {
 });
 
 
-schema.plugin(mongooseTimestamp, {useVirtual: false});
+schema.plugin(mongooseTimestamp);
 
 module.exports = mongoose.model('CourseParticipant', schema);
