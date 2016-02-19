@@ -1,0 +1,12 @@
+extends /layouts/main
+
+
+
+
+block content
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/codemirror.js")
+  !=css('mdeditor')
+  !=js("mdeditor", {defer: true})
+
+  textarea.mdeditor Value
+
