@@ -1,12 +1,14 @@
 'use strict';
 
 const co = require('co');
+const gutil = require('gulp-util');
 const mws = require('../lib/mws');
 const yakassaConfig = require('config').payments.modules.yakassa;
 const currencyRate = require('currencyRate');
 var Transaction = require('../../models/transaction');
 var Order = require('../../models/order');
-const ObjectId = require('mongoose').Types.ObjectId;
+const cheerio = require('cheerio');
+const currencies = require('country-data').currencies;
 /**
  * Mark TX as paid
  * @returns {Function}
@@ -14,7 +16,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 module.exports = function() {
 
   var args = require('yargs')
-    .example('gulp payments:yakassa:returnPayment --number 12345678 --amount 1234')
+    .example('gulp payments:yakassa:returnPayment --number 12345678 --amount 1234 --invoiceId 200232')
     .demand(['number'])
     .argv;
 
@@ -40,24 +42,50 @@ module.exports = function() {
       }
 
 
-      yield transaction.log('payments:transaction:yakassa:refund');
+      yield transaction.log('payments:transaction:yakassa:returnPayment');
 
 
       let date = new Date();
+      // types: https://money.yandex.ru/doc.xml?id=527070
       let params = {
         clientOrderId: +date,
         requestDT:     date.toJSON(),
-        invoiceId:     transaction.paymentDetails.invoiceId,
+        invoiceId:     args.invoiceId || transaction.paymentDetails.aviso.invoiceId,
         shopId:        yakassaConfig.shopId,
-        amount:        args.amount || transaction.amount,
-        currency:      transaction.currency,
+        amount:        (+(args.amount || transaction.amount)).toFixed(2),
+        currency:      currencies[transaction.currency].number, // ISO code
         cause:         'возврат оплаты'
       };
 
-      let result = yield* mws.sendPkcs7Request('returnPayment', params);
+      let result;
 
-      console.log(result);
+      try {
+        result = yield* mws.sendPkcs7Request('returnPayment', params);
+      } catch (e) {
+        yield transaction.log('payments:transaction:yakassa:returnPayment error', e);
+        throw e;
+      }
 
+      yield transaction.log('payments:transaction:yakassa:returnPayment response', result);
+
+      let dom = cheerio.load(result, {
+        xmlMode: true
+      });
+
+      let returnPaymentResponse = dom.root().children()[0];
+
+      let status = +returnPaymentResponse.attribs.status;
+      let error = +returnPaymentResponse.attribs.error;
+
+      if (status === 0 && error === 0) {
+        yield transaction.log('payments:transaction:yakassa:returnPayment success');
+      } else {
+        throw new Error("response failure: " + result);
+      }
+
+      yield transaction.persist({
+        status: Transaction.STATUS_REFUND
+      });
 
     });
 

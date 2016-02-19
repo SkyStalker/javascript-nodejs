@@ -26,6 +26,11 @@ module.exports = function(config) {
         `${name}.${ext}`;
   }
 
+  var modulesDirectories = ['node_modules'];
+  if (process.env.NODE_PATH) {
+    modulesDirectories = modulesDirectories.concat(process.env.NODE_PATH.split(":").map(p => path.resolve(p)));
+  }
+
   var webpackConfig = {
     output: {
       // fs path
@@ -161,11 +166,12 @@ module.exports = function(config) {
         angularRouter:   'angular-ui-router/release/angular-ui-router',
         angularCookies:  'angular-cookies/angular-cookies',
         angularResource: 'angular-resource/angular-resource'
-      }
+      },
+      modulesDirectories
     },
 
     resolveLoader: {
-      modulesDirectories: ['node_modules'],
+      modulesDirectories,
       moduleTemplates:    ['*-loader', ''],
       extensions:         ['.js', '']
     },
