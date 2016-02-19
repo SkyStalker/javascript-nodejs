@@ -1,7 +1,8 @@
 'use strict';
 
 require('./styles');
-const MdEditor = require('./mdeditor');
+
+const MdEditor = require('./mdEditor');
 
 
 function init() {

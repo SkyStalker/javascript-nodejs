@@ -11,11 +11,11 @@ text:
 
 
 buttons:
-  bold: жирный текст [Ctrl-B]
-  italic: текст курсивом [Ctrl-I]
+  bold: жирный текст
+  italic: текст курсивом
   code: строка кода
-  undo: отмена [Ctrl-Z]
-  redo: отменить отмену [Ctrl-Y]
+  undo: отмена
+  redo: отменить отмену
   fencedCode: несколько строк кода
   link: ссылка
   ul: список

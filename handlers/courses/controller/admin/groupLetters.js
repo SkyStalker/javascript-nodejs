@@ -1,7 +1,7 @@
 'use strict';
 
-const CourseGroupLetterTemplate = require('../models/courseGroupLetterTemplate');
-const CourseGroupLetter = require('../models/courseGroupLetter');
+const CourseGroupLetterTemplate = require('../../models/courseGroupLetterTemplate');
+const CourseGroupLetter = require('../../models/courseGroupLetter');
 
 exports.getList = function*() {
 
@@ -14,6 +14,6 @@ exports.getList = function*() {
     group: group._id
   }).sort({created: -1});
 
-  this.body = this.render('groupLetter/letters');
+  this.body = this.render('admin/groupLetter/letters');
 
 };

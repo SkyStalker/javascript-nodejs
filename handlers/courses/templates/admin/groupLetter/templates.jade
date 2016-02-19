@@ -6,6 +6,10 @@ block append variables
   - var layout_main_class = "main_width-limit"
   - var layout_header_class = "main__header_center"
 
+block append head
+  !=js("coursesAdmin", {defer: true})
+  !=css("coursesAdmin")
+
 block content
 
 
@@ -15,7 +19,7 @@ block content
     ul
       each template in templates
         li
-          a(href="/courses/group-letter-templates/edit/" + template.id)= template.title
+          a(href="/courses/admin/group-letter-templates/edit/" + template.id)= template.title
 
 
-  +e("a")(href="/courses/group-letter-templates/add") Создать новый
+  +e("a")(href="/courses/admin/group-letter-templates/add") Создать новый

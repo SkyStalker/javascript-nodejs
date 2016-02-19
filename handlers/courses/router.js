@@ -22,13 +22,14 @@ router.get('/feedback-fetch', require('./controller/courseFeedbackFetch').get);
 router.get('/:course', require('./controller/course').get);
 
 
-router.get("/group-letter-templates", require('./controller/groupLetterTemplates').getList);
-router.get("/group-letter-templates/:id", require('./controller/groupLetterTemplates').get);
-router.get("/group-letter-templates/add", require('./controller/groupLetterTemplates').edit);
-router.post("/group-letter-templates", require('./controller/groupLetterTemplates').post);
-router.get("/group-letter-templates/edit/:id", require('./controller/groupLetterTemplates').edit);
+router.get("/admin/group-letter-templates", require('./controller/admin/groupLetterTemplates').getList);
+router.post("/admin/group-letter-templates", require('./controller/admin/groupLetterTemplates').post);
 
-router.get('/groups/:groupBySlug/letters', mustBeTeacherOrAdmin, require('./controller/groupLetters').getList);
+router.get("/admin/group-letter-templates/add", require('./controller/admin/groupLetterTemplates').edit);
+router.get("/admin/group-letter-templates/edit/:id", require('./controller/admin/groupLetterTemplates').edit);
+router.get("/admin/group-letter-templates/rest/:id", require('./controller/admin/groupLetterTemplates').get);
+
+router.get('/admin/groups/:groupBySlug/letters', mustBeTeacherOrAdmin, require('./controller/admin/groupLetters').getList);
 
 
 
