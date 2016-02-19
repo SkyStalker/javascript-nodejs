@@ -1,13 +1,16 @@
 
 extends /layouts/main
+include /blocks/mdeditor
 
 block append variables
   - var sitetoolbar = true
   - var layout_main_class = "main_width-limit"
   - var layout_header_class = "main__header_center"
   - var breadcrumbs = [ { title: 'Учебник', url: '/' }, { title: 'Шаблоны рассылок', url: '/courses/group-letter-templates' }]
-  - var content_class = '_center'
 
+block append head
+  !=js("coursesAdmin", {defer: true})
+  !=css("coursesAdmin")
 
 block content
 
@@ -17,7 +20,7 @@ block content
       +e('button').close(title="Закрыть")
 
 
-  +b("form")(method="POST" action="/courses/group-letter-templates")
+  +b("form").group-letter-templates-form(method="POST" action="/courses/admin/group-letter-templates")
     input(type="hidden", name="_csrf", value=csrf())
     input(type="hidden", name="id", value=form.id)
 
@@ -33,9 +36,13 @@ block content
         +e("label").label(for="content") Сообщение
         if errors && errors.content
           +e.err= errors.content
-        +b('textarea').textarea-input#content(name="content" cols="80", rows="20")= form.content
+        +mdeditor({value: form.content, textareaName: "content", editorClass:"__mdeditor"})
 
       +e.line
         +b("button").button._action(type="submit")
           +e("span").text Отправить
+
+      +e.line
+        +b("button").button._action(type="submit" name="delete")
+          +e("span").text Удалить
 

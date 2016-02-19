@@ -1,9 +1,15 @@
 include /bem
 
+  // OLD NOT USED
+-
+  var buttonSets = {
+    standard: 'bold italic | link ul ol | code fencedCode'.split(' ')
+  };
+
 +b.mdeditor
   +e.editor
     +e.button-bar
-      each button in buttons
+      each button in buttonSets[buttonSet || 'standard']
         if button == '|'
           +e.button-separator
         else

@@ -10,11 +10,11 @@ text:
   link: link text
 
 buttons:
-  bold: bold [Ctrl-B]
-  italic: italic [Ctrl-I]
+  bold: bold
+  italic: italic
   code: inline code
-  undo: undo [Ctrl-Z]
-  redo: redo [Ctrl-Y]
+  undo: undo
+  redo: redo
   fencedCode: multiline code
   link: insert link
   ul: itemized list

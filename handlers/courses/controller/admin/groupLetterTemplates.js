@@ -1,7 +1,7 @@
 'use strict';
 
-var CourseGroup = require('../models/courseGroup');
-var CourseGroupLetterTemplate = require('../models/courseGroupLetterTemplate');
+var CourseGroup = require('../../models/courseGroup');
+var CourseGroupLetterTemplate = require('../../models/courseGroupLetterTemplate');
 var ObjectId = require('lib/mongoose').Types.ObjectId;
 
 exports.getList = function*() {
@@ -15,7 +15,7 @@ exports.getList = function*() {
     user: this.user
   }).sort({created: -1});
 
-  this.body = this.render('groupLetter/templates');
+  this.body = this.render('admin/groupLetter/templates');
 };
 
 function* loadTemplate(id) {
@@ -63,7 +63,7 @@ exports.post = function*() {
     yield letterTemplate.persist();
     this.addFlashMessage('success', 'Шаблон успешно сохранён.');
 
-    this.redirect('/courses/group-letter-templates');
+    this.redirect('/courses/admin/group-letter-templates');
   } catch (e) {
     if (e.name != 'ValidationError') throw e;
 
@@ -74,14 +74,15 @@ exports.post = function*() {
 
     this.locals.title = "Редактировать шаблон";
 
-    this.body = this.render('groupLetter/template');
+    this.body = this.render('admin/groupLetter/template');
   }
 
 
 };
 
 exports.get = function*() {
-  let letterTemplate = yield loadTemplate.call(this, this.params.id);
+
+  let letterTemplate = yield* loadTemplate.call(this, this.params.id);
 
   this.body = {
     title:   letterTemplate.title,
@@ -94,7 +95,7 @@ exports.edit = function*() {
   let letterTemplate;
 
   if (this.params.id) {
-    letterTemplate = yield loadTemplate.call(this, this.params.id);
+    letterTemplate = yield* loadTemplate.call(this, this.params.id);
   }
 
   this.locals.title = letterTemplate ? "Редактировать шаблон" : "Создать шаблон";
@@ -105,5 +106,5 @@ exports.edit = function*() {
     id: letterTemplate ? letterTemplate.id : ''
   };
 
-  this.body = this.render('groupLetter/template');
+  this.body = this.render('admin/groupLetter/template');
 };

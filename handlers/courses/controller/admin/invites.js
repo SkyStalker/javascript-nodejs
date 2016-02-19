@@ -34,7 +34,7 @@ exports.post = function*() {
       });
     }
 
-    yield* registerParticipants(invite.group);
+    yield* registerParticipants(newGroup);
 
     this.log.debug("transfer complete for invite", invite);
     if (this.request.body.notify) {

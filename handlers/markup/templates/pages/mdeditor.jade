@@ -1,11 +1,11 @@
 extends /layouts/main
-
-
-
+include /blocks/mdeditor
 
 block content
   !=css('mdeditor')
   !=js("mdeditor", {defer: true})
 
-  textarea.mdeditor Мама **мыла** раму
+  p Example mdeditor
+
+  +mdeditor('standard', 'Мама **мыла** раму')
 

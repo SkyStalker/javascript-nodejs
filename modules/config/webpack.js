@@ -74,7 +74,6 @@ module.exports = function(config) {
       profile:                   'profile/client',
       search:                    'search/client',
       quiz:                      'quiz/client',
-      mdeditor:                  'mdeditor/client',
       ebook:                     'ebook/client',
       donate:                    'donate/client',
       coursesCourse:             'courses/client/course',
@@ -85,6 +84,7 @@ module.exports = function(config) {
       coursesFeedbackList:       'courses/client/feedbackList',
       coursesFeedbackShow:       'courses/client/feedbackShow',
       coursesFrontpage:          'courses/client/frontpage',
+      coursesAdmin:              'courses/client/admin',
       profileGuestAboutMe:       'profileGuest/client/aboutMe',
       footer:                    'client/footer',
       screencast:                'screencast/client',
@@ -116,7 +116,7 @@ module.exports = function(config) {
           // babel shouldn't process modules which contain ws/browser.js,
           // which must not be run in strict mode (global becomes undefined)
           // babel would make all modules strict!
-          exclude: /node_modules\/(angular|prismjs|moment|blueimp-canvas-to-blob|codemirror)/,
+          exclude: /node_modules\/(angular|prismjs|moment|blueimp-canvas-to-blob|codemirror|markdown-it)/,
           loaders: ['ng-annotate', 'babel'] // babel will work first
         },
         {
@@ -167,13 +167,13 @@ module.exports = function(config) {
         angularCookies:  'angular-cookies/angular-cookies',
         angularResource: 'angular-resource/angular-resource'
       },
-      modulesDirectories
+                  modulesDirectories
     },
 
     resolveLoader: {
-      modulesDirectories,
-      moduleTemplates:    ['*-loader', ''],
-      extensions:         ['.js', '']
+                       modulesDirectories,
+      moduleTemplates: ['*-loader', ''],
+      extensions:      ['.js', '']
     },
 
     node: {

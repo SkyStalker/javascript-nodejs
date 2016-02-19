@@ -8,6 +8,9 @@ block append variables
   - var breadcrumbs = [ { title: 'Учебник', url: '/' }, { title: 'Рассылки', url: '/courses/group-letters' }]
   - var content_class = '_center'
 
+block append head
+  !=js("coursesAdmin", {defer: true})
+  !=css("coursesAdmin")
 
 block content
 

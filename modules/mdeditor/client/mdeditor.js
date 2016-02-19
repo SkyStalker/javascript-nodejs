@@ -1,13 +1,5 @@
 'use strict';
 
-const BasicParser = require('markit/basicParser');
-const prism = require('client/prism');
-
-const template = require('../templates/editor.jade');
-const throttle = require('lodash/throttle');
-const clientRender = require('client/clientRender');
-
-
 const delegate = require('client/delegate');
 
 const t = require('i18n');
@@ -15,10 +7,6 @@ const t = require('i18n');
 const LANG = require('config').lang;
 
 t.requirePhrase('mdeditor', require('../locales/' + LANG + '.yml'));
-
-const buttonSets = {
-  standard: 'bold italic | link ul ol | code fencedCode'.split(' ')
-};
 
 class MdEditor {
 
@@ -44,10 +32,10 @@ class MdEditor {
     let text;
     let link;
 
-    let value = this.textArea.value;
-    let hasSelection = (this.textArea.selectionStart != this.textArea.selectionEnd);
+    let value = this.textarea.value;
+    let hasSelection = (this.textarea.selectionStart != this.textarea.selectionEnd);
 
-    let selection = hasSelection ? value.slice(this.textArea.selectionStart, this.textArea.selectionEnd) : '';
+    let selection = hasSelection ? value.slice(this.textarea.selectionStart, this.textarea.selectionEnd) : '';
 
     if (selection) {
       if (selection.match(/^https?:\/\//)) {
@@ -60,19 +48,20 @@ class MdEditor {
     let substitutionText = text || t('mdeditor.text.link'); // || link ?
     let substitution = '[' + substitutionText + '](' + (link || 'http://') + ')';
 
-    let before = value.slice(0, this.textArea.selectionStart);
-    let after = value.slice(this.textArea.selectionEnd);
-    this.textArea.value = before + substitution + after;
+    let before = value.slice(0, this.textarea.selectionStart);
+    let after = value.slice(this.textarea.selectionEnd);
+    this.textarea.value = before + substitution + after;
 
     if (!text) {
       // select default text
-      this.textArea.selectionStart = before.length + 1;
-      this.textArea.selectionEnd = before.length + 1 + substitutionText.length;
+      this.textarea.selectionStart = before.length + 1;
+      this.textarea.selectionEnd = before.length + 1 + substitutionText.length;
     } else if (!link) {
       // place cursor after http://
-      this.textArea.selectionEnd = before.length + substitution.length - 1;
-      this.textArea.selectionStart = this.textArea.selectionEnd;
+      this.textarea.selectionEnd = before.length + substitution.length - 1;
+      this.textarea.selectionStart = this.textarea.selectionEnd;
     }
+    this.triggerChange();
 
   }
 
@@ -105,49 +94,29 @@ class MdEditor {
 
 
   replaceSelection(prefix, suffix, defaultText) {
-    let value = this.textArea.value;
-    let hasSelection = (this.textArea.selectionStart != this.textArea.selectionEnd);
+    let value = this.textarea.value;
+    let hasSelection = (this.textarea.selectionStart != this.textarea.selectionEnd);
 
-    let selection = hasSelection ? value.slice(this.textArea.selectionStart, this.textArea.selectionEnd) : '';
+    let selection = hasSelection ? value.slice(this.textarea.selectionStart, this.textarea.selectionEnd) : '';
 
     let substitution = hasSelection ?
       (prefix + selection + suffix) :
       (prefix + defaultText + suffix);
 
-    let before = value.slice(0, this.textArea.selectionStart);
-    let after = value.slice(this.textArea.selectionEnd);
-    this.textArea.value = before + substitution + after;
+    let before = value.slice(0, this.textarea.selectionStart);
+    let after = value.slice(this.textarea.selectionEnd);
+    this.textarea.value = before + substitution + after;
 
     if (!hasSelection) {
-      this.textArea.selectionStart = before.length + prefix.length;
-      this.textArea.selectionEnd = before.length + prefix.length + defaultText.length;
+      this.textarea.selectionStart = before.length + prefix.length;
+      this.textarea.selectionEnd = before.length + prefix.length + defaultText.length;
     }
-    this.renderPreviewThrottled();
+    this.triggerChange();
   }
 
-  render(textArea) {
-
-    let buttonSet = buttonSets[this.options.buttonSet || 'standard'];
-
-    textArea.insertAdjacentHTML("afterEnd", clientRender(template, {
-      buttons: buttonSet
-    }));
-
-    this.elem = textArea.nextElementSibling;
-
-    let templateArea = this.elem.querySelector('textarea');
-    templateArea.replace(textArea);
-    this.textArea = textArea;
-
-    textArea.classList.remove('mdeditor');
-    // move all classes from template textarea to the existing one
-    for (var i = 0; i < templateArea.classList.length; i++) {
-      var cls = templateArea.classList[i];
-      textArea.classList.add(cls);
-    }
-  }
 
   onResizeMouseDown(e) {
+    console.log("ERERERE!!!");
     this.elem.classList.add('mdeditor_resizing');
     document.addEventListener('mousemove', this.onResizeMouseMove);
     document.addEventListener('mouseup', this.onResizeMouseUp);
@@ -155,9 +124,9 @@ class MdEditor {
   }
 
   onResizeMouseMove(e) {
-    let height = e.clientY - this.textArea.getBoundingClientRect().top;
+    let height = e.clientY - this.textarea.getBoundingClientRect().top;
     if (height < 30) height = 30;
-    this.textArea.style.height = height + 'px';
+    this.textarea.style.height = height + 'px';
   }
 
   onResizeMouseUp(e) {
@@ -167,14 +136,9 @@ class MdEditor {
   }
 
   constructor(options) {
-    this.options = Object.create(options);
-    if (!options.buttonSet) this.options.buttonSet = 'standard';
+    this.elem = options.elem;
 
-    this.renderPreviewThrottled = throttle(this.renderPreview.bind(this), 100);
-
-    this.render(options.elem);
-    this.renderPreviewThrottled();
-
+    this.textarea = this.elem.querySelector('textarea');
     this.delegate('[data-action]', 'click', function(e) {
       let actionName = 'action' +
         e.delegateTarget.getAttribute('data-action')[0].toUpperCase() +
@@ -184,9 +148,8 @@ class MdEditor {
 
       e.preventDefault();
       this[actionName]();
-      this.textArea.focus();
+      this.textarea.focus();
     });
-
 
     this.onResizeMouseDown = this.onResizeMouseDown.bind(this);
     this.onResizeMouseMove = this.onResizeMouseMove.bind(this);
@@ -194,18 +157,37 @@ class MdEditor {
 
     this.delegate('[data-mdeditor-resize]', 'mousedown', this.onResizeMouseDown);
 
-    this.textArea.addEventListener("input", this.renderPreviewThrottled);
+    this.textarea.addEventListener("input", () => this.triggerChange());
+
+    require.ensure([], (require) => {
+      let MdEditorPreview = require('./mdEditorPreview');
+      new MdEditorPreview({ editor: this });
+    });
   }
 
-  highlightInPreview() {
-    prism.highlight(this.elem.querySelector('[data-editor-preview]'));
+  triggerChange() {
+    this.elem.dispatchEvent(new CustomEvent('mdeditor:change', {
+      bubbles: true,
+      detail: {
+        editor: this
+      }
+    }));
   }
 
-  renderPreview() {
-    let value = this.textArea.value;
-    let rendered = new BasicParser().render(value);
-    this.elem.querySelector('[data-editor-preview]').innerHTML = rendered;
-    this.highlightInPreview();
+
+  getPreviewElem() {
+    return this.elem.querySelector('[data-editor-preview]');
+  }
+
+  getValue() {
+    return this.textarea.value;
+  }
+
+  setValue(val, quiet) {
+    this.textarea.value = val;
+    if (!quiet) {
+      this.triggerChange();
+    }
   }
 
 }
