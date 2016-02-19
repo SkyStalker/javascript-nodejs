@@ -122,7 +122,7 @@ class MdEditor {
       this.textArea.selectionStart = before.length + prefix.length;
       this.textArea.selectionEnd = before.length + prefix.length + defaultText.length;
     }
-    this.renderPreviewTrottled();
+    this.renderPreviewThrottled();
   }
 
   render(textArea) {
@@ -170,8 +170,10 @@ class MdEditor {
     this.options = Object.create(options);
     if (!options.buttonSet) this.options.buttonSet = 'standard';
 
+    this.renderPreviewThrottled = throttle(this.renderPreview.bind(this), 100);
+
     this.render(options.elem);
-    this.value = this.elem.value;
+    this.renderPreviewThrottled();
 
     this.delegate('[data-action]', 'click', function(e) {
       let actionName = 'action' +
@@ -190,12 +192,9 @@ class MdEditor {
     this.onResizeMouseMove = this.onResizeMouseMove.bind(this);
     this.onResizeMouseUp = this.onResizeMouseUp.bind(this);
 
-    this.renderPreviewThrottled = throttle(this.renderPreview.bind(this), 100);
-
     this.delegate('[data-mdeditor-resize]', 'mousedown', this.onResizeMouseDown);
 
     this.textArea.addEventListener("input", this.renderPreviewThrottled);
-    this.renderPreviewTrottled();
   }
 
   highlightInPreview() {
