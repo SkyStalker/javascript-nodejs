@@ -2,7 +2,6 @@ var inlineCss = require('./inlineCss');
 var config = require('config');
 var fs = require('fs');
 var path = require('path');
-var _ = require('lodash');
 var jade = require('lib/serverJade');
 var mandrill = require('./mandrill');
 var logoBase64 = fs.readFileSync(path.join(config.projectRoot, 'assets/img/logo.png')).toString('base64');
@@ -34,7 +33,7 @@ function* createLetter(options) {
   }
 
   var locals = Object.create(options);
-  _.assign(locals, config.jade);
+  Object.assign(locals, config.jade);
 
   locals.lang = config.lang;
   locals.domain = config.domain;
@@ -126,6 +125,7 @@ exports.init = function(app) {
 
 
 exports.Letter = require('./models/letter');
+exports.inlineCss = inlineCss;
 exports.send = send;
 exports.createLetter = createLetter;
 exports.sendLetter = sendLetter;

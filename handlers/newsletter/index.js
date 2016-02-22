@@ -11,6 +11,7 @@ exports.init = function(app) {
 };
 
 let Newsletter = exports.Newsletter = require('./models/newsletter');
+exports.NewsletterRelease = require('./models/newsletterRelease');
 let Subscription = exports.Subscription = require('./models/subscription');
 exports.SubscriptionAction = require('./models/subscriptionAction');
 

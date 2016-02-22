@@ -167,6 +167,19 @@ var UserSchema = new mongoose.Schema({
   town:                      {
     type: String
   },
+  teacherEmail:              {
+    type:      String,
+    lowercase: true,
+    trim:      true,
+    validate:  [
+      {
+        validator: function checkEmail(value) {
+          return !value ? true : validate.patterns.email.test(value);
+        },
+        msg:       'Укажите, пожалуйста, корректный email.'
+      }
+    ]
+  },
   publicEmail:               {
     type:      String,
     lowercase: true,
@@ -184,10 +197,13 @@ var UserSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  teachesCourses:            [{
-    type: Schema.Types.ObjectId,
-    ref:  'Course'
-  }],
+  teachesCourses:            {
+    type:    [{
+      type: Schema.Types.ObjectId,
+      ref:  'Course'
+    }],
+    default: []
+  },
   aboutMe:                   {
     type:      String,
     maxlength: 600,
@@ -198,12 +214,17 @@ var UserSchema = new mongoose.Schema({
     default: false
   },
   readOnly:                  Boolean,  // data is not deleted, just flagged as banned
-  isAdmin:                   Boolean,
   roles:                     { // qaModerator?
-    type: [String],
-    index: true,
+    type:    [{
+      type:      String,
+      lowercase: true,
+      trim:      true
+    }],
+    index:   true,
     default: []
   },
+  emailSignature:            String, // for teachers, normally a user cannot send an email
+  isAdmin:                   Boolean, // deprecated in favor of roles['Admin']
   lastActivity:              Date
   /* created, modified from plugin */
 });
@@ -249,6 +270,7 @@ UserSchema.statics.getInfoFields = function(user) {
     birthday:           user.birthday,
     country:            user.country,
     town:               user.town,
+    teacherEmail:       user.teacherEmail,
     publicEmail:        user.publicEmail,
     interests:          user.interests,
     email:              user.email,
@@ -256,7 +278,6 @@ UserSchema.statics.getInfoFields = function(user) {
     photo:              user.photo,
     deleted:            user.deleted,
     readOnly:           user.readOnly,
-    isAdmin:            user.isAdmin,
     created:            user.created,
     lastActivity:       user.lastActivity,
     profileTabsEnabled: user.profileTabsEnabled,
@@ -270,6 +291,9 @@ UserSchema.methods.getProfileUrl = function() {
   return '/profile/' + this.profileName;
 };
 
+UserSchema.methods.hasRole = function(role) {
+  return this.roles.indexOf(role) != -1;
+};
 
 UserSchema.methods.checkPassword = function(password) {
   if (!password) return false; // empty password means no login by password
@@ -282,6 +306,7 @@ UserSchema.methods.checkPassword = function(password) {
 UserSchema.methods.softDelete = function(callback) {
   // delete this.email does not work
   // need to assign to undefined to $unset
+  this.aboutMe = undefined;
   this.email = undefined;
   this.realName = undefined;
   this.displayName = 'Аккаунт удалён';
@@ -297,7 +322,8 @@ UserSchema.methods.softDelete = function(callback) {
   this.passwordResetRedirect = undefined;
   this.providers = [];
   this.password = undefined;
-
+  this.teachesCourses = undefined;
+  this.teacherEmail = undefined;
   this.photo = undefined;
   // keep verifiedEmail status as it was, maybe for some displays?
   //  user.verifiedEmail = false;
@@ -359,6 +385,17 @@ UserSchema.pre('save', function(next) {
     yield* this.generateProfileName();
   }.bind(this)).then(next, next);
 });
+
+
+UserSchema.pre('save', function(next) {
+  if (this.deleted) return next();
+
+  if (this.hasRole('teacher') && !this.teacherEmail) {
+    this.invalidate('teacherEmail', 'Не указан адрес teacherEmail.');
+  }
+  next();
+});
+
 
 UserSchema.pre('save', function(next) {
   if (this.aboutMe) this.aboutMe = this.aboutMe.slice(0, 600);

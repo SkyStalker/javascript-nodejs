@@ -1,0 +1,11 @@
+
+include /bem
+
++b.newsletter-release-form-select
+  +b('select')(name="to-"+i).input-select._small.__control
+    +e('option').option(value='' selected) ---------
+    each variant in toVariants
+      +e('option').option(value=variant.key)= variant.value
+  = ' Исключить'
+  input(type="checkbox" name="to-exclude-"+i)
+  +e('a')(href='#' data-newsletter-to-delete) [x]

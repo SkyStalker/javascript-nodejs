@@ -11,7 +11,7 @@ var ImgurImage = require('imgur').ImgurImage;
 
 exports.get = function*(next) {
 
-  var fields = 'id created displayName realName birthday email gender country town interests aboutMe profileName publicEmail'.split(' ');
+  var fields = 'id created displayName realName birthday email gender country town interests aboutMe profileName teacherEmail publicEmail'.split(' ');
 
   this.body = {
     teachesCourses: this.params.user.teachesCourses.map(String)
@@ -59,7 +59,7 @@ exports.patch = function*(next) {
 
   var fields = this.request.body;
 
-  'displayName realName birthday gender country town interests aboutMe profileName publicEmail'.split(' ').forEach(function(field) {
+  'displayName realName birthday gender country town interests aboutMe profileName teacherEmail publicEmail'.split(' ').forEach(function(field) {
     if (field in fields) {
       user[field] = fields[field];
     }

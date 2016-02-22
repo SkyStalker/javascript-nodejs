@@ -13,7 +13,7 @@ module.exports = function*(courseFeedback, user) {
   var doRender = renderFeedback.bind(null, courseFeedback, user);
 
   if (user) {
-    if (courseFeedback.userCache.equals(user._id) || courseFeedback.teacherCache.equals(user._id) || user.isAdmin) {
+    if (courseFeedback.userCache.equals(user._id) || courseFeedback.teacherCache.equals(user._id) || user.hasRole('admin')) {
       return yield* doRender();
     }
   }
@@ -33,12 +33,12 @@ function* renderFeedback(courseFeedback, user) {
 
   var authorOrAdmin = false;
   if (user) {
-    if (user.isAdmin || user._id.equals(courseFeedback.participant.user._id)) {
+    if (user.hasRole('admin') || user._id.equals(courseFeedback.participant.user._id)) {
       authorOrAdmin = true;
     }
   }
 
-  var isTeacherOrAdmin = user && (user.isAdmin || user._id.equals(courseFeedback.group.teacher._id));
+  var isTeacherOrAdmin = user && (user.hasRole('admin') || user._id.equals(courseFeedback.group.teacher._id));
 
   var rendered = {
     photo:             courseFeedback.photo || courseFeedback.participant.user.getPhotoUrl(),
