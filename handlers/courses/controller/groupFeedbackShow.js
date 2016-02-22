@@ -20,7 +20,7 @@ exports.get = function*() {
 
   var authorOrAdminOrTeacher = false;
   if (this.user) {
-    if (this.user.isAdmin || this.user._id.equals(courseFeedback.userCache || ~this.user.teachesCourses.indexOf(courseFeedback.group._id))) {
+    if (this.user.hasRole('admin') || this.user._id.equals(courseFeedback.userCache || ~this.user.teachesCourses.indexOf(courseFeedback.group._id))) {
       authorOrAdminOrTeacher = true;
     }
   }

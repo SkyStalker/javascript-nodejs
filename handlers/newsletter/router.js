@@ -34,8 +34,11 @@ router.get('/admin/newsletter-releases', canMakeLetters, require('./controllers/
 router.get('/admin/newsletter-releases/add', canMakeLetters, require('./controllers/admin/newsletterReleases').edit);
 router.get('/admin/newsletter-releases/edit/:id', canMakeLetters, require('./controllers/admin/newsletterReleases').edit);
 
+//router.get('/admin/newsletter-send/:id', canMakeLetters, require('./controllers/admin/newsletterSend').get);
+//router.post('/admin/newsletter-send/:id?', canMakeLetters, require('./controllers/admin/newsletterSend').post);
+
 function* canMakeLetters(next) {
-  let hasAccess = this.isAdmin || (this.user && this.user.roles.indexOf('teacher') >= 0);
+  let hasAccess = this.isAdmin || (this.user && this.user.hasRole('teacher'));
   if (!hasAccess) {
     this.throw(403);
   }

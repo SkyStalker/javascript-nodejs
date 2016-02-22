@@ -43,12 +43,29 @@ block content
 
       +e.line
         +e("label").label Кому
-        +e.select
-          +b('select')(name="to").input-select._small.__control
-            each variant in toVariants
-              +e('option').option(value=variant.key)= variant.value
-          +e('a')(href='#' data-newsletter-to-include) [+]
-          +e('a')(href='#' data-newsletter-to-exclude) [-]
+        if form.to.length == 0
+          +b.newsletter-release-form-select
+            +b('select')(name="to").input-select._small.__control
+              +e('option').option(value='' selected) Выберите из списка
+              each variant in toVariants
+                +e('option').option(value=variant.key)= variant.value
+        else
+          each toItem, i in form.to
+            +b.newsletter-release-form-select
+              +b('select')(name="to-"+i disabled=form.sendFinished).input-select._small.__control
+                each variant in toVariants
+                  - console.log(toItem);
+                  - console.log(toItem.getKey(), variant.key)
+                  +e('option').option(value=variant.key selected=toItem.getKey()==variant.key)= variant.value
+              if (i > 0)
+                = ' Исключить'
+                input(type="checkbox" name="to-exclude-"+i checked=toItem.exclude disabled=form.sendFinished)
+                if (!form.sendFinished)
+                  = ' '
+                  +e('a')(href='#' data-newsletter-to-delete) [x]
+
+        if (!form.sendFinished)
+          +e('a')(href='#' data-newsletter-to-add) [+]
 
 
       +e.line
@@ -62,16 +79,47 @@ block content
         +e("label").label Сообщение
         if errors && errors.content
           +e.err= errors.content
-        +mdeditor({buttonSet: 'large', value: form.content, textareaName: "content", editorClass: "__mdeditor"})
+        +mdeditor({buttonSet: 'large', value: form.content, textareaName: "content", editorClass: "_large"})
+
+
+      h2 Действия
+
+      p Отослано писем этой рассылки: #{letterSentCount}.
+
+      if !form.sendingPid && !form.sendFinished
+        +e.line
+          +b("button").button._action(type="submit" name="action" value="save")
+            +e("span").text Сохранить
+
+      if !letterSentCount
+        +e.line
+          +b("button").button._action(type="submit" name="action" value="delete")
+            +e("span").text Удалить
 
       +e.line
-        +b("button").button._action(type="submit")
-          +e("span").text Отправить
+        +b("button").button._action(type="submit" name="action" value="template")
+          +e("span").text Добавить в шаблоны
 
-  if form.id && !form.firstSentAt
-    +b("form").newsletter-template-form(method="POST" action="/newsletter/admin/newsletter-releases" onsubmit="return confirm('чё, правда удалить?')")
-      input(type="hidden", name="_csrf", value=csrf())
-      input(type="hidden", name="id", value=form.id)
       +e.line
-        +b("button").button._action(type="submit" name="action" value="delete")
-          +e("span").text Удалить
+        input(type="email" name="sendOneTo")
+        +b("button").button._action(type="submit" name="action" value="sendOne")
+          +e("span").text Одиночное письмо
+
+      if !form.sendingPid
+        +e.line
+          +b("button").button._action(type="submit" name="action" value="send")
+            +e("span").text Разослать/дослать сейчас
+
+      if !form.sendingPid
+        +e.line
+          input(type="text" name="scheduleAt")
+          +b("button").button._action(type="submit" name="action" value="schedule")
+            +e("span").text Запланировать
+
+      if form.sendingPid || form.sendScheduledAt
+        +e.line
+          +b("button").button._action(type="submit" name="action" value="cancelSend")
+            +e("span").text Отменить
+
+
+

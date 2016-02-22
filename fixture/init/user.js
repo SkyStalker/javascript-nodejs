@@ -16,7 +16,7 @@ exports.User = [{
   displayName:    "Ilya Kantor",
   profileName:    'iliakan',
   password:       "123456",
-  isAdmin:        1,
+  roles:        ['admin'],
   teachesCourses: [oid('course-nodejs'), oid('course-js')],
   verifiedEmail:  true
 }];

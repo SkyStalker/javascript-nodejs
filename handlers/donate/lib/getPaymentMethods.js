@@ -11,7 +11,7 @@ module.exports = function*() {
   });
 
   /*
-   if (this.user && this.user.isAdmin) {
+   if (this.user && this.user.hasRole('admin')) {
    paymentMethods.yakassa = payments.methods.yakassa.info;
    }*/
 

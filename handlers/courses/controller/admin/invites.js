@@ -57,7 +57,9 @@ exports.post = function*() {
     this.redirect(`/courses/admin/orders/${invite.order.number}`);
 
   } else {
-    this.throw(501, "Not implemented");
+    this.throw(501, "Not implemented", {
+      info: "Same group already"
+    });
   }
 
 };
