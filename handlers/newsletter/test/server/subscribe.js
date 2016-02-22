@@ -15,8 +15,11 @@ describe('Subscribe', function() {
 
   var server;
   before(function*() {
-    yield* db.loadModels(fixtures, {reset: true});
     server = app.listen();
+  });
+
+  beforeEach(function*() {
+    yield* db.loadModels(fixtures, {reset: true});
   });
 
   after(function() {

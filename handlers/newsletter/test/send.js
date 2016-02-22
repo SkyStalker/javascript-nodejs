@@ -37,7 +37,7 @@ describe('Send NewsletterRelease', function() {
       });
 
       yield* send();
-      (yield Letter.find()).length.should.eql(1);
+      (yield Letter.find()).length.should.eql(2);
     });
 
     it('sends a newsletter', function*() {
@@ -48,7 +48,7 @@ describe('Send NewsletterRelease', function() {
       });
 
       yield* send();
-      (yield Letter.find()).length.should.eql(2);
+      (yield Letter.find()).length.should.eql(3);
     });
 
     it('sends one more letter when new subscription appears', function*() {
