@@ -19,7 +19,7 @@ var secret = require('./secret');
 var lang = env.NODE_LANG || 'ru';
 
 if (env.DEV_TRACE) {
-  Error.stackTraceLimit = 10000;
+  Error.stackTraceLimit = 100000;
   require('trace');
   require('clarify');
 }

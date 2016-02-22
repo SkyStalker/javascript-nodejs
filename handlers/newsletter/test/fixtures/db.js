@@ -39,6 +39,11 @@ exports.Subscription = [
     email:       'nodejs@javascript.ru',
     accessKey:   '2',
     newsletters: [oid('newsletter-nodejs')]
+  },
+  {
+    email:       'student@javascript.ru',
+    accessKey:   '3',
+    newsletters: [oid('newsletter-nodejs')]
   }
 ];
 
