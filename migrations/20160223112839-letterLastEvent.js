@@ -10,8 +10,12 @@ exports.up = function*() {
     let transportState = [];
     for (let j = 0; j < letter.transportResponse.length; j++) {
       let response = letter.transportResponse[j];
-      let event = yield MandrillEvent.findOne(
-        {'payload.Id': response.Id},
+      let event = yield MandrillEvent.findOne({
+        'payload.Id': response.Id,
+        'payload.event': {
+          $in: ['send', 'deferral', 'hard-bounce', 'soft-bounce', 'spam', 'unsub', 'reject']
+        }
+      },
         {'payload.event': 1, 'payload.msg.state': 1, 'payload.msg.bounceDescription': 1}
       ).sort({'payload.ts': -1}).limit(1);
 

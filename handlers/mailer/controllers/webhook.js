@@ -29,11 +29,14 @@ exports.post = function*() {
 
   let lettersCache = {};
 
+  // open/click events are missing
+  let sendEventTypes = ['send', 'deferral', 'hard-bounce', 'soft-bounce', 'spam', 'unsub', 'reject'];
+
   for (let i = 0; i < mandrillEvents.length; i++) {
     let payload = mandrillEvents[i];
     yield MandrillEvent.create({payload});
 
-    if (payload.Id) {
+    if (payload.Id && sendEventTypes.indexOf(payload.event) != -1) {
       // the event refers to a letter!
       let letter = lettersCache[payload.Id] || (yield Letter.findOne({
         'transportResponse.Id': payload.Id

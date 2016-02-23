@@ -54,8 +54,6 @@ block content
             +b.newsletter-release-form-select
               +b('select')(name="to-"+i disabled=form.sendFinished).input-select._small.__control
                 each variant in toVariants
-                  - console.log(toItem);
-                  - console.log(toItem.getKey(), variant.key)
                   +e('option').option(value=variant.key selected=toItem.getKey()==variant.key)= variant.value
               if (i > 0)
                 = ' Исключить'

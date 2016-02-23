@@ -28,6 +28,32 @@ function* loadById(id) {
   return newsletterRelease;
 }
 
+function *getFailedLetters(newsletterRelease) {
+  let letters = yield Letter.find({
+    labelId: newsletterRelease._id,
+    $or:     [{
+      'transportResponse.status': {
+        $ne: 'sent'
+      }
+    }, {
+      'transportState.state': {
+        $ne: 'sent'
+      }
+    }]
+  }, {transportResponse: 1, transportState: 1});
+
+  let results = {};
+
+  for (let i = 0; i < letters.length; i++) {
+    let letter = letters[i];
+    Object.assign(results, letter.getFailureReasons());
+  }
+
+  console.log(results);
+
+
+}
+
 function* getToVariants() {
   let variants = [];
   if (this.isAdmin) {
@@ -104,13 +130,15 @@ exports.edit = function*() {
 
 function* renderForm(newsletterRelease) {
 
+  yield* getFailedLetters(newsletterRelease);
+
   this.locals.toVariants = yield* getToVariants.call(this);
 
   this.locals.templates = yield NewsletterTemplate.find().sort({created: -1});
 
   this.locals.letterSentCount = yield Letter.count({
     labelId: newsletterRelease._id,
-    sent: true
+    sent:    true
   });
 
   this.locals.form = {

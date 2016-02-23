@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -49,6 +51,28 @@ const schema = new Schema({
     rejectReason: String
   }]
 });
+
+schema.methods.getFailureReasons = function() {
+  let results = {};
+  for (let i = 0; i < this.transportResponse.length; i++) {
+    let response = this.transportResponse[i];
+    let state = this.transportState[i];
+
+    if (response.status == 'rejected' || response.status == 'invalid') {
+      results[response.email] = response.status + ': ' + response.rejectReason;
+    } else {
+      results[response.email] = state.state;
+      if (state.bounceDescription) {
+        results[response.email] += ': ' + state.bounceDescription;
+      }
+    }
+    if (!results[response.email]) {
+      console.log(this);
+    }
+  }
+
+  return results;
+};
 
 schema.index({ 'message.to': 1 });
 schema.index({ 'transportResponse.Id': 1 });
