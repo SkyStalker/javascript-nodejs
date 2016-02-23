@@ -1,3 +1,5 @@
+'use strict';
+
 var inlineCss = require('./inlineCss');
 var config = require('config');
 var fs = require('fs');
@@ -106,11 +108,15 @@ function* sendLetter(letter) {
       };
     });
   } else {
-    letter.transportResponse = yield mandrill.messages.send({
+    let transportResponse = yield mandrill.messages.send({
       message: letter.message
     });
 
-    letter.transportResponse = capitalizeKeys(letter.transportResponse);
+    // capitalize BEFORE assigning to letter, while it's a plain object (will be mongoose)
+    transportResponse = capitalizeKeys(transportResponse);
+
+    letter.transportResponse = transportResponse;
+
   }
 
   letter.sent = true;
