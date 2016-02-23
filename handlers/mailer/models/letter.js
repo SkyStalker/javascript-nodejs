@@ -30,9 +30,26 @@ const schema = new Schema({
 
   message: {},
 
-  // Transport responds with that
-  transportResponse: {}
+  // summary of the last mandrill event
+  // one for each "to" item
+  transportState: {
+    type: [{
+      state: String, // deferred/soft-bounced/...
+      bounceDescription: String // invalid domain
+    }],
+    default: []
+  },
+
+  // Transport responds
+  // one response for each "to" item
+  transportResponse: [{
+    Id: String,
+    email: String,
+    status: String,
+    rejectReason: String
+  }]
 });
 
 schema.index({ 'message.to': 1 });
+schema.index({ 'transportResponse.Id': 1 });
 var Letter = module.exports = mongoose.model('Letter', schema);

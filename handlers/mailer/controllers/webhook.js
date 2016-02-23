@@ -1,5 +1,6 @@
 var path = require('path');
 var MandrillEvent = require('../models/mandrillEvent');
+var Letter = require('../models/letter');
 var config = require('config');
 var crypto = require('crypto');
 var capitalizeKeys = require('lib/capitalizeKeys');
@@ -23,9 +24,36 @@ exports.post = function*() {
 
   mandrillEvents = capitalizeKeys(mandrillEvents);
 
-  for (var i = 0; i < mandrillEvents.length; i++) {
-    var event = mandrillEvents[i];
-    yield MandrillEvent.create({payload: event});
+  for (let i = 0; i < mandrillEvents.length; i++) {
+    let payload = mandrillEvents[i];
+    yield MandrillEvent.create({payload});
+
+    if (payload.Id) {
+      let letter = yield Letter.findOne({
+        'transportResponse.Id': payload.Id
+      }, {transportResponse:1, transportState: 1});
+      if (!letter) {
+        // no such letter, maybe letter sent from home server?
+        this.log.error("Webhook event: no letter for Id", payload);
+        continue;
+      }
+
+      // write new state into transportState[j] where j is the number of the email in to/transportResponse
+      for (let j = 0; j < letter.transportResponse.length; j++) {
+        let response = letter.transportResponse[j];
+        if (response.Id == payload.Id) {
+          letter.transportState[j] = {
+            state: payload.msg.state
+          };
+          if (payload.msg.bounceDescription) {
+            letter.transportState[j].bounceDescription = payload.msg.bounceDescription;
+          }
+          break;
+        }
+      }
+      yield letter.persist();
+
+    }
   }
 
   this.body = '';

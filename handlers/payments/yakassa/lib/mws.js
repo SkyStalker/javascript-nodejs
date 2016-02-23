@@ -36,7 +36,7 @@ function* sendRequest(method, params, type) {
       'content-type': `application/${type}`
     },
     body: body,
-    url: 'https://penelope.yamoney.ru:4443/webservice/mws/api/' + method,
+    url: 'https://penelope.yamoney.ru/webservice/mws/api/' + method,
     cert,
     key,
     ca
@@ -68,37 +68,31 @@ exports.sendPkcs7Request = function* (method, params) {
 
 
 function signData(data) {
-  let resolve, reject;
-  let promise = new Promise((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
+  return new Promise((resolve, reject) => {
 
-  let args = `smime -sign -signer ${certPath} -inkey ${keyPath} -nochain -nocerts -outform PEM -nodetach`;
-  let process = spawn('openssl', args.split(' '), {stdio: 'pipe'});
-  process.stderr.setEncoding('utf-8');
-  process.stderr.on('data', function(err) {
-    log.error(err);
-    reject(err);
-  });
-  process.on('error', function(err) {
-    log.error(err);
-    reject(err);
-  });
+    let args = `smime -sign -signer ${certPath} -inkey ${keyPath} -nochain -nocerts -outform PEM -nodetach`;
+    let process = spawn('openssl', args.split(' '), {stdio: 'pipe'});
+    process.stderr.setEncoding('utf-8');
+    process.stderr.on('data', function(err) {
+      log.error(err);
+      reject(err);
+    });
+    process.on('error', function(err) {
+      log.error(err);
+      reject(err);
+    });
 
-  process.stdin.end(data);
+    process.stdin.end(data);
 
-  let result = '';
-  process.stdout.setEncoding('utf-8');
-  process.stdout.on('data', function(chunk) {
-    //console.log("DATA", chunk);
-    result += chunk;
+    let result = '';
+    process.stdout.setEncoding('utf-8');
+    process.stdout.on('data', function(chunk) {
+      result += chunk;
+    });
+
+    process.stdout.on('end', function() {
+      resolve(result);
+    });
+
   });
-
-  process.stdout.on('end', function() {
-    //console.log("END", arguments[0]);
-    resolve(result);
-  });
-
-  return promise;
 }
