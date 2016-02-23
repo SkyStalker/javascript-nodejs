@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path');
 var MandrillEvent = require('../models/mandrillEvent');
 var Letter = require('../models/letter');
@@ -38,7 +40,7 @@ exports.post = function*() {
       }, {transportResponse:1, transportState: 1}));
 
       if (!letter) {
-        // no such letter, maybe letter sent from home server?
+        // no such letter, maybe letter sent from home server, so it's not in the local db?
         this.log.error("Webhook event: no letter for Id", payload);
         continue;
       }
