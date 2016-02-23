@@ -67,7 +67,8 @@ schema.methods.getFailureReasons = function() {
       }
     }
     if (!results[response.email]) {
-      console.log(this);
+      // must be result desc ^^
+      results[response.email] = 'SHOULD NEVER HAPPEN';
     }
   }
 

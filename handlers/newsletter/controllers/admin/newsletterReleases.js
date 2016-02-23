@@ -28,7 +28,7 @@ function* loadById(id) {
   return newsletterRelease;
 }
 
-function *getFailedLetters(newsletterRelease) {
+function *getFailedReasons(newsletterRelease) {
   let letters = yield Letter.find({
     labelId: newsletterRelease._id,
     $or:     [{
@@ -49,8 +49,7 @@ function *getFailedLetters(newsletterRelease) {
     Object.assign(results, letter.getFailureReasons());
   }
 
-  console.log(results);
-
+  return results;
 
 }
 
@@ -130,7 +129,7 @@ exports.edit = function*() {
 
 function* renderForm(newsletterRelease) {
 
-  yield* getFailedLetters(newsletterRelease);
+  this.locals.failedReasons = yield* getFailedReasons(newsletterRelease);
 
   this.locals.toVariants = yield* getToVariants.call(this);
 

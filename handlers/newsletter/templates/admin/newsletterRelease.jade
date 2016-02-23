@@ -80,6 +80,15 @@ block content
         +mdeditor({buttonSet: 'large', value: form.content, textareaName: "content", editorClass: "_large"})
 
 
+      if Object.keys(failedReasons).length
+        h2 Не доставлено
+
+        table
+          each reason, email in failedReasons
+            tr
+              td= email
+              td= reason
+
       h2 Действия
 
       p Отослано писем этой рассылки: #{letterSentCount}.
