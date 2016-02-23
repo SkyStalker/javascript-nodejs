@@ -12,4 +12,6 @@ const schema = new Schema({
   payload: {}
 });
 
+schema.index({ 'payload.Id': 1 });
+
 module.exports = mongoose.model('MandrillEvent', schema);

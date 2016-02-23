@@ -253,7 +253,7 @@ exports.post = function*() {
   case 'sendOne':
     let sendOneTo = this.request.body.sendOneTo.toLowerCase();
     yield NewsletterRelease.populate(newsletterRelease, 'user to.courseGroup to.newsletter to.mailList');
-    yield* sendNewsletterReleaseOne(newsletterRelease, sendOneTo);
+    yield* sendNewsletterReleaseOne(newsletterRelease, sendOneTo, {noLabel: true});
     this.addFlashMessage('success', `Письмо отослано ${sendOneTo}.`);
 
     break;

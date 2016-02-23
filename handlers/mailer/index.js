@@ -97,7 +97,14 @@ function* send(options) {
 function* sendLetter(letter) {
 
   if (process.env.NODE_ENV == 'test' || process.env.MAILER_DISABLED) {
-    letter.transportResponse = [];
+    letter.transportResponse = letter.to.map(function(toItem) {
+      return {
+        email:        toItem.email,
+        status:       'test',
+        Id:           '' + Math.random(),
+        rejectReason: null
+      };
+    });
   } else {
     letter.transportResponse = yield mandrill.messages.send({
       message: letter.message

@@ -15,7 +15,9 @@ const BasicParser = require('markit').BasicParser;
 const logoBase64 = require('fs').readFileSync(path.join(config.projectRoot, 'assets/img/logo.png')).toString('base64');
 const assert = require('assert');
 
-function* sendNewsletterReleaseOne(newsletterRelease, recipient) {
+// options.noLabel means send one letter w/o labelId, doesn't count as a newsletter
+function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
+  options = options || {};
 
   let message = {
     subject:      newsletterRelease.title,
@@ -115,7 +117,7 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient) {
 
   let letter = new Letter({
     message: message,
-    labelId: newsletterRelease._id
+    labelId: options.noLabel ? undefined : newsletterRelease._id
   });
 
   yield* mailer.sendLetter(letter);
