@@ -41,7 +41,7 @@ block content
         +e("label").label Сообщение
         if errors && errors.content
           +e.err= errors.content
-        +mdeditor({buttonSet: 'large', value: form.content, textareaName: "content", editorClass:"__mdeditor"})
+        +mdeditor({buttonSet: 'email', value: form.content, textareaName: "content", editorClass:"__mdeditor"})
 
       +e.line
         +b("button").button._action(type="submit")

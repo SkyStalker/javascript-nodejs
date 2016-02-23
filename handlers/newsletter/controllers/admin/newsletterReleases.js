@@ -38,6 +38,7 @@ function *getFailedReasons(newsletterRelease) {
       }
     }, {
       'transportState.state': {
+        $exists: true,
         $ne: 'sent'
       }
     }]

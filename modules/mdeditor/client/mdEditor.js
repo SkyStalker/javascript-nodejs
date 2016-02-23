@@ -26,6 +26,10 @@ class MdEditor {
     this.replaceSelection("\n```js\n", "\n```\n", t("mdeditor.text.fencedCode"));
   }
 
+  actionAutolink() {
+    this.replaceSelection("<", ">", 'http://');
+  }
+
   actionLink() {
     let text;
     let link;
