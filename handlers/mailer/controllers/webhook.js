@@ -63,7 +63,10 @@ exports.post = function*() {
       }
 
       // for safety/consistency, persist the letter on every event even if it's a single letter
-      yield letter.persist();
+      // NB: validation fails if I use letter.persist() here
+      yield Letter.update({_id: letter._id}, {
+        transportState: letter.transportState
+      });
     }
   }
 
