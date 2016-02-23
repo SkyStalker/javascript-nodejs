@@ -45,7 +45,7 @@ block content
         +e("label").label Кому
         if form.to.length == 0
           +b.newsletter-release-form-select
-            +b('select')(name="to").input-select._small.__control
+            +b('select')(name="to-1").input-select._small.__control
               +e('option').option(value='' selected) Выберите из списка
               each variant in toVariants
                 +e('option').option(value=variant.key)= variant.value
@@ -64,6 +64,11 @@ block content
 
         if (!form.sendFinished)
           +e('a')(href='#' data-newsletter-to-add) [+]
+
+        if errors && errors.to
+          +e.err= errors.to
+
+
 
 
       +e.line

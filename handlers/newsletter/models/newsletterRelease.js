@@ -107,7 +107,8 @@ schema.plugin(mongooseTimestamp);
 
 // ensure ids exist for groups & newsletters
 schema.path('to').validate(function(value, respond) {
-  if (!value) return respond(true);
+  if (!value) return respond(false, 'Не указано поле "Кому"');
+  if (!value.length) return respond(false, 'Не указано поле "Кому"');
 
   let jobs = [];
   for (var i = 0; i < value.length; i++) {

@@ -20,6 +20,7 @@ const sendNewsletterReleaseOne = require('./sendNewsletterReleaseOne');
 // simultaneous mandrill api requests count
 const MANDRILL_CONCURRENCY = 10;
 
+// returns true if sending was finished (or never started)
 module.exports = function*() {
 
 
@@ -65,14 +66,16 @@ module.exports = function*() {
 
   if (!newsletterRelease) {
     log.debug("Nothing to send");
-    return;
+    return true;
   }
 
-  log.debug("Sending newsletter", newsletterRelease.toJSON());
+  log.debug("Sending newsletter", newsletterRelease.toObject());
 
   // form recipients list
   // email => Subscription || Participant || MailListEmail
   let recipientsByEmail = yield* makeRecipients(newsletterRelease);
+
+  log.debug("recipientsByEmail", recipientsByEmail);
 
   let recipientsQueue = [];
   for (let email in recipientsByEmail) {
@@ -87,6 +90,8 @@ module.exports = function*() {
   }
   newsletterRelease.sendingPid = 0;
   yield newsletterRelease.persist();
+
+  return sendFinished;
 
 };
 
@@ -111,12 +116,13 @@ function* makeRecipients(newsletterRelease) {
         isActive: true,
         group:    toItem.courseGroup
       }).populate('user', 'email'); // only user email
+
       for (let j = 0; j < participants.length; j++) {
         let participant = participants[j];
         if (toItem.exclude) {
-          delete recipientsByEmail[participant.email];
+          delete recipientsByEmail[participant.user.email];
         } else {
-          recipientsByEmail[participant.email] = participant;
+          recipientsByEmail[participant.user.email] = participant;
         }
       }
     } else if (toItem.mailList) {

@@ -106,7 +106,7 @@ gulp.task('payments:yakassa:listOrders', lazyRequireTask('payments/yakassa/tasks
 gulp.task('payments:yakassa:returnPayment', lazyRequireTask('payments/yakassa/tasks/returnPayment'));
 
 gulp.task("newsletter:send", lazyRequireTask('newsletter/tasks/send'));
-gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));
+//gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));
 
 var testSrcs = ['{handlers,modules}/**/test/**/*.js'];
 // on Travis, keys are required for E2E Selenium tests
