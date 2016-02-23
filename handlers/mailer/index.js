@@ -102,7 +102,7 @@ function* sendLetter(letter) {
     letter.transportResponse = letter.message.to.map(function(toItem) {
       return {
         email:        toItem.email,
-        status:       'test',
+        status:       'sent',
         Id:           '' + Math.random(),
         rejectReason: null
       };

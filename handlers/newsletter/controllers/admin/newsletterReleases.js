@@ -9,6 +9,7 @@ const CourseGroup = require('courses').CourseGroup;
 const ObjectId = require('mongoose').Types.ObjectId;
 const sendNewsletterReleaseOne = require('../../lib/sendNewsletterReleaseOne');
 const moment = require('momentWithLocale');
+require('mdeditor');
 
 function* loadById(id) {
   if (!ObjectId.isValid(id)) {
@@ -211,7 +212,10 @@ exports.post = function*() {
 
   newsletterRelease.content = this.request.body.content;
   newsletterRelease.title = this.request.body.title;
-  newsletterRelease.to = to;
+
+  if (!newsletterRelease.sendFinished) {
+    newsletterRelease.to = to;
+  }
 
   // save the data, then apply actions
   try {
@@ -274,7 +278,38 @@ exports.post = function*() {
     newsletterRelease.sendScheduledAt = undefined;
     yield newsletterRelease.persist();
 
-    this.addFlashMessage('success', 'Рассылка отменена.');
+
+    let isStopped;
+
+    if (newsletterRelease.sendingPid) {
+      isStopped = false;
+      let dateTill = Date.now() + 5000;
+      while (true) { // wait till cancelled, so that the user will see a cancelled NL on refresh
+        let maybeStopped = yield NewsletterRelease.findById(newsletterRelease._id, {sendingPid: 1});
+        if (!maybeStopped.sendingPid) {
+          isStopped = true;
+          break;
+        }
+        this.log.debug("Still sending...");
+
+        if (Date.now() > dateTill) {
+          break;
+        }
+
+        yield function(callback) {
+          setTimeout(callback, 700);
+        };
+      }
+    } else {
+      isStopped = true;
+    }
+
+    if (isStopped) {
+      this.addFlashMessage('success', 'Рассылка отменена.');
+    } else {
+      this.addFlashMessage('success', 'Рассылку отменить не удалось, возможно она "подвисла".');
+    }
+
     break;
 
   case 'sendOne':

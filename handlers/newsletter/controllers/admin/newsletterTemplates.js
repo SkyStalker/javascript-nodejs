@@ -1,7 +1,8 @@
 'use strict';
 
-var NewsletterTemplate = require('../../models/newsletterTemplate');
-var ObjectId = require('lib/mongoose').Types.ObjectId;
+require('mdeditor');
+const NewsletterTemplate = require('../../models/newsletterTemplate');
+const ObjectId = require('lib/mongoose').Types.ObjectId;
 
 exports.getList = function*() {
   if (!this.user || this.user.roles.indexOf('teacher') == -1) {

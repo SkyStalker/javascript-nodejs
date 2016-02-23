@@ -1,5 +1,6 @@
 const bem = require('bem-jade')();
 const thumb = require('client/image').thumb;
+const LANG = require('config').lang;
 
 const t = require('i18n');
 
@@ -14,5 +15,6 @@ function addStandardHelpers(locals) {
   locals.bem = bem;
   locals.t = t;
   locals.thumb = thumb;
+  locals.lang = LANG;
 }
 

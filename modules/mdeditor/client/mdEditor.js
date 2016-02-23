@@ -3,9 +3,7 @@
 const delegate = require('client/delegate');
 
 const t = require('i18n');
-
 const LANG = require('config').lang;
-
 t.requirePhrase('mdeditor', require('../locales/' + LANG + '.yml'));
 
 class MdEditor {
