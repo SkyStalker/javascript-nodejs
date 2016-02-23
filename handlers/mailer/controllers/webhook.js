@@ -60,12 +60,9 @@ exports.post = function*() {
         }
       }
 
+      // for safety/consistency, persist the letter on every event even if it's a single letter
+      yield letter.persist();
     }
-  }
-
-  // probably a single letter, many events
-  for (let id in lettersCache) {
-    yield lettersCache[id].persist();
   }
 
   this.body = '';
