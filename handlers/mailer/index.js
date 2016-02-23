@@ -123,8 +123,6 @@ function* sendLetter(letter) {
 
   log.debug("sent ", letter.toObject());
 
-  console.log("HERE 4!!");
-
   yield letter.persist();
 
   return letter;
