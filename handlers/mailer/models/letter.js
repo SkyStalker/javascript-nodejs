@@ -60,6 +60,8 @@ schema.methods.getFailureReasons = function() {
 
     if (response.status == 'rejected' || response.status == 'invalid') {
       results[response.email] = response.status + ': ' + response.rejectReason;
+    } else if (!state) {
+      results[response.email] = 'unknown state';
     } else {
       results[response.email] = state.state;
       if (state.bounceDescription) {
