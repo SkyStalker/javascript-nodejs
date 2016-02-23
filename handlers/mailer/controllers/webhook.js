@@ -5,6 +5,7 @@ var config = require('config');
 var crypto = require('crypto');
 var capitalizeKeys = require('lib/capitalizeKeys');
 
+
 exports.post = function*() {
 
   var signature = this.get('X-Mandrill-Signature');
@@ -24,19 +25,26 @@ exports.post = function*() {
 
   mandrillEvents = capitalizeKeys(mandrillEvents);
 
+  let lettersCache = {};
+
   for (let i = 0; i < mandrillEvents.length; i++) {
     let payload = mandrillEvents[i];
     yield MandrillEvent.create({payload});
 
     if (payload.Id) {
-      let letter = yield Letter.findOne({
+      // the event refers to a letter!
+      let letter = lettersCache[payload.Id] || (yield Letter.findOne({
         'transportResponse.Id': payload.Id
-      }, {transportResponse:1, transportState: 1});
+      }, {transportResponse:1, transportState: 1}));
+
       if (!letter) {
         // no such letter, maybe letter sent from home server?
         this.log.error("Webhook event: no letter for Id", payload);
         continue;
       }
+
+      // cache in case many events refer to the same letter
+      lettersCache[payload.Id] = letter;
 
       // write new state into transportState[j] where j is the number of the email in to/transportResponse
       for (let j = 0; j < letter.transportResponse.length; j++) {
@@ -51,9 +59,13 @@ exports.post = function*() {
           break;
         }
       }
-      yield letter.persist();
 
     }
+  }
+
+  // probably a single letter, many events
+  for (let id in lettersCache) {
+    yield lettersCache[id].persist();
   }
 
   this.body = '';
