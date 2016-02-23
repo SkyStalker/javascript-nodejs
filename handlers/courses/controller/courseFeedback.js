@@ -6,7 +6,7 @@ const CourseFeedback = require('../models/courseFeedback');
 const CourseGroup = require('../models/courseGroup');
 const Course = require('../models/course');
 const User = require('users').User;
-const _ = require('lodash');
+const groupBy = require('lodash/groupBy');
 const CacheEntry = require('cache').CacheEntry;
 
 exports.get = function*() {
@@ -45,14 +45,15 @@ function* getFeedbackStats(course) {
     course: course.id
   });
 
-  let groupIds = _.pluck(groups, '_id');
+  let groupIds = groups.map(group => group._id);
 
   let stats = yield CourseFeedback.aggregate([
     {
       $match: {
         group: {
           $in: groupIds
-        }
+        },
+        isPublic: true
       }
     },
     {
@@ -88,7 +89,8 @@ function* getFeedbackStats(course) {
       $match: {
         group: {
           $in: groupIds
-        }
+        },
+        isPublic: true
       }
     },
     {
@@ -102,13 +104,13 @@ function* getFeedbackStats(course) {
   ]).exec();
 
 
-  recommendStats = _.groupBy(recommendStats, '_id');
+  recommendStats = groupBy(recommendStats, '_id');
 
   if (!recommendStats[true]) recommendStats[true] = [{count: 0}];
   if (!recommendStats[false]) recommendStats[false] = [{count: 0}];
 
   // 76% recommend
-  let recommendFraction = recommendStats[true][0].count / (recommendStats[true][0].count + recommendStats[false][0].count);
+  let recommendFraction = recommendStats[true][0].count / (recommendStats[true][0].count + recommendStats[false][0].count) || 0;
 
   return {
     stars: starStatsPopulated,

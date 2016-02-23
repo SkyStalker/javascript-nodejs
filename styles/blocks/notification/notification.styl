@@ -45,10 +45,13 @@
         box-sizing border-box
 
     &_top
-        height top_notification_height
+        min-height top_notification_height
         display inline-block // no margin-collapse
         width 100%
         vertical-align bottom
+
+    &_top &__content
+        text-align center
 
     &_error
         background #F2DEDE

@@ -26,18 +26,18 @@ function mutation(nodes) {
 var methods = {
   // safari = webkitMatchesSelector
   matches: Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector,
-  replace: function replace() {
+  replace() {
     if (this.parentNode) {
       this.parentNode.replaceChild(mutation(arguments), this);
     }
   },
-  prepend: function prepend() {
+  prepend() {
     this.insertBefore(mutation(arguments), this.firstChild);
   },
-  append: function append() {
+  append() {
     this.appendChild(mutation(arguments));
   },
-  remove: function() {
+  remove() {
     var parentNode = this.parentNode;
     if (parentNode) {
       return parentNode.removeChild(this);

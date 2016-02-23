@@ -91,8 +91,8 @@ Application.prototype.requireHandler = function(path) {
 
   var handler = require(path);
 
-  // init is always sync, for tests to run fast
-  // boot is async
+  // init is always fast & sync, for tests to run fast
+  // boot may be slower and async
   if (handler.init) {
     handler.init(this);
   }

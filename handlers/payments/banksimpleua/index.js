@@ -8,12 +8,10 @@ exports.renderForm = require('./renderForm');
 // TX gets this status when created
 exports.createTransaction = function*(order) {
 
-  var amount = Math.round(money.convert(order.amount, {from: config.payments.currency, to: 'UAH'}));
-
-
   var transaction = new Transaction({
     order:  order._id,
-    amount: amount,
+    currency: 'UAH',
+    amount: order.convertAmount('UAH'),
     status: Transaction.STATUS_PENDING,
     paymentMethod: path.basename(__dirname)
   });
@@ -26,5 +24,6 @@ exports.createTransaction = function*(order) {
 exports.info = {
   title:   "Банковский перевод в Украине (в гривнах)",
   name:    path.basename(__dirname),
-  hasIcon: false
+  hasIcon: false,
+  currency: 'UAH'
 };

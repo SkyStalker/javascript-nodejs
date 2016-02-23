@@ -1,7 +1,9 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const crypto = require('crypto');
-const _ = require('lodash');
+const uniq = require('lodash/uniq');
 
 const schema = new Schema({
   newsletters: {
@@ -14,7 +16,7 @@ const schema = new Schema({
     validate: [
       {
         validator: function mustBeUnique(value) {
-          return _.uniq(value).length == value.length;
+          return uniq(value).length == value.length;
         },
         msg:       'Список подписок содержит дубликаты.'
       }
@@ -22,6 +24,8 @@ const schema = new Schema({
   },
   email:       {
     type:     String,
+    lowercase: true,
+    trim: true,
     required: true,
     unique:   true,
     validate: [

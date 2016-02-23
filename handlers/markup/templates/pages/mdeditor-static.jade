@@ -1,0 +1,29 @@
+extends /layouts/main
+
+
+
+
+block content
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/codemirror.js")
+  !=css('mdeditor')
+  //!=js("mdeditor", {defer: true})
+
+  //- textarea.mdeditor Value
+
+  - var buttons = [{action:'Bold', title:'bold'}, {action:'Italic', title:'italic'}, {action:'Divider', title:''}, {action:'Link', title:'link'}, {action:'Blockquote', title:'quote'}, {action:'Code', title:'code'}, {action:'Image', title:'image'}, {action:'Divider', title:''}, {action:'Olist', title:'ordered list'}, {action:'Ulist', title:'unordered list'}, {action:'Heading', title:'heading'}, {action:'Separator', title:'separator'}, {action:'Divider', title:''}, {action:'Undo', title:'undo'}, {action:'Redo', title:'redo'}, {action:'Help', title:'help'}];
+
+  +b.mdeditor
+    +e.button-bar
+      +e.button-row
+        each button in buttons
+          +e.button(data-action=button.action title=button.title)
+
+    +e('textarea')#mdeditor.input BlaBlaBla
+    +e.title-preview
+      +e('h2') Предпросмотр
+    +e.preview
+
+    script.
+      CodeMirror.fromTextArea(document.getElementById('mdeditor'))
+
+

@@ -27,40 +27,42 @@ module.exports = function*(order) {
 
   if (orderSuccessSameGroupAndUser) {
     // 2 days if has success order to same group
-    if (order.created > Date.now() - 2 * 86400 * 1e3) {
-      //console.log(order.created, Date.now() - 2 * 24 * 86400 * 1e3, +order.created);
-      gutil.log(`...created ${order.created} less than 2 days, return`);
+    if (order.modified > Date.now() - 2 * 86400 * 1e3) {
+      //console.log(order.modified, Date.now() - 2 * 24 * 86400 * 1e3, +order.modified);
+      gutil.log(`...modified ${order.modified} less than 2 days, return`);
       return;
     }
   } else {
     // 7 days wait otherwise
-    if (order.created > Date.now() - 7 * 86400 * 1e3) {
-      gutil.log(`...created ${order.created} less than 7 days, return`);
+    if (order.modified > Date.now() - 7 * 86400 * 1e3) {
+      gutil.log(`...modified ${order.modified} less than 7 days, return`);
       return;
     }
   }
 
   gutil.log("Canceling " + order.number);
 
-  var orderUser = yield User.findById(order.user).exec();
+  var orderUser = yield User.findById(order.user);
   var orderGroup = yield CourseGroup.findById(order.data.group).exec();
 
   assert(orderGroup);
   assert(orderUser);
 
-  yield* mailer.send({
-    from:                         'orders',
-    templatePath:                 path.join(__dirname, '../templates/email/orderCancel'),
-    to:                           [{email: orderUser.email}],
-    orderSuccessSameGroupAndUser: orderSuccessSameGroupAndUser,
-    orderUser:                    orderUser,
-    orderGroup:                   orderGroup,
-    profileOrdersLink:            config.server.siteHost + orderUser.getProfileUrl() + '/orders',
-    order:                        order,
-    subject:                      "[Курсы, система регистрации] Отмена заказа " + order.number + " на сайте javascript.ru"
-  });
+  if (!orderUser.deleted) {
+    yield* mailer.send({
+      from:                         'orders',
+      templatePath:                 path.join(__dirname, '../templates/email/orderCancel'),
+      to:                           [{email: orderUser.email}],
+      orderSuccessSameGroupAndUser: orderSuccessSameGroupAndUser,
+      orderUser:                    orderUser,
+      orderGroup:                   orderGroup,
+      profileOrdersLink:            config.server.siteHost + orderUser.getProfileUrl() + '/orders',
+      order:                        order,
+      subject:                      "[Курсы, система регистрации] Отмена заказа " + order.number + " на сайте javascript.ru"
+    });
 
-  gutil.log("Sent letter to " + orderUser.email);
+    gutil.log("Sent letter to " + orderUser.email);
+  }
 
 
   yield order.persist({

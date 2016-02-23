@@ -1,5 +1,8 @@
-var bem = require('bem-jade')();
-var thumb = require('client/image').thumb;
+const bem = require('bem-jade')();
+const thumb = require('client/image').thumb;
+const LANG = require('config').lang;
+
+const t = require('i18n');
 
 module.exports = function(template, locals) {
   locals = locals ? Object.create(locals) : {};
@@ -10,7 +13,8 @@ module.exports = function(template, locals) {
 
 function addStandardHelpers(locals) {
   locals.bem = bem;
-
+  locals.t = t;
   locals.thumb = thumb;
+  locals.lang = LANG;
 }
 

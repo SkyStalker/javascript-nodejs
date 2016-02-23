@@ -31,8 +31,10 @@ var schema = new Schema({
   currency: {
     // sometimes needed, e.g. paypal allows many currencies
     type:   String,
+    default: 'RUB',
     enum: ['USD', 'EUR', 'RUB', 'UAH']
   },
+
   // payment method may initiate the payment
   // and provide the token value to track it
   // other details are also possible
@@ -43,11 +45,15 @@ var schema = new Schema({
       oauthToken: String, // for Ya.Money processPayments
       requestId: String, //  for Ya.Money processPayments,
 
+      aviso: {}, // for YaKassa aviso info (invoiceId: internal number, used for refunds and other)
+
       // for invoices
       companyName: String,
       agreementRequired: Boolean,
       contractHead: String,
       companyAddress: String,
+      companyMail: String,
+      companyMailSent: Boolean,  // true iff paper letter sent
       bankDetails: String
     },
     default: {}
@@ -89,6 +95,8 @@ schema.statics.STATUS_PENDING = 'pending';
 schema.statics.STATUS_SUCCESS = 'success';
 
 schema.statics.STATUS_FAIL = 'fail';
+
+schema.statics.STATUS_REFUND = 'refund';
 
 // autolog all changes
 schema.pre('save', function logChanges(next) {

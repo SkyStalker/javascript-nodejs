@@ -14,7 +14,7 @@
 * Сайт пока на русском, на английском сделаем потом.
 * Сайт для разработчиков, да, кстати, они не пользуются старыми и страшными IE.
 
-С элементами SPA, но не SPA, потому что нафига сове биплан. Она и так летает.
+Профиль юзера на AngularJS, в остальном не SPA, так как контент-сайт. 
 
 ## Что в опен-сорсе?
 
@@ -35,7 +35,7 @@
 Многие модули из него можно взять и выделить в отдельные проекты, было бы желание.
 
 Также в опен-сорсе &ndash; текст учебника JavaScript. 
-Правда, он в другом репозитарии [https://github.com/iliakan/javascript-tutorial](https://github.com/iliakan/javascript-tutorial), здесь только код.
+Правда, он в другом репозитории [https://github.com/iliakan/javascript-tutorial](https://github.com/iliakan/javascript-tutorial), здесь только код.
 
 Для установки dev-среды см. [INSTALL.md](https://github.com/iliakan/javascript-nodejs/blob/master/Install.md).
 

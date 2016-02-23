@@ -13,7 +13,7 @@ module.exports = function*() {
   if (!privatBankCurrencyRate) {
     throw new Error("Failed to fetch privatRate");
   }
-  let privatRates = _.indexBy(privatBankCurrencyRate.rates, 'ccy');
+  let privatRates = _.keyBy(privatBankCurrencyRate.rates, 'ccy');
   var openExchangeRate = yield* openExchangeUpdater.update();
 
   if (!openExchangeRate) {

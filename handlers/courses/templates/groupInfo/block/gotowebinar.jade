@@ -1,0 +1,47 @@
+h2 Система для разделения экрана и общения
+
+p Мы используем систему GoToWebinar, в ней специальный кодек, который обеспечивает лучшее качество скринкастов, чем более распространённый flv-формат.
+
+p.
+  Для использования этой системы в браузере должна быть установлена и включена java.
+  Если у вас ее нет &ndash; скачать можно здесь:
+  <a href="http://java.com/ru/download/">http://java.com/ru/download/</a>.
+
+p
+  | Заранее, для проверки, можно подключиться по адресу <a href="https://www3.gotomeeting.com/join/406552062">https://www3.gotomeeting.com/join/406552062</a>,
+  | людей там нет, но программа должна поставиться и запуститься.
+
+p Полная инструкция по тестированию входа находится на <a href="http://support.citrixonline.com/en_US/GoToMeeting/help_files/GTM140010?title=Test+Your+GoToMeeting+Connection">http://support.citrixonline.com/en_US/GoToMeeting/help_files/GTM140010?title=Test+Your+GoToMeeting+Connection</a>.
+
+p Для запуска системы отвечайте Yes на вопросы. Если ничего не запускается &ndash; возможно, нужно нажать кнопку <b>Launch</b> или <b>Download Software</b> и запустить скачанную программу вручную.
+
+p Когда программа поставится, при следующем заходе скачивать или запускать ее заново будет не нужно.
+
+p Практика показывает, что если у вас стоит Java и работает Skype, то и видео тоже нормально заработает.
+
+:markit
+  ```warn
+  Полноценное видео работает только во время онлайн-встречи.
+
+  Вас не пустит в видео вне занятия. Это совершенно нормально, т.к. видео-сессию запускает преподаватель.
+  ```
+
+if participant && participant.joinUrl
+  p
+    | Для захода в систему во время занятия вы можете перейти по ссылке&nbsp;
+    a(href=participant.joinUrl)= participant.joinUrl
+    | .
+
+  p Или же зайдите на <a href="http://gotowebinar.com">http://gotowebinar.com</a>, нажмите "JOIN A WEBINAR" справа-сверху и введите:
+else
+  p Зайдите на <a href="http://gotowebinar.com">http://gotowebinar.com</a>, нажмите "JOIN A WEBINAR" справа-сверху и введите:
+
+ul
+  li Webinar ID: <b>#{group.webinarId}</b>
+  li Email: <b>#{user.profileName}@javascript.ru</b> (именно это, не ваш реальный email).
+
+h2 Общение голосом
+
+p Для того, чтобы задавать вопросы голосом, используется та же система, что и для видео. Понадобится микрофон.
+
+p Заметим, что микрофон не обязателен для участия, так как задавать вопросы можно и в чате.

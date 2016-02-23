@@ -1,8 +1,8 @@
-var config = require('config');
+'use strict';
 
 module.exports = function*(next) {
 
-  if (process.env.NODE_ENV == 'development' || this.isAdmin) {
+  if (this.isAdmin) {
     yield* next;
   } else {
     this.throw(403);

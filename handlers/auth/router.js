@@ -22,7 +22,6 @@ var router = module.exports = new Router();
 router.post('/login/local', function*(next) {
   var ctx = this;
 
-
   // @see node_modules/koa-passport/lib/framework/koa.js for passport.authenticate
   // it returns the middleware to delegate
   var middleware = passport.authenticate('local', function*(err, user, info) {
@@ -34,7 +33,7 @@ router.post('/login/local', function*(next) {
       ctx.body = info;
     } else {
       yield ctx.login(user);
-      yield ctx.rememberMe();
+      yield* ctx.rememberMe();
       ctx.body = {user: user.getInfoFields() };
     }
   });
@@ -54,7 +53,7 @@ router.post('/forgot', mustNotBeAuthenticated, forgot.post);
 
 router.get('/login', login.get);
 
-router.get('/login-as/:profileNameOrEmailOrId', mustBeAdmin, loginAs.get);
+router.get('/login-as/:profileNameOrEmailOrId', loginAs.get);
 
 router.get('/verify/:verifyEmailToken', verify.get);
 router.get('/forgot-recover/:passwordResetToken?', mustNotBeAuthenticated, forgotRecover.get);

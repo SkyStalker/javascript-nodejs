@@ -14,7 +14,7 @@ exports.Course = [
     titleShort:       "JavaScript/DOM/интерфейсы",
     shortDescription: `
     <p>"Правильный" курс по профессиональному JavaScript, цель которого – научить думать на JavaScript, писать просто, быстро и красиво.</p>
-    <p>Стоимость обучения 21000 руб, время обучения: 2 месяца.</p>`,
+    <p>Стоимость обучения <span class="auto-currency" data-currency="RUB">21000 руб</span>, время обучения: 2 месяца.</p>`,
     isListed:         true,
     weight:           1
   },
@@ -53,8 +53,8 @@ exports.CourseGroup = [
   },
   {
     course:            oid('course-nodejs'),
-    dateStart:         new Date(2015, 6, 22),
-    dateEnd:           new Date(2015, 7, 10),
+    dateStart:         new Date(2016, 6, 22),
+    dateEnd:           new Date(2016, 7, 10),
     timeDesc:          "пн/ср/сб 19:30 - 21:00 GMT+3",
     slug:              'nodejs-20160722',
     price:             1,

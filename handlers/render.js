@@ -7,13 +7,13 @@ const config = require('config');
 const fs = require('fs');
 const log = require('log')();
 const jade = require('lib/serverJade');
-const _ = require('lodash');
 const assert = require('assert');
-const i18n = require('i18next');
+const t = require('i18n');
 const money = require('money');
 const url = require('url');
 const validate = require('validate');
 const pluralize = require('textUtil/pluralize');
+const BasicParser = require('markit').BasicParser;
 
 // public.versions.json is regenerated and THEN node is restarted on redeploy
 // so it loads a new version.
@@ -33,8 +33,6 @@ function addStandardHelpers(locals, ctx) {
   if (locals._hasStandardHelpers) return;
 
   locals.moment = moment;
-
-  locals._ = _;
 
   locals.lang = config.lang;
 
@@ -77,14 +75,13 @@ function addStandardHelpers(locals, ctx) {
   locals.yandexMetrika = config.yandexMetrika;
 
 
-
   // patterns to use in urls
   // no need to escape /
   // \s => \\s
   locals.validate = {
     patterns: {}
   };
-  for(var name in validate.patterns) {
+  for (var name in validate.patterns) {
     locals.validate.patterns[name] = validate.patterns[name].source.replace(/\\\//g, '/');
   }
 
@@ -93,14 +90,14 @@ function addStandardHelpers(locals, ctx) {
     var json = JSON.stringify(s);
     return json.replace(/\//g, '\\/')
       .replace(/[\u003c\u003e]/g,
-      function(c) {
-        return '\\u'+('0000'+c.charCodeAt(0).toString(16)).slice(-4).toUpperCase();
-      }
-    ).replace(/[\u007f-\uffff]/g,
-      function(c) {
-        return '\\u'+('0000'+c.charCodeAt(0).toString(16)).slice(-4);
-      }
-    );
+        function(c) {
+          return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4).toUpperCase();
+        }
+      ).replace(/[\u007f-\uffff]/g,
+        function(c) {
+          return '\\u' + ('0000' + c.charCodeAt(0).toString(16)).slice(-4);
+        }
+      );
   };
 
   Object.defineProperty(locals, "user", {
@@ -109,13 +106,15 @@ function addStandardHelpers(locals, ctx) {
     }
   });
 
+  locals.rateUsdRub = money.convert(1, {from: 'USD', to: 'RUB'});
+
   locals.profileTabNames = {
-    quiz: 'Тесты',
-    orders: 'Заказы',
-    courses: 'Курсы',
-    aboutme: 'Публичный профиль',
+    quiz:          'Тесты',
+    orders:        'Заказы',
+    courses:       'Курсы',
+    aboutme:       'Публичный профиль',
     subscriptions: 'Уведомления',
-    account: 'Аккаунт'
+    account:       'Аккаунт'
   };
 
   // flash middleware may be attached later in the chain
@@ -125,18 +124,13 @@ function addStandardHelpers(locals, ctx) {
     }
   });
 
-  var renderSimpledown;
-  Object.defineProperty(locals, "renderSimpledown", {
-    get: function() {
-      if (!renderSimpledown) {
-        renderSimpledown = require('renderSimpledown');
-      }
-      return renderSimpledown; // attach at 1st use
-    }
-  });
+  locals.markit = function(text, options) {
+    return new BasicParser(options).render(text);
+  };
 
-
-  locals.renderParagraphsAndLinks = require('renderParagraphsAndLinks');
+  locals.markitInline = function(text, options) {
+    return new BasicParser(options).renderInline(text);
+  };
 
   locals.csrf = function() {
     // function, not a property to prevent autogeneration
@@ -150,7 +144,7 @@ function addStandardHelpers(locals, ctx) {
     debugger;
   };
 
-  locals.t = i18n.t;
+  locals.t = t;
   locals.bem = require('bem-jade')();
 
   locals.thumb = function(url, width, height) {
@@ -187,13 +181,12 @@ function addStandardHelpers(locals, ctx) {
 
     throw new Error(`Not found pack name:${name} ext:${ext}`);
     /*
-    if (process.env.NODE_ENV == 'development') {
-      // webpack-dev-server url
-      versionName = process.env.STATIC_HOST + ':' + config.webpack.devServer.port + versionName;
-    }*/
+     if (process.env.NODE_ENV == 'development') {
+     // webpack-dev-server url
+     versionName = process.env.STATIC_HOST + ':' + config.webpack.devServer.port + versionName;
+     }*/
 
   };
-
 
 
   locals._hasStandardHelpers = true;
@@ -208,7 +201,7 @@ exports.init = function(app) {
 
     var renderFileCache = {};
 
-    this.locals = _.assign({}, config.jade);
+    this.locals = Object.assign({}, config.jade);
 
     /**
      * Render template
@@ -227,11 +220,11 @@ exports.init = function(app) {
       addStandardHelpers(this.locals, this);
 
       // warning!
-      // _.assign does NOT copy defineProperty
+      // Object.assign does NOT copy defineProperty
       // so I use this.locals as a root and merge all props in it, instead of cloning this.locals
       var loc = Object.create(this.locals);
 
-      _.assign(loc, locals);
+      Object.assign(loc, locals);
 
       if (!loc.schema) {
         loc.schema = {};

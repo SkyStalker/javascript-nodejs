@@ -1,0 +1,127 @@
+extends /layouts/main
+
+block append variables
+
+  - var layout_header_class = "main__header_center"
+  - var title = 'Заказ ' + order.number;
+  - var sitetoolbar = true
+  - var siteToolbarCurrentSection = "courses";
+
+block content
+
+  p= order.title
+
+  form(method="POST" action="")
+    input(type="hidden", name="_csrf", value=csrf())
+    div
+      label
+       | Стоимость:
+       = ' '
+       input(name="amount" required value=order.amount)
+       select(name="currency")
+         option(value='USD' selected=(order.currency=='USD')) USD
+         option(value='EUR' selected=(order.currency=='EUR')) EUR
+         option(value='RUB' selected=(order.currency=='RUB')) RUB
+         option(value='UAH' selected=(order.currency=='UAH')) UAH
+    div
+      | Статус: <b>#{order.status}</b>
+
+
+    h2 Транзакция
+    table
+      tr
+        th number
+        th modified
+        th created
+        th paymentMethod
+        th amount
+        th currency
+        th status
+        th statusMessage
+      each transaction in transactions
+        tr
+          td= transaction.number
+          td= moment(transaction.modified).format('DD.MM.YYYY HH:mm:ss')
+          td= moment(transaction.created).format('DD.MM.YYYY HH:mm:ss')
+          td= transaction.paymentMethod
+          td= transaction.amount
+          td= transaction.currency
+          td= transaction.status
+          td= transaction.statusMessage
+        if transaction.paymentMethod == 'invoice'
+          tr
+            td(colspan=8)
+              | Скачать <a href="/payments/invoice/#{transaction.number}/invoice.docx">счёт</a>
+              if transaction.paymentDetails.agreementRequired
+                | &nbsp;и <a href="/payments/invoice/#{transaction.number}/agreement.docx">договор с актом</a>.
+
+    h3 Действия:
+
+    ul
+      li
+        +b('button').button._action(name="action" value="save" type="submit")
+          +e('span').text Сохранить
+
+      if order.status == 'cancel'
+        li
+          +b('button').button._action(name="action" value="pending" type="submit")
+            +e('span').text Вернуть в Pending
+        li
+          +b('button').button._action(name="action" value="paid-tx" type="submit")
+            +e('span').text Оплачен транзакцией
+        li
+          +b('button').button._action(name="action" value="paid-direct" type="submit")
+            +e('span').text Оплачен напрямую
+
+      if order.status == 'pending'
+        li
+          +b('button').button._action(name="action" value="paid-free" type="submit")
+            +e('span').text Зачислить бесплатно
+        li
+          +b('button').button._action(name="action" value="paid-tx" type="submit")
+            +e('span').text Оплачен транзакцией
+        li
+          +b('button').button._action(name="action" value="paid-direct" type="submit")
+            +e('span').text Оплачен напрямую
+
+      if order.status == 'success'
+        li
+          +b('button').button._action(name="action" value="cancel" type="submit")
+            +e('span').text Отменить и отчислить участников
+
+
+  h2 Инвайты
+
+  table
+    thead
+      tr
+        th email
+        th участник
+        th группа
+        th действия
+    tbody
+      each invite in invites
+        tr
+          td= invite.email
+          td
+            if invite.participant
+              | #{invite.participant.firstName} #{invite.participant.surname}
+            else
+              | '—'
+          td= invite.group.title
+          td
+            div
+              b Перевод
+            form(action="/courses/admin/invites" method="POST")
+              input(type="hidden", name="_csrf", value=csrf())
+              input(type="hidden", name="id", value=invite.id)
+              div
+                select(name="group")
+                  each group in groupsAvailable
+                    option(value=group.id) #{group.title} #{group.timeDesc} #{group.teacher.displayName}
+              div
+                label
+                  input(type="checkbox" checked name="notify")
+                  | Уведомить о переводе по почте
+              div
+                input(type="submit" value="Перевести")

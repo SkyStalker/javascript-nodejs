@@ -1,0 +1,11 @@
+extends /layouts/main
+include /blocks/mdeditor
+
+block content
+  !=css('mdeditor')
+  !=js("mdeditor", {defer: true})
+
+  p Example mdeditor
+
+  +mdeditor('standard', 'Мама **мыла** раму')
+

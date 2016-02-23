@@ -12,12 +12,13 @@ block append variables
 
 block append head
   !=js("coursesFeedbackList", {defer: true})
+  if user && (user.hasRole('admin') || user.teachesCourses.length)
+    !=js("coursesFeedbackShow", {defer: true})
 
 
 block content
 
   script var feedbackStats = !{escapeJSON(stats)};
-
   +b.feedback-stat
     +e('ul').list
       +e('li').item(data-stars-title=5) Отлично
@@ -64,13 +65,13 @@ block content
 
       +e.text
         +e('strong').percents #{Math.round(stats.recommendFraction * 100)}%
-        +e('span').advice Оставивших отзыв рекомендуют эти курсы
+        +e('span').advice Оставивших отзыв рекомендуют этот курс
 
   +b.feedback-policy
     +e.link Политика отзывов javascript.ru
       +e.popup
         +e('ul').list
-          li Показываются все отзывы, опубликованные авторами, без выбора, без исключений.
+          li Показываются все опубликованные отзывы, даже если оценка нам "не нравится".
           li Отзывы показываются "как есть", не модерируются, исключение может быть сделано при нарушении правил сайта и курса (нецензурная лексика и др).
           li Отзыв может оставить только реальный участник, после прохождения курса.
 
@@ -86,11 +87,11 @@ block content
             +e('option').option(value=teacher._id)= teacher.displayName
       +e.select
         +b('select')(name="stars").input-select._small.__control
-          +e('option').option(value="all" selected) с любой оценкой
+          +e('option').option(value="" selected) с любой оценкой
           +e('option').option(value="5") с оценкой 5
           +e('option').option(value="4") с оценкой 4
           +e('option').option(value="3") с оценкой 3
-          +e('option').option(value="2") с оценкой 4
+          +e('option').option(value="2") с оценкой 2
           +e('option').option(value="1") с оценкой 1
 
     +e.feedbacks-list(data-feedback-container)

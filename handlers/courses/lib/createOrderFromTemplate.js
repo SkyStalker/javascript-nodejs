@@ -38,7 +38,7 @@ module.exports = function*(orderTemplate, user, requestBody) {
   if (!Array.isArray(emails)) {
     throw new OrderCreateError("Отсутствуют участники.");
   }
-  orderData.emails = _.unique(emails.filter(Boolean).map(String));
+  orderData.emails = _.uniq(emails.filter(Boolean).map(String).map(s => s.toLowerCase()));
 
   if (!user) {
     throw new OrderCreateError("Вы не авторизованы.");
@@ -49,7 +49,7 @@ module.exports = function*(orderTemplate, user, requestBody) {
   var discount;
   if (requestBody.discountCode) {
     discount = yield* Discount.findByCodeAndModule(requestBody.discountCode, 'courses');
-    if (discount && discount.data.slug != group.slug) {
+    if (discount && !discount.data.slug.test(group.slug)) {
       discount = null;
     }
 
@@ -67,9 +67,10 @@ module.exports = function*(orderTemplate, user, requestBody) {
     title:  group.title,
     amount: orderData.count * price,
     module: orderTemplate.module,
+    currency: 'RUB',
     data:   orderData,
     email:  user.email,
-    user:   user._id
+    user:   user
   });
 
   yield order.persist();

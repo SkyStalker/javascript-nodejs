@@ -1,3 +1,5 @@
+'use strict';
+
 var config = require('config');
 var path = require('path');
 var assert = require('assert');
@@ -23,11 +25,11 @@ var mountHandlerMiddleware = require('lib/mountHandlerMiddleware');
 exports.init = function(app) {
   for(var name in paymentMethods) {
     app.use(mountHandlerMiddleware('/payments/' + name, path.join(__dirname, name)));
+    app.csrfChecker.ignore.add(`/payments/${name}/:any*`);
   }
 
   app.use(mountHandlerMiddleware('/payments/common', path.join(__dirname, 'common')));
 
-  app.csrfChecker.ignore.add('/payments/:any*');
   app.verboseLogger.logPaths.add('/payments/:any*');
 };
 

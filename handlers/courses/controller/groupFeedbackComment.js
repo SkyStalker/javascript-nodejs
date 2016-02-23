@@ -1,8 +1,8 @@
+'use strict';
+
 const countries = require('countries');
 const CourseFeedback = require('../models/courseFeedback');
-const CourseParticipant = require('../models/courseParticipant');
-const _ = require('lodash');
-const renderSimpledown = require('renderSimpledown');
+const BasicParser = require('markit').BasicParser;
 
 exports.patch = function*() {
 
@@ -22,7 +22,7 @@ exports.patch = function*() {
   yield courseFeedback.persist();
 
   this.body = {
-    teacherComment: renderSimpledown(courseFeedback.teacherComment, {trusted: false})
+    teacherComment: new BasicParser().render(courseFeedback.teacherComment)
   };
 
 };

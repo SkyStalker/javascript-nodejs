@@ -3,26 +3,45 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var autoIncrement = require('mongoose-auto-increment');
-var OrderTemplate = require('./orderTemplate');
 var Transaction = require('./transaction');
 var _ = require('lodash');
+var money = require('money');
 
 var schema = new Schema({
-  amount:      {
+  amount: {
     type:     Number,
     required: true
   },
+
+  currency: {
+    // sometimes needed, e.g. donate allows multiple currencies
+    // courses can be sold in USD directly by the teacher
+    type:    String,
+    default: 'RUB',
+    enum:    ['USD', 'EUR', 'RUB', 'UAH']
+  },
+
+  // amount in stable currency, for sorting by amount
+  usdAmount: {
+    type: Number
+  },
+
   module:      { // module so that transaction handler knows where to go back e.g. 'ebook'
     type:     String,
     required: true
   },
+
   title:       {
     type:     String,
-    required: true
+    required: true,
+    trim: true
   },
+
   description: {
-    type: String
+    type: String,
+    trim: true
   },
+
   status:      {
     type:    String,
     enum:    ['success', 'cancel', 'pending', 'paid'],
@@ -31,13 +50,15 @@ var schema = new Schema({
 
   // order can be bound to either an email or a user
   email: {
-    type: String,
+    type:  String,
+    lowercase: true,
+    trim: true,
     index: true
   },
 
-  user:  {
-    type: Schema.Types.ObjectId,
-    ref:  'User',
+  user: {
+    type:  Schema.Types.ObjectId,
+    ref:   'User',
     index: true
   },
 
@@ -50,6 +71,7 @@ var schema = new Schema({
     type:    Date,
     default: Date.now
   },
+
   modified: {
     type: Date
   }
@@ -58,6 +80,14 @@ var schema = new Schema({
 
 schema.pre('save', function(next) {
   this.modified = new Date();
+
+  if (this.isModified('amount')) {
+    try {
+      this.usdAmount = money.convert(this.amount, {from: this.currency, to: 'USD'});
+    } catch (e) {
+      return next(typeof e == 'string' ? new Error(e) : e);
+    }
+  }
   next();
 });
 
@@ -77,6 +107,11 @@ schema.methods.cancelPendingTransactions = function*(statusMessage) {
     statusMessage: statusMessage
   });
 
+};
+
+schema.methods.convertAmount = function(currencyCode) {
+  return (this.currency == currencyCode) ? this.amount :
+    Math.ceil(money.convert(this.amount, {from: this.currency, to: currencyCode}));
 };
 
 schema.methods.onPaid = function*(transaction) {

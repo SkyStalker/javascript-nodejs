@@ -334,7 +334,7 @@ var countries = [{"co": "au", "ph": "61", "na": "Австралия"}, {"co": "a
   "na": "Япония"
 }];
 
-countries = _.indexBy(countries, 'co');
+countries = _.keyBy(countries, 'co');
 
 exports.all = countries;
 exports.top = {};

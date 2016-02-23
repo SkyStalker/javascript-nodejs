@@ -4,7 +4,6 @@ const CourseInvite = require('../models/courseInvite');
 const CourseParticipant = require('../models/courseParticipant');
 const CourseGroup = require('../models/courseGroup');
 const CourseFeedback = require('../models/courseFeedback');
-const _ = require('lodash');
 
 /**
  * The order form is sent to checkout when it's 100% valid (client-side code validated it)
@@ -34,7 +33,7 @@ exports.get = function*(next) {
 
   var groups;
   if (userParticipants) {
-    groups = _.pluck(userParticipants, 'group');
+    groups = userParticipants.map(p => p.group);
   } else {
     groups = [];
   }
@@ -90,14 +89,6 @@ exports.get = function*(next) {
       });
     }
 
-
-    if (this.isAdmin || groups[i].teacher.equals(this.user.id)) {
-      groupInfo.links.push({
-        url:   `/courses/groups/${group.slug}/participants-info`,
-        title: 'Анкеты участников'
-      });
-    }
-
     groupInfo.status = (groupInfo.dateStart > new Date()) ? 'accepted' :
       (groupInfo.dateEnd > new Date()) ? 'started' : 'ended';
 
@@ -113,12 +104,12 @@ exports.get = function*(next) {
   var groupsWhereTeacher = yield CourseGroup.find({
     teacher: user._id,
     dateEnd: {
-      // show 2 weeks after the end, not more
+      // show 2 months after the end, not more
       $not: {
-        $lt:  new Date(+new Date() - 14*86400*1e3)
+        $lt:  new Date(+new Date() - 31*2*86400*1e3)
       }
     }
-  });
+  }).sort({dateStart: -1});
 
   for (let i = 0; i < groupsWhereTeacher.length; i++) {
     let group = groupsWhereTeacher[i];
@@ -137,7 +128,14 @@ exports.get = function*(next) {
     }, {
       url:   `/courses/groups/${group.slug}/materials`,
       title: 'Материалы для обучения'
+    }, {
+      url:   `/courses/groups/${group.slug}/participants-info`,
+      title: 'Анкеты участников'
+    }, {
+      url:   `/courses/groups/${group.slug}/letters`,
+      title: 'Рассылки по группе'
     }];
+
 
     groupInfo.status = (groupInfo.dateStart > new Date()) ? 'accepted' :
       (groupInfo.dateEnd > new Date()) ? 'started' : 'ended';

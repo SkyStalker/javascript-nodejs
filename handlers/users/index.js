@@ -15,7 +15,7 @@ exports.init = function(app) {
     Object.defineProperty(this, 'isAdmin', {
       get: function() {
         // service may authorize with X-Admin-Key header
-        return this.user && this.user.isAdmin || this.get('X-Admin-Key') === config.adminKey;
+        return this.user && this.user.hasRole('admin') || this.get('X-Admin-Key') === config.adminKey;
       }
     });
 

@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var crypto = require('crypto');
 
 var schema = new Schema({
 
@@ -11,7 +12,7 @@ var schema = new Schema({
   order: {
     type: Schema.Types.ObjectId,
     ref:  'Order'
-    // not required, invite may exist without an order ("free second time" for people who had problems)
+    // not required, invite may exist without an order (theoretically?)
   },
 
   // when order is null,
@@ -26,12 +27,20 @@ var schema = new Schema({
     type: String,
     required: true,
     default: function() {
-      return Math.random().toString(36).slice(2, 10);
+      return parseInt(crypto.randomBytes(4).toString('hex'), 16).toString(36);
     }
+  },
+
+  // for history how this participant was created
+  participant: {
+    type: Schema.Types.ObjectId,
+    ref:  'CourseParticipant'
+    // should be required, but added after participants w/o it existed already
   },
 
   email: {
     type: String,
+    lowercase: true,
     required: true
   },
 
@@ -55,8 +64,9 @@ var schema = new Schema({
 });
 
 
-schema.methods.accept = function*() {
+schema.methods.accept = function*(participant) {
   yield this.persist({
+    participant: participant,
     accepted: true
   });
 };

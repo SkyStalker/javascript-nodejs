@@ -185,6 +185,9 @@
     &__info
         color light_gray_color
 
+    &__teacher
+        color light_gray_color
+
     &_result &__edit
         font-size 12px
         display inline-block
@@ -217,6 +220,20 @@
 
     &_result .share-icons .share
         margin 7px 10px 0 10px
+
+    &_not-public::after
+        @extend $font-private
+        position absolute
+        height 30px
+        width 30px
+        border-radius 15px
+        line-height 30px
+        right -15px
+        top 32px
+        font-size 30px
+        text-align center
+        color white
+        background #999
 
     &_external
         padding-bottom 40px

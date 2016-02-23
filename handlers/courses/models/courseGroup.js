@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var config = require('config');
@@ -5,8 +7,9 @@ var fs = require('mz/fs');
 var path = require('path');
 var log = require('log')();
 var validate = require('validate');
-var CourseParticipant = require('./courseParticipant');
 var CourseMaterial = require('./courseMaterial');
+require('./course'); // ensure Course exists
+require('users'); // ensure User exists
 
 var schema = new Schema({
   // 01.01.2015
@@ -18,6 +21,22 @@ var schema = new Schema({
   dateEnd:   {
     type:     Date,
     required: true
+  },
+
+  duration: { // duration in minutes
+    type: Number
+  },
+  rrule:    {
+    freq:  {
+      type:      String,
+      uppercase: true,
+      default:   'WEEKLY'
+    },
+    byday: [{
+      type:      String,
+      uppercase: true,
+      enum:      ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
+    }]
   },
 
   // like "nodejs-0402", for urls
@@ -35,7 +54,8 @@ var schema = new Schema({
   // Every mon and thu at 19:00 GMT+3
   timeDesc: {
     type:     String,
-    required: true
+    required: true,
+    trim:     true
   },
 
   // currently available places
@@ -45,10 +65,15 @@ var schema = new Schema({
     required: true
   },
 
-  teacher:       {
+  teacher: {
     type:     Schema.Types.ObjectId,
     ref:      'User',
     required: true
+  },
+
+  videoKeyTagCached: {
+    type:  String,
+    index: true
   },
 
   // group w/o materials can set this to undefined
@@ -61,29 +86,34 @@ var schema = new Schema({
   // is this group in the open course list (otherwise hidden)?
   // even if not, the group is accessible by a direct link
   isListed: {
-    type: Boolean,
+    type:     Boolean,
     required: true,
-    default: false
+    default:  false
   },
 
   // is it possible to register?
   isOpenForSignup: {
-    type: Boolean,
+    type:     Boolean,
     required: true,
-    default: false
+    default:  false
   },
 
   // room jid AND gotowebinar id
-  // an offline group may not have this
+  // an offline or unconfigured group may not have this
   webinarId: {
+    type: String,
+    trim: true
+  },
+  webinarKey: {
     type: String
   },
 
   skypeLink: {
-    type: String
+    type: String,
+    trim: true
   },
 
-  course:       {
+  course: {
     type:     Schema.Types.ObjectId,
     ref:      'Course',
     required: true
@@ -93,7 +123,8 @@ var schema = new Schema({
   // a user-friendly group title
   title: {
     type:     String,
-    required: true
+    required: true,
+    trim:     true
   },
 
   created: {
@@ -115,9 +146,17 @@ schema.methods.getMaterialFileRelativePath = function(material) {
   return `courses/${this.slug}/${material.filename}`;
 };
 
+schema.methods.getMaterialFilePath = function(material) {
+  return path.join(config.downloadRoot, this.getMaterialFileRelativePath(material));
+};
+
 schema.methods.getMaterialFileSize = function* (material) {
-  var stat = yield fs.stat(path.join(config.downloadRoot, this.getMaterialFileRelativePath(material)));
-  return stat.size;
+  try {
+    let stat = yield fs.stat(this.getMaterialFilePath(material));
+    return stat.size;
+  } catch (e) {
+    return 0;
+  }
 };
 
 schema.methods.decreaseParticipantsLimit = function(count) {

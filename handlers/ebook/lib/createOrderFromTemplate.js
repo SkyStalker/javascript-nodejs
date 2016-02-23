@@ -15,16 +15,17 @@ module.exports = function* (orderTemplate, user, requestBody) {
   var order = new Order({
     title:       orderTemplate.title,
     description: orderTemplate.description,
+    currency:    'RUB',
     amount:      amount,
     module:      orderTemplate.module,
     data:        orderTemplate.data
   });
 
   if (user) {
-    order.user = user._id;
+    order.user = user;
     order.email = user.email;
   } else {
-    order.email = requestBody.email;
+    order.email = requestBody.email.toLowerCase();
   }
 
   yield order.persist();

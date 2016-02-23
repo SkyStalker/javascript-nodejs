@@ -2,8 +2,18 @@ extends root
 
 block append head
   !=js("profileGuestAboutMe", {defer: true})
+  if user && (user.hasRole('admin') || user.teachesCourses.length)
+    !=js("coursesFeedbackShow", {defer: true})
+
 
 block profileContent
+  if user && user.hasRole('admin')
+    +b.profile-field
+      +e.lcell
+        +e.name Email
+      +e.rcell
+        +e.value= profileUser.email
+
   if profileUser.realName
     +b.profile-field
       +e.lcell
@@ -45,7 +55,7 @@ block profileContent
       +e.lcell
         +e.name О себе
       +e.rcell
-        +e.value!= renderParagraphsAndLinks(profileUser.aboutMe)
+        +e.value!= markit(profileUser.aboutMe)
 
   if profileUser.birthday
     +b.profile-field
@@ -55,7 +65,7 @@ block profileContent
         +e.value= profileUser.birthday
 
 
-  if profileUser.teachesCourses
+  if profileUser.teachesCourses && profileUser.teachesCourses.length
     +b.profile-field
       +e.lcell
         +e.name Ведёт курсы

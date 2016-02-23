@@ -29,8 +29,7 @@ module.exports = function() {
       .argv;
 
     return co(function* () {
-      var group = yield CourseGroup
-        .findOne({slug: args.group});
+      var group = yield CourseGroup.findOne({slug: args.group}).populate('teacher');
 
       if (!group) {
         throw new Error("No group:" + args.group);
@@ -48,14 +47,14 @@ module.exports = function() {
 
       log.debug(recipients);
 
-      var teacher = yield User.findById(group.teacher);
+      var teacher = group.teacher;
       recipients.push({
         email: teacher.email,
-        name: teacher.displayName
+        name:  teacher.displayName
       });
 
       // filter out already received
-      var recipientsByEmail = _.indexBy(recipients, 'email');
+      var recipientsByEmail = _.keyBy(recipients, 'email');
 
       var label = group.slug + '/' + path.basename(args.templatePath);
 
@@ -93,6 +92,7 @@ module.exports = function() {
           from:         args.from || 'informer',
           templatePath: args.templatePath,
           to:           [recipient],
+          config:       config,
           user:         usersByEmail[recipient.email],
           group:        group,
           subject:      args.subject,

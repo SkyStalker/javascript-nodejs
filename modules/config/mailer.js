@@ -22,7 +22,7 @@ module.exports = {
     },
     mgrinko: {
       fromEmail: 'm.grinko@javascript.ru',
-      fromName:  'Мизаил Гринько (JavaScript.ru)',
+      fromName:  'Михаил Гринько (JavaScript.ru)',
       signature: "<em>Успешной разработки!<br>Михаил Гринько</em>"
     },
     ikantor: {
@@ -30,10 +30,25 @@ module.exports = {
       fromName:  'Илья Кантор (JavaScript.ru)',
       signature: "<em>Успешной разработки!<br>Илья Кантор</em>"
     },
+    riakobchuk: {
+      fromEmail: 'r.iakobchuk@javascript.ru',
+      fromName:  'Роман Якобчук (JavaScript.ru)',
+      signature: "<em>Успешной разработки!<br>Роман Якобчук</em>"
+    },
+    amezin: {
+      fromEmail: 'a.mezin@javascript.ru',
+      fromName: 'Артём Мезин (JavaScript.ru)',
+      signature: "<em>Успешной разработки!<br>Артём Мезин</em>"
+    },
     ssuvorov: {
       fromEmail: 's.suvorov@javascript.ru',
       fromName:  'Степан Суворов (JavaScript.ru)',
       signature: "<em>Успешной разработки!<br>Степан Суворов</em>"
+    },
+    inepipenko: {
+      fromEmail: 'i.nepipenko@javascript.ru',
+      fromName:  'Игорь Непипенко (JavaScript.ru)',
+      signature: "<em>Успешной разработки!<br>Игорь Непипенко</em>"
     }
   },
   mandrill: {

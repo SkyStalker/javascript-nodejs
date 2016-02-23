@@ -1,7 +1,5 @@
 // Transliteration ported from https://github.com/yaroslav/russian/blob/master/lib/russian/transliteration.rb
 
-var _ = require('lodash');
-
 var LOWER_SINGLE = {
   "і": "i", "ґ": "g", "ё": "yo", "№": "#", "є": "e",
   "ї": "yi", "а": "a", "б": "b",
@@ -33,11 +31,11 @@ var UPPER_MULTI = {
   "ЬЁ": "IE"
 };
 
-var LOWER = _.assign({}, LOWER_SINGLE, LOWER_MULTI);
+var LOWER = Object.assign({}, LOWER_SINGLE, LOWER_MULTI);
 
-var UPPER = _.assign({}, UPPER_SINGLE, UPPER_MULTI);
+var UPPER = Object.assign({}, UPPER_SINGLE, UPPER_MULTI);
 
-var MULTI_KEYS = Object.keys(_.assign({}, LOWER_MULTI, UPPER_MULTI)).sort(function(a, b) {
+var MULTI_KEYS = Object.keys(Object.assign({}, LOWER_MULTI, UPPER_MULTI)).sort(function(a, b) {
   return a.length > b.length;
 });
 

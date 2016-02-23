@@ -4,10 +4,12 @@
  */
 
 const gulp = require('gulp');
+const glob = require('glob');
 const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 const runSequence = require('run-sequence');
+
 
 const linkModules = require('./modules/linkModules');
 
@@ -48,12 +50,15 @@ gulp.task('lint-or-die', lazyRequireTask('./tasks/lint', { src: jsSources, dieOn
 gulp.task('db:load', lazyRequireTask('./tasks/dbLoad'));
 gulp.task('db:clear', lazyRequireTask('./tasks/dbClear'));
 gulp.task('migrate:play', lazyRequireTask('./tasks/migratePlay'));
+gulp.task('migrate:md', lazyRequireTask('./tasks/migrateMd'));
+gulp.task('migrate:tutorial', lazyRequireTask('./tasks/migrateTutorial'));
 
 gulp.task('migrate:up', lazyRequireTask('migrate/tasks/up'));
 gulp.task('migrate:down', lazyRequireTask('migrate/tasks/down'));
 gulp.task('migrate:create', lazyRequireTask('migrate/tasks/create'));
 
 gulp.task('courses:material:add', lazyRequireTask('courses/tasks/materialAdd'));
+gulp.task('courses:webinar:add', lazyRequireTask('courses/tasks/webinarAdd'));
 gulp.task('courses:group:send', lazyRequireTask('courses/tasks/groupSend'));
 gulp.task('courses:invite:remind', lazyRequireTask('courses/tasks/inviteRemind'));
 
@@ -62,9 +67,10 @@ gulp.task("nodemon", lazyRequireTask('./tasks/nodemon', {
   // so I have to restart server to pickup the template change
   ext:    "js,jade",
 
-  nodeArgs: ['--debug'],
+  nodeArgs: process.env.NODE_DEBUG  ? ['--debug'] : [],
   script: "./bin/server",
-  ignore: '**/client/', // ignore handlers' client code
+  //ignoreRoot: ['.git', 'node_modules'].concat(glob.sync('{handlers,modules}/**/client')), // ignore handlers' client code
+  ignore: ['**/client/', '**/photoCut/'], // ignore handlers' client code
   watch:  ["handlers", "modules"]
 }));
 
@@ -96,8 +102,11 @@ gulp.task("payments:order:paid", lazyRequireTask('payments/tasks/orderPaid'));
 gulp.task("payments:transaction:paid", lazyRequireTask('payments/tasks/transactionPaid'));
 gulp.task("payments:order:cancelPending", lazyRequireTask('payments/tasks/orderCancelPending'));
 
+gulp.task('payments:yakassa:listOrders', lazyRequireTask('payments/yakassa/tasks/listOrders'));
+gulp.task('payments:yakassa:returnPayment', lazyRequireTask('payments/yakassa/tasks/returnPayment'));
+
 gulp.task("newsletter:send", lazyRequireTask('newsletter/tasks/send'));
-gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));
+//gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));
 
 var testSrcs = ['{handlers,modules}/**/test/**/*.js'];
 // on Travis, keys are required for E2E Selenium tests
@@ -147,7 +156,7 @@ gulp.task("client:sync-resources", lazyRequireTask('./tasks/syncResources', {
 
 gulp.task("videoKey:load", lazyRequireTask('videoKey/tasks/load'));
 
-// Show errors if encountered
+// show errors if encountered
 gulp.task('client:compile-css',
   lazyRequireTask('./tasks/compileCss', {
     src: './styles/base.styl',
@@ -163,7 +172,7 @@ gulp.task('client:minify', lazyRequireTask('./tasks/minify'));
 gulp.task('client:resize-retina-images', lazyRequireTask('./tasks/resizeRetinaImages'));
 
 gulp.task('client:webpack', lazyRequireTask('./tasks/webpack'));
-//gulp.task('client:webpack-dev-server', lazyRequireTask('./tasks/webpackDevServer'));
+// gulp.task('client:webpack-dev-server', lazyRequireTask('./tasks/webpackDevServer'));
 
 
 gulp.task('build', function(callback) {

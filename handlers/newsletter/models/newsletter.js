@@ -2,27 +2,29 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  slug: {
-    type: String,
+  title:   {
+    type:     String,
     required: true,
-    unique: true
+    trim:     true
+  },
+  slug:    {
+    type:     String,
+    required: true,
+    trim:     true,
+    unique:   true
   },
   // weight for non-internal subscriptions sorting
-  weight: {
-    type: Number,
-    default: 0,
+  weight:  {
+    type:     Number,
+    default:  0,
     required: true
   },
   // how often? string description
-  period: {
+  period:  {
     type: String
   },
   created: {
-    type: Date,
+    type:    Date,
     default: Date.now
   }
 });

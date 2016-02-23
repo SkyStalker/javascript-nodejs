@@ -1,12 +1,16 @@
+'use strict';
+
+var ucWordStart = require('textUtil/ucWordStart');
 var mongoose = require('lib/mongoose');
 var Schema = mongoose.Schema;
 var config = require('config');
-var troop = require('mongoose-troop');
+var mongooseTimestamp = require('lib/mongooseTimestamp');
 var fs = require('mz/fs');
 var path = require('path');
 var log = require('log')();
 var validate = require('validate');
 var countries = require('countries');
+var CourseGroup = require('./courseGroup');
 
 // make sure ref:User is resolved when a gulp task wants this model
 require('users').User;
@@ -16,7 +20,16 @@ var schema = new Schema({
   group: {
     type: Schema.Types.ObjectId,
     ref:  'CourseGroup',
+    index: true,
     required: true
+  },
+
+  courseCache: {
+    type: Schema.Types.ObjectId,
+    ref:  'Course',
+    index: true
+    // required: true
+    // assigned by the hook
   },
 
   // participation cancelled?
@@ -26,8 +39,21 @@ var schema = new Schema({
     default: true
   },
 
+  // for history how this participant was created
+  invite: {
+    type: Schema.Types.ObjectId,
+    ref:  'CourseInvite'
+    // should be required, but added after participants w/o it existed already
+  },
+
+  notes: {
+    type: String,
+    trim: true
+  },
+
   firstName:  {
     type:      String,
+    trim: true,
     validate:  [
       {validator: /\S/, msg: "Имя отсутствует."},
       {validator: validate.patterns.singleword, msg: "Имя дожно состоять из одного слова."}
@@ -37,6 +63,7 @@ var schema = new Schema({
   },
   surname:    {
     type:      String,
+    trim: true,
     validate:  [
       {validator: /\S/, msg: "Фамилия отсутствует."},
       {validator: validate.patterns.singleword, msg: "Фамилия должна состоять из одного слова."}
@@ -58,23 +85,29 @@ var schema = new Schema({
   },
   aboutLink:  {
     type:      String,
+    trim: true,
     validate:  [
-      function(value) { return value ? validate.patterns.webpageUrl.test(value) : true; },
+      function(value) {
+        return value ? validate.patterns.webpageUrl.test(value) : true;
+      },
       "Некорректный URL страницы."
     ],
     maxlength: 4 * 1024
   },
   occupation: {
     type:      String,
+    trim: true,
     maxlength: 2 * 1024
   },
   purpose:    {
     type:      String,
+    trim: true,
     maxlength: 16 * 1024
   },
 
   wishes:     {
     type:      String,
+    trim: true,
     maxlength: 16 * 1024
   },
 
@@ -90,6 +123,13 @@ var schema = new Schema({
     default: true
   },
 
+  registrantKey: { // gotowebinar api registrant key
+    type: String
+  },
+  joinUrl: {
+    type: String // gotowebinar api register joinUrl
+  },
+
   videoKey: {
     type: String
     // there may be groups without video & keys
@@ -103,6 +143,31 @@ schema.virtual('fullName').get(function () {
   return this.firstName + ' ' + this.surname;
 });
 
-schema.plugin(troop.timestamp, {useVirtual: false});
+
+schema.pre('save', function(next) {
+  var self = this;
+
+  if (this.city) {
+    this.city = ucWordStart(this.city);
+  }
+
+  if (this.group.course) {
+    if (this.group.course._id) {
+      this.courseCache = this.group.course._id;
+    } else {
+      this.courseCache = this.group.course;
+    }
+    next();
+  } else {
+    CourseGroup.findOne({_id: this.group}, function(err, group) {
+      if (err) return next(err);
+      self.courseCache = group.course;
+      next();
+    });
+  }
+});
+
+
+schema.plugin(mongooseTimestamp);
 
 module.exports = mongoose.model('CourseParticipant', schema);

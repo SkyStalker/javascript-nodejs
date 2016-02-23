@@ -33,6 +33,7 @@ module.exports = function() {
 
         // unless --no-build
         if (args.build !== false) {
+          yield* client.runInBuild(`find node_modules -maxdepth 1 -type l -delete`); // delete handlers symlinks, gulp will recreate
           yield* client.runInBuild(`NODE_ENV=production ASSET_VERSIONING=file gulp build`);
           yield* client.runInBuild('git add -A --force public manifest');
         }
@@ -42,7 +43,7 @@ module.exports = function() {
         // so I commit only if there are changes
         try {
           yield* client.runInBuild('git diff-index --quiet HEAD');
-        } catch(e) {
+        } catch (e) {
           if (e.code == 1) {
             // exit code 1 means that there's something to commit
             yield* client.runInBuild('git commit -a -m deploy');

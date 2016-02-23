@@ -5,9 +5,6 @@ const countries = require('countries');
 const CourseFeedback = require('../models/courseFeedback');
 const CourseGroup = require('../models/courseGroup');
 const Course = require('../models/course');
-const User = require('users').User;
-const _ = require('lodash');
-const CacheEntry = require('cache').CacheEntry;
 const renderFeedback = require('../lib/renderFeedback');
 
 exports.get = function*() {
@@ -15,28 +12,47 @@ exports.get = function*() {
   var skip = +this.query.skip || 0;
   var limit = 10;
 
-  var filter = {
-    isPublic: true
-  };
+  var filter = {};
+
+  // for non-admin user filter isPublic
+  if (!this.isAdmin) {
+    filter.$or = [{
+      isPublic: true
+    }];
+
+    // or his groups
+    if (this.user) {
+      filter.$or.push({
+        teacherCache: this.user._id
+      });
+    }
+  }
 
   if (this.query.course) {
-    let course = yield Course.findOne({slug: this.query.course}, {_id: 1});
-    if (!course) this.throw(404);
 
-    let groups = yield CourseGroup.find({course: course._id}, {_id: 1});
-    let groupIds = groups.map(function(group) { return group._id });
-    filter.group = {$in: groupIds };
+    var course = yield Course.findOne({
+      slug: this.query.course
+    });
+
+    if (!course) {
+      this.throw(404);
+    }
+
+    filter.courseCache = course._id;
   }
 
   if (this.query.teacherId) {
-    if (!mongoose.Types.ObjectId.isValid(this.query.teacherId)) this.throw(400, "teacherId is malformed");
+    if (!mongoose.Types.ObjectId.isValid(this.query.teacherId)) {
+      this.throw(400, "teacherId is malformed");
+    }
     filter.teacherCache = new mongoose.Types.ObjectId(this.query.teacherId);
   }
+
   if (this.query.stars) {
     filter.stars = +this.query.stars;
   }
 
-  let feedbacks = yield CourseFeedback.find(filter).sort({created: -1}).skip(skip).limit(limit);
+  let feedbacks = yield CourseFeedback.find(filter).sort({created: 1}).skip(skip).limit(limit);
 
 
   let feedbacksRendered = [];

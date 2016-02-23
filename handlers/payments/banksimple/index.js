@@ -1,5 +1,6 @@
 const Transaction = require('../models/transaction');
 const path = require('path');
+const money = require('money');
 
 exports.renderForm = require('./renderForm');
 
@@ -8,7 +9,8 @@ exports.createTransaction = function*(order) {
 
   var transaction = new Transaction({
     order:  order._id,
-    amount: order.amount,
+    amount: order.convertAmount('RUB'),
+    currency: 'RUB',
     status: Transaction.STATUS_PENDING,
     paymentMethod: path.basename(__dirname)
   });
@@ -23,5 +25,6 @@ exports.info = {
   name:    path.basename(__dirname),
   hasIcon: false,
   cards: ['sberbank'],
-  subtitle: 'или другой банк'
+  subtitle: 'или другой банк',
+  currency: 'RUB'
 };

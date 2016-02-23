@@ -1,8 +1,9 @@
+'use strict';
+
 var inlineCss = require('./inlineCss');
 var config = require('config');
 var fs = require('fs');
 var path = require('path');
-var _ = require('lodash');
 var jade = require('lib/serverJade');
 var mandrill = require('./mandrill');
 var logoBase64 = fs.readFileSync(path.join(config.projectRoot, 'assets/img/logo.png')).toString('base64');
@@ -34,7 +35,7 @@ function* createLetter(options) {
   }
 
   var locals = Object.create(options);
-  _.assign(locals, config.jade);
+  Object.assign(locals, config.jade);
 
   locals.lang = config.lang;
   locals.domain = config.domain;
@@ -98,13 +99,24 @@ function* send(options) {
 function* sendLetter(letter) {
 
   if (process.env.NODE_ENV == 'test' || process.env.MAILER_DISABLED) {
-    letter.transportResponse = [];
+    letter.transportResponse = letter.message.to.map(function(toItem) {
+      return {
+        email:        toItem.email,
+        status:       'sent',
+        Id:           '' + Math.random(),
+        rejectReason: null
+      };
+    });
   } else {
-    letter.transportResponse = yield mandrill.messages.send({
+    let transportResponse = yield mandrill.messages.send({
       message: letter.message
     });
 
-    letter.transportResponse = capitalizeKeys(letter.transportResponse);
+    // capitalize BEFORE assigning to letter, while it's a plain object (will be mongoose)
+    transportResponse = capitalizeKeys(transportResponse);
+
+    letter.transportResponse = transportResponse;
+
   }
 
   letter.sent = true;
@@ -126,6 +138,7 @@ exports.init = function(app) {
 
 
 exports.Letter = require('./models/letter');
+exports.inlineCss = inlineCss;
 exports.send = send;
 exports.createLetter = createLetter;
 exports.sendLetter = sendLetter;

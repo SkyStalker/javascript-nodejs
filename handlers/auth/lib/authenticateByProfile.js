@@ -1,7 +1,6 @@
 const User = require('users').User;
 const config = require('config');
 const co = require('co');
-const _ = require('lodash');
 const request = require('co-request');
 const transload = require('imgur').transload;
 const log = require('log')();

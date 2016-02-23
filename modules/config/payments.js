@@ -16,6 +16,13 @@ module.exports = {
       purse:        secret.yandexmoney.purse
     },
 
+    yakassa: {
+      shopId: secret.yakassa.shopId,
+      scid: secret.yakassa.scid,
+      secret: secret.yakassa.secret,
+      certDir: secret.yakassa.certDir
+    },
+
     payanyway: {
       id:     secret.payanyway.id,
       secret: secret.payanyway.secret
@@ -34,6 +41,18 @@ module.exports = {
       secret: secret.interkassa.secret
     },
 
-    invoice: secret.invoice
+    invoice: secret.invoice,
+
+    fail: {
+      // dev only
+    },
+
+    success: {
+      // dev only
+    },
+
+    free: {
+      // request a freebie, accepted manually
+    }
   }
 };

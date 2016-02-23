@@ -29,7 +29,7 @@ exports.post = function*() {
   // previous attempt will be automatically removed from the session
   this.session.quizzes[quiz.slug] = sessionQuiz;
 
-  sessionQuiz.questionCurrentId = _.sample(quiz.questions, 1)[0]._id;
+  sessionQuiz.questionCurrentId = _.sampleSize(quiz.questions, 1)[0]._id;
 
   this.redirect(quiz.getUrl());
 };
