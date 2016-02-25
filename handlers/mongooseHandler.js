@@ -1,9 +1,5 @@
 const mongoose = require('lib/mongoose');
 
-const clsNamespace = require('continuation-local-storage').getNamespace('app');
-
-require('cls-mongoose')(clsNamespace);
-
 exports.boot = function*() {
 
   if (process.env.NODE_ENV == 'production') {

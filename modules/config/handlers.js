@@ -6,7 +6,7 @@ const fs = require('fs');
 const ru = (process.env.NODE_LANG == 'ru' || !process.env.NODE_LANG);
 
 var handlers = [
-  'clsHandler', 'countryCode', 'mongooseHandler', 'requestId', 'requestLog', 'nocache',
+  'countryCode', 'mongooseHandler', 'requestId', 'requestLog', 'nocache',
 
   // this middleware adds this.render method
   // it is *before errorHandler*, because errors need this.render

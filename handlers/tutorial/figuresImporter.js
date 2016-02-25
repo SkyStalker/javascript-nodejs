@@ -14,7 +14,7 @@ const execSync = require('child_process').execSync;
 // TODO: use htmlhint/jslint for html/js examples
 
 function FiguresImporter(options) {
-  this.sketchtool = options.sketchtool || '/usr/local/bin/sketchtool';
+  this.sketchtool = options.sketchtool || '/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool';
 
   this.root = fs.realpathSync(options.root);
   this.figuresFilePath = options.figuresFilePath;
@@ -22,7 +22,7 @@ function FiguresImporter(options) {
 
 FiguresImporter.prototype.syncFigures = function*() {
 
-  if (!fs.existsSync('/usr/local/bin/sketchtool')) {
+  if (!fs.existsSync(this.sketchtool)) {
     log.info("No sketchtool");
     return;
   }
@@ -32,7 +32,7 @@ FiguresImporter.prototype.syncFigures = function*() {
   fse.removeSync(outputDir);
   fse.mkdirsSync(outputDir);
 
-  var artboardsByPages = JSON.parse(execSync('/usr/local/bin/sketchtool list artboards "' + this.figuresFilePath + '"', {
+  var artboardsByPages = JSON.parse(execSync(this.sketchtool + ' list artboards "' + this.figuresFilePath + '"', {
     encoding: 'utf-8'
   }));
 
@@ -63,14 +63,14 @@ FiguresImporter.prototype.syncFigures = function*() {
   }
 
   // NB: Artboards are NOT trimmed (sketchtool doesn't do that yet)
-  execSync('/usr/local/bin/sketchtool export artboards "' + this.figuresFilePath + '" ' +
+  execSync(this.sketchtool + ' export artboards "' + this.figuresFilePath + '" ' +
   '--overwriting=YES --trimmed=YES --formats=png --scales=1,2 --output="' + outputDir + '" --items=' + pngIds.join(','), {
     stdio: 'inherit',
     encoding: 'utf-8'
   });
 
   // NB: Artboards are NOT trimmed (sketchtool doesn't do that yet)
-  execSync('/usr/local/bin/sketchtool export artboards "' + this.figuresFilePath + '" ' +
+  execSync(this.sketchtool + ' export artboards "' + this.figuresFilePath + '" ' +
   '--overwriting=YES --trimmed=YES --formats=svg --output="' + outputDir + '" --items=' + svgIds.join(','), {
     stdio: 'inherit',
     encoding: 'utf-8'
