@@ -7,7 +7,7 @@ const MailList = require('../../models/mailList');
 const Letter = require('mailer').Letter;
 const CourseGroup = require('courses').CourseGroup;
 const ObjectId = require('mongoose').Types.ObjectId;
-const sendNewsletterReleaseOne = require('../../lib/sendNewsletterReleaseOne');
+const send = require('../../lib/send');
 const moment = require('momentWithLocale');
 require('mdeditor');
 
@@ -79,7 +79,7 @@ function* getToVariants() {
   let dateGreater = new Date();
   dateGreater.setDate(dateGreater.getDate() - 30);
   let groups = yield CourseGroup.find({
-    teacher: this.user._id,
+    teacher: this.isAdmin ? { $exists: true } : this.user._id,
     dateEnd: {
       $gt: dateGreater // finished not more than 1 month ago
     }
@@ -316,7 +316,7 @@ exports.post = function*() {
   case 'sendOne':
     let sendOneTo = this.request.body.sendOneTo.toLowerCase();
     yield NewsletterRelease.populate(newsletterRelease, 'user to.courseGroup to.newsletter to.mailList');
-    yield* sendNewsletterReleaseOne(newsletterRelease, sendOneTo, {noLabel: true});
+    yield* send.one(newsletterRelease, sendOneTo);
     this.addFlashMessage('success', `Письмо отослано ${sendOneTo}.`);
 
     break;

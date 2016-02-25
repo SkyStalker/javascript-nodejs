@@ -14,6 +14,7 @@ const jade = require('lib/serverJade');
 const BasicParser = require('markit').BasicParser;
 const logoBase64 = require('fs').readFileSync(path.join(config.projectRoot, 'assets/img/logo.png')).toString('base64');
 const assert = require('assert');
+const template = require('lodash/template');
 
 // options.noLabel means send one letter w/o labelId, doesn't count as a newsletter
 function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
@@ -106,7 +107,12 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
 
   // no content templating yet
   let parser = new BasicParser();
-  locals.messageBody = parser.render(newsletterRelease.content);
+
+  let content = newsletterRelease.content.replace(/PROFILE_URL/g,
+    recipient.user ? ('https://' + config.domain.main + recipient.user.getProfileUrl()) : '/profile'
+  );
+
+  locals.messageBody = parser.render(content);
 
   log.debug("Created letter to " + message.to[0].email, message, locals);
 
