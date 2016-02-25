@@ -16,13 +16,15 @@ const Letter = require('mailer').Letter;
 const config = require('config');
 const PromisePool = require('es6-promise-pool');
 const sendNewsletterReleaseOne = require('./sendNewsletterReleaseOne');
+const User = require('users').User;
 
 // simultaneous mandrill api requests count
 const MANDRILL_CONCURRENCY = 10;
 
 // returns true if sending was finished (or never started)
-module.exports = function*() {
+module.exports = send;
 
+function* send() {
 
   let newsletterRelease = yield NewsletterRelease.findOneAndUpdate({
     sendScheduledAt: {
@@ -93,6 +95,42 @@ module.exports = function*() {
 
   return sendFinished;
 
+}
+
+// send to one email the letter same as it will be in batch
+send.one = function* (newsletterRelease, email) {
+
+  let recipientsByEmail = yield* makeRecipients(newsletterRelease);
+
+  let recipient = recipientsByEmail[email];
+
+  // create a dummy recipient
+  if (!recipient) {
+    let toItem = newsletterRelease.to[0];
+    if (toItem.newsletter) {
+      recipient = new Subscription({
+        newsletters: [newsletterRelease.newsletter],
+        email: email,
+        accessKey: '' + Math.random()
+      });
+    } else if (toItem.courseGroup) {
+      recipient = new CourseParticipant({
+        group: toItem.courseGroup,
+        isActive: true,
+        user: (yield User.findOne({email: email})) || new User({
+          displayName: "Tester",
+          profileName: "tester"
+          }),
+        firstName: "FirstName",
+        surname: "Surname"
+      });
+    } else {
+      recipient = email;
+    }
+  }
+
+  yield* sendNewsletterReleaseOne(newsletterRelease, recipient, {noLabel: true});
+
 };
 
 function* makeRecipients(newsletterRelease) {
@@ -115,7 +153,7 @@ function* makeRecipients(newsletterRelease) {
       let participants = yield CourseParticipant.find({
         isActive: true,
         group:    toItem.courseGroup
-      }).populate('user', 'email'); // only user email
+      }).populate('user'); // only user email now, mb something else later when formatting
 
       for (let j = 0; j < participants.length; j++) {
         let participant = participants[j];

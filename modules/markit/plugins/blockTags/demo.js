@@ -19,8 +19,7 @@ module.exports = function(md) {
       return `<a href="${href}" target="blank">${t('markit.demo.window')}</a>`;
     }
 
-
-    return `<button onclick="runDemo(this)">${t('markit.demo.run')}</button>`;
+    return `<a href="#" onclick="event.preventDefault(); runDemo(this)">${t('markit.demo.run')}</a>`;
 
   };
 

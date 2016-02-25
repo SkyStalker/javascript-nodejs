@@ -17,8 +17,6 @@ linkModules({
   src: ['client', 'styles', 'modules/*', 'handlers/*', 'extra/handlers/*']
 });
 
-require('cls'); // init CLS namespace once
-
 const config = require('config');
 const mongoose = require('lib/mongoose');
 

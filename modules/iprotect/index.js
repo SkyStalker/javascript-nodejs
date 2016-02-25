@@ -109,7 +109,7 @@ function* protect(name, filePath, targetDir) {
 
   yield* del(uniqueName);
 
-  yield fs.unlink(protectedPath); // strange bluebird/cls warning if I yield unlink
+  yield fs.unlink(protectedPath); // strange bluebird warning if I yield unlink
 
   log.debug("done", protectedPath, targetDir);
 

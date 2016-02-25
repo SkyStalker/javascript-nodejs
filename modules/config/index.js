@@ -1,8 +1,6 @@
 
 // make sure Promise is wrapped early,
 // to assign mongoose.Promise = global.Promise the wrapped variant any time later
-require('continuation-local-storage');
-
 var path = require('path');
 var fs = require('fs');
 var env = process.env;

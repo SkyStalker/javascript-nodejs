@@ -10,13 +10,6 @@ var bunyan = require('bunyan');
 var LRU = require('lru-cache');
 var os = require('os');
 
-var clsNamespace = require('continuation-local-storage').getNamespace('app');
-
-///--- Globals
-
-var sprintf = util.format;
-
-
 ///--- API
 
 /**
