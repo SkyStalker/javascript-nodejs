@@ -16,6 +16,7 @@ module.exports = {
 
   cloudflare: {},
 
+  aws: {},
   xmpp: {
     admin: {
       login: 'a',
