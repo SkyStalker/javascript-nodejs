@@ -1,6 +1,8 @@
 'use strict';
 
 const config = require('config');
+require('lib/mongoose'); // the right mongoose for a standalone run
+
 const co = require('co');
 const AWS = require('aws');
 const crypto = require('crypto');
