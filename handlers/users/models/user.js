@@ -271,6 +271,7 @@ UserSchema.statics.getInfoFields = function(user) {
     country:            user.country,
     town:               user.town,
     teacherEmail:       user.teacherEmail,
+    emailSignature:     user.emailSignature,
     publicEmail:        user.publicEmail,
     interests:          user.interests,
     email:              user.email,
@@ -282,7 +283,8 @@ UserSchema.statics.getInfoFields = function(user) {
     lastActivity:       user.lastActivity,
     profileTabsEnabled: user.profileTabsEnabled,
     aboutMe:            user.aboutMe,
-    teachesCourses:     user.teachesCourses
+    teachesCourses:     user.teachesCourses,
+    isTeacher:          user.roles.indexOf('teacher') != -1
   };
 };
 

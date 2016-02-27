@@ -37,6 +37,13 @@ var config = module.exports = {
     staticHost: env.STATIC_HOST || ''
   },
 
+
+  aws: {
+    region:          secret.aws.region,
+    accessKeyId:     secret.aws.AWSAccessKeyId,
+    secretAccessKey: secret.aws.AWSSecretKey
+  },
+
   ga: {
     id: lang == 'ru' ? 'UA-2056213-16' : 'UA-2056213-19'
   },

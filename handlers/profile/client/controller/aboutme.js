@@ -7,8 +7,9 @@ profile.controller('ProfileAboutMeCtrl', ($scope, me) => {
 
   $scope.me = me;
 
+
   $scope.markit = function(text) {
-    return new BasicParser().render(text);
+    return new BasicParser().render(text || '');
   };
 
 });

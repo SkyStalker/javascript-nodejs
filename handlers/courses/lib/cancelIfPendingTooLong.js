@@ -52,7 +52,7 @@ module.exports = function*(order) {
     yield* mailer.send({
       from:                         'orders',
       templatePath:                 path.join(__dirname, '../templates/email/orderCancel'),
-      to:                           [{email: orderUser.email}],
+      to:                           orderUser.email,
       orderSuccessSameGroupAndUser: orderSuccessSameGroupAndUser,
       orderUser:                    orderUser,
       orderGroup:                   orderGroup,

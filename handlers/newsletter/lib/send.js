@@ -183,11 +183,13 @@ function* makeRecipients(newsletterRelease) {
   // now remove those who received the newsletter already
   let received = yield Letter.find({
     labelId: newsletterRelease._id
-  }, {'message.to': 1, _id: false}).lean();
+  }, {'message.to': 1}).lean();
 
   for (let i = 0; i < received.length; i++) {
-    let emails = received[i].message.to.map(t => t.email);
-    emails.forEach(email => delete recipientsByEmail[email]);
+    if (!received[i].message.to.address) {
+      throw new Error("Message to is not an object???" + JSON.stringify(received[i]));
+    }
+    delete recipientsByEmail[received[i].message.to.address];
   }
 
   return recipientsByEmail;

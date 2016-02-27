@@ -9,9 +9,15 @@ const schema = new Schema({
 
   // freeform
   // so that any changes in the schema will not affect the store
-  payload: {}
+  payload: {},
+
+  // only message parsed
+  message: {
+  }
 });
 
-schema.index({ 'payload.Id': 1 });
+schema.index({ 'message.mail.messageId': 1 });
 
-module.exports = mongoose.model('MandrillEvent', schema);
+
+
+module.exports = mongoose.model('SQSNotification', schema);

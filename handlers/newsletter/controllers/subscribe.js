@@ -106,7 +106,7 @@ exports.post = function*() {
 
     if (subscription) {
       if (action == ACTION_ADD) {
-        respond(`Вы будете получать уведомления на эту тему на адрес ${email}.`);
+        respond(`Готово! Вы будете получать уведомления на эту тему на адрес ${email}.`);
       }
 
       if (action == ACTION_REPLACE) {

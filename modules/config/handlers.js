@@ -74,7 +74,6 @@ var handlers = [
   ru && 'payments',
   ru && 'downloadByLink',
   ru && 'newsletter',
-  ru && 'mailer',
   ru && 'courses'
 ];
 
