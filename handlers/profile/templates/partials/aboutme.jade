@@ -36,3 +36,7 @@ include /bem
       textarea.textarea-input(maxlength=600 focus-on="editing" ng-model="editingValue")
       p Только текст и ссылки, не более 600 символов.
 
+    +e('profile-field')(ng-show="me.isTeacher" field-name="emailSignature" field-format-value="markit" field-title="Подпись для email" field-value="me.emailSignature")
+      textarea.textarea-input(maxlength=600 focus-on="editing" ng-model="editingValue")
+      p Markdown
+

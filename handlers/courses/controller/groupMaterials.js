@@ -224,20 +224,27 @@ exports.post = function*() {
   yield group.persist();
 
   if (this.request.body.notify) {
+
     var recipients = participants
       .map(function(participant) {
-        return {email: participant.user.email, name: participant.fullName};
+        return {address: participant.user.email, name: participant.fullName};
       });
 
-    yield sendMail({
-      templatePath: path.join(__dirname, '../templates/email/materials'),
-      subject:      "Добавлены материалы курса",
-      to:           recipients, // recipients
-      comment:      material.comment,
-      link:         config.server.siteHost + `/courses/groups/${group.slug}/materials`,
-      fileLink:     config.server.siteHost + `/courses/download/${group.slug}/${material.filename}`,
-      fileTitle:    material.title
-    });
+    for (let i = 0; i < recipients.length; i++) {
+      let to = recipients[i];
+
+      yield* sendMail({
+        templatePath: path.join(__dirname, '../templates/email/materials'),
+        subject:      "Добавлены материалы курса",
+        to:           to,
+        comment:      material.comment,
+        link:         config.server.siteHost + `/courses/groups/${group.slug}/materials`,
+        fileLink:     config.server.siteHost + `/courses/download/${group.slug}/${material.filename}`,
+        fileTitle:    material.title
+      });
+
+
+    }
 
     this.addFlashMessage('success', 'Материал добавлен, уведомления разосланы.');
   } else {

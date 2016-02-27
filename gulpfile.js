@@ -55,9 +55,7 @@ gulp.task('migrate:up', lazyRequireTask('migrate/tasks/up'));
 gulp.task('migrate:down', lazyRequireTask('migrate/tasks/down'));
 gulp.task('migrate:create', lazyRequireTask('migrate/tasks/create'));
 
-gulp.task('courses:material:add', lazyRequireTask('courses/tasks/materialAdd'));
 gulp.task('courses:webinar:add', lazyRequireTask('courses/tasks/webinarAdd'));
-gulp.task('courses:group:send', lazyRequireTask('courses/tasks/groupSend'));
 gulp.task('courses:invite:remind', lazyRequireTask('courses/tasks/inviteRemind'));
 
 gulp.task("nodemon", lazyRequireTask('./tasks/nodemon', {
@@ -104,7 +102,6 @@ gulp.task('payments:yakassa:listOrders', lazyRequireTask('payments/yakassa/tasks
 gulp.task('payments:yakassa:returnPayment', lazyRequireTask('payments/yakassa/tasks/returnPayment'));
 
 gulp.task("newsletter:send", lazyRequireTask('newsletter/tasks/send'));
-//gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));
 
 var testSrcs = ['{handlers,modules}/**/test/**/*.js'];
 // on Travis, keys are required for E2E Selenium tests

@@ -135,7 +135,9 @@ function* renderForm(newsletterRelease) {
 
   this.locals.toVariants = yield* getToVariants.call(this);
 
-  this.locals.templates = yield NewsletterTemplate.find().sort({created: -1});
+  this.locals.templates = yield NewsletterTemplate.find({
+    user: this.user
+  }).sort({created: -1});
 
   this.locals.letterSentCount = yield Letter.count({
     labelId: newsletterRelease._id,

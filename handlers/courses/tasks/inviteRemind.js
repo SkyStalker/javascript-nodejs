@@ -42,7 +42,7 @@ module.exports = function() {
           from:         'orders',
           templatePath: path.join(__dirname, '../templates/email/inviteRemind'),
           link:         config.server.siteHost + '/courses/invite/' + invite.token,
-          to:           [{email: invite.email}],
+          to:           invite.email,
           group:        group,
           subject:      group.title + ' - вы не присоединились к группе'
         });

@@ -5,11 +5,25 @@ var config = require('config');
 var fs = require('fs');
 var path = require('path');
 var jade = require('lib/serverJade');
-var mandrill = require('./mandrill');
 var logoBase64 = fs.readFileSync(path.join(config.projectRoot, 'assets/img/logo.png')).toString('base64');
 var log = require('log')();
 var Letter = require('./models/letter');
-var capitalizeKeys = require('lib/capitalizeKeys');
+var AWS = require('aws');
+
+const nodemailer = require('nodemailer');
+const htmlToText = require('nodemailer-html-to-text').htmlToText;
+const stubTransport = require('nodemailer-stub-transport');
+const sesTransport = require('nodemailer-ses-transport');
+
+const transportEngine = (process.env.NODE_ENV == 'test' || process.env.MAILER_DISABLED) ? stubTransport() : sesTransport({
+  ses: new AWS.SES(),
+//  pool: true, not needed for SES?
+  rateLimit: 50
+});
+
+const transport = nodemailer.createTransport(transportEngine);
+
+transport.use('compile', htmlToText());
 
 // some clients don't allow svg
 // var logoSrc = yield fs.readFile(path.join(config.projectRoot, 'assets/img/logo.svg'));
@@ -48,35 +62,30 @@ function* createLetter(options) {
   var letterHtml = jade.renderFile(templatePath, locals);
   letterHtml = yield inlineCss(letterHtml);
 
-  message.html = letterHtml;
-  message.subject = options.subject;
-  message.from_email = sender.fromEmail;
-  message.from_name = sender.fromName;
+  message.from = {
+    name: sender.fromName,
+    address: sender.fromEmail
+  };
 
-  message.to = (typeof options.to == 'string') ? [{email: options.to}] : options.to;
+  message.to = (typeof options.to == 'string') ? {address: options.to} : options.to;
 
-  for (var i = 0; i < message.to.length; i++) {
-    var recepient = message.to[i];
-    if (!recepient.email) {
-      throw new Error("No email for recepient:" + recepient + " message options:" + JSON.stringify(options));
-    }
+  if (!message.to.address) {
+    throw new Error("No email for recepient, message options:" + JSON.stringify(options));
   }
+
+
+  message.html = letterHtml;
+
+  message.subject = options.subject;
 
   message.headers = options.headers;
 
-  // auto generate text by default (spamassassin wants that)
-  message.auto_text = "auto_text" in options ? options.auto_text : true;
-
-  message.track_opens = options.track_opens;
-  message.track_clicks = options.track_clicks;
-
-  var letter = yield Letter.create({
+  return yield Letter.create({
     message: message,
     labelId: options.labelId,
     label:   options.label
   });
 
-  return letter;
 }
 
 /**
@@ -98,25 +107,12 @@ function* send(options) {
  */
 function* sendLetter(letter) {
 
-  if (process.env.NODE_ENV == 'test' || process.env.MAILER_DISABLED) {
-    letter.transportResponse = letter.message.to.map(function(toItem) {
-      return {
-        email:        toItem.email,
-        status:       'sent',
-        Id:           '' + Math.random(),
-        rejectReason: null
-      };
-    });
-  } else {
-    let transportResponse = yield mandrill.messages.send({
-      message: letter.message
-    });
+  let result = yield transport.sendMail(letter.message);
 
-    // capitalize BEFORE assigning to letter, while it's a plain object (will be mongoose)
-    transportResponse = capitalizeKeys(transportResponse);
+  letter.transportResponse = result;
 
-    letter.transportResponse = transportResponse;
-
+  if (result.messageId) {
+    letter.messageId = result.messageId.replace(/@email.amazonses.com$/, '');
   }
 
   letter.sent = true;
@@ -129,11 +125,7 @@ function* sendLetter(letter) {
 }
 
 
-var mountHandlerMiddleware = require('lib/mountHandlerMiddleware');
-
 exports.init = function(app) {
-  app.verboseLogger.logPaths.add('/mailer/:any*');
-  app.use(mountHandlerMiddleware('/mailer', __dirname));
 };
 
 

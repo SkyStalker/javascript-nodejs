@@ -22,10 +22,6 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
 
   let message = {
     subject:      newsletterRelease.title,
-    // auto generate text by default (spamassassin wants that)
-    auto_text:    true,
-    track_opens:  false,
-    track_clicks: false,
     headers:      {
       Precedence: 'bulk'
     }
@@ -43,10 +39,12 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
     locals.unsubscribeUrl = config.server.siteHost + '/newsletter/subscriptions/' + recipient.accessKey;
     let sender = config.mailer.senders.informer;
 
-    message.from_email = sender.fromEmail;
-    message.from_name = sender.fromName;
+    message.from = {
+      name: sender.fromName,
+      address: sender.fromEmail
+    };
 
-    message.to = [{email: recipient.email}];
+    message.to = {address: recipient.email};
     message.headers['List-ID'] = '<from.javascript.ru>';
     message.headers['List-Unsubscribe'] = `<${locals.unsubscribeUrl}>`;
     locals.signagure = sender.signature;
@@ -54,20 +52,24 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
   } else if (recipient instanceof CourseParticipant) {
     // from release author
     assert(recipient.user.email);
-    message.to = [{
-      email: recipient.user.email,
+    message.to = {
+      address: recipient.user.email,
       name:  recipient.fullName
-    }];
+    };
 
 
     if (newsletterRelease.user.teacherEmail) {
-      message.from_email = newsletterRelease.user.teacherEmail;
-      message.from_name = newsletterRelease.user.displayName + ' (JavaScript.ru)';
+      message.from = {
+        name: newsletterRelease.user.displayName + ' (JavaScript.ru)',
+        address: newsletterRelease.user.teacherEmail
+      };
+
     } else {
       let sender = config.mailer.senders.informer;
-
-      message.from_email = sender.fromEmail;
-      message.from_name = sender.fromName;
+      message.from = {
+        name: sender.fromName,
+        address: sender.fromEmail
+      };
     }
 
     locals.signature = newsletterRelease.user.emailSignature ?
@@ -78,23 +80,30 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
 
     let sender = config.mailer.senders.informer;
 
-    message.from_email = sender.fromEmail;
-    message.from_name = sender.fromName;
-    message.to = [{email: recipient.email}];
+    message.from = {
+      name: sender.fromName,
+      address: sender.fromEmail
+    };
+
+    message.to = {address: recipient.email};
     locals.signagure = sender.signature;
 
   } else if (typeof recipient == 'string') {
     // "test letter" to string email
 
-    message.to = [{email: recipient}];
+    message.to = {address: recipient};
     if (newsletterRelease.user.teacherEmail) {
-      message.from_email = newsletterRelease.user.teacherEmail;
-      message.from_name = newsletterRelease.user.displayName + ' (JavaScript.ru)';
+      message.from = {
+        name: newsletterRelease.user.displayName + ' (JavaScript.ru)' ,
+        address: newsletterRelease.user.teacherEmail
+      };
     } else {
       let sender = config.mailer.senders.informer;
 
-      message.from_email = sender.fromEmail;
-      message.from_name = sender.fromName;
+      message.from = {
+        name: sender.fromName,
+        address: sender.fromEmail
+      };
     }
     locals.signature = newsletterRelease.user.emailSignature ?
       new BasicParser().render(newsletterRelease.user.emailSignature) :
@@ -114,7 +123,7 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
 
   locals.messageBody = parser.render(content);
 
-  log.debug("Created letter to " + message.to[0].email, message, locals);
+  log.debug("Created letter to " + message.to.address, message, locals);
 
   let letterHtml = jade.renderFile(__dirname + '/../templates/admin/email.jade', Object.assign({}, locals, message));
   letterHtml = yield mailer.inlineCss(letterHtml);
@@ -128,7 +137,7 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
 
   yield* mailer.sendLetter(letter);
 
-  log.debug("Sent letter to " + message.to[0].email);
+  log.debug("Sent letter to " + message.to.address);
 }
 
 

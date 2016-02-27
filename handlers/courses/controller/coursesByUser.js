@@ -131,9 +131,6 @@ exports.get = function*(next) {
     }, {
       url:   `/courses/groups/${group.slug}/participants-info`,
       title: 'Анкеты участников'
-    }, {
-      url:   `/courses/groups/${group.slug}/letters`,
-      title: 'Рассылки по группе'
     }];
 
 
