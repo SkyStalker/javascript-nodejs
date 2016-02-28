@@ -7,5 +7,13 @@ const co = require('co');
 const send = require('../lib/send');
 
 co(function*()  {
-  yield* send();
-}).catch(console.error);
+  while(true) {
+    yield* send();
+
+    yield function(callback) {
+      setTimeout(callback, 5000);
+    };
+  }
+}).catch(function(err) {
+  console.error(err.message, err.stack);
+});
