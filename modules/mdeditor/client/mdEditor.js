@@ -163,10 +163,13 @@ class MdEditor {
 
     this.textarea.addEventListener("input", () => this.triggerChange());
 
-    require.ensure([], (require) => {
-      let MdEditorPreview = require('./mdEditorPreview');
-      new MdEditorPreview({ editor: this });
-    });
+    // maybe preview is made with a webservice
+    if (!options.noPreview) {
+      require.ensure([], (require) => {
+        let MdEditorPreview = require('./mdEditorPreview');
+        new MdEditorPreview({editor: this});
+      });
+    }
   }
 
   triggerChange() {

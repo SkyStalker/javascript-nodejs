@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 const runSequence = require('run-sequence');
-
+const ll   = require('gulp-ll');
 
 const linkModules = require('./modules/linkModules');
 
@@ -28,6 +28,8 @@ process.on('uncaughtException', function(err) {
 const jsSources = [
   'handlers/**/*.js', 'modules/**/*.js', 'tasks/**/*.js', '*.js'
 ];
+
+
 
 function lazyRequireTask(path) {
   var args = [].slice.call(arguments, 1);
@@ -178,6 +180,7 @@ gulp.task('server', lazyRequireTask('./tasks/server'));
 
 gulp.task('edit', ['build', 'tutorial:import:watch', "client:sync-resources", 'client:livereload', 'server']);
 
+ll.tasks('nodemon', 'client:webpack');
 
 gulp.task('dev', function(callback) {
   runSequence("client:sync-resources", ['nodemon', 'client:livereload', 'client:webpack', 'watch'], callback);

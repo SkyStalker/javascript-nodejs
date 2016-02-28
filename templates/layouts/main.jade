@@ -11,7 +11,7 @@ block main
       if flashMessages
         each flashMessage in flashMessages
           +b(class=["notification", "_message", "_" + flashMessage.type])
-            +e.content= flashMessage.html
+            +e.content!= flashMessage.html
             +e('button').close(title="Закрыть" onclick="this.parentNode.remove()")
 
       if title
