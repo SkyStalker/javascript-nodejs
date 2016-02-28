@@ -45,12 +45,13 @@ function *getFailedReasons(newsletterRelease) {
         $ne: 'Delivery'
       }
     }]
-  }, {transportResponse: 1, transportState: 1});
+  });
 
   let results = {};
 
   for (let i = 0; i < letters.length; i++) {
     let letter = letters[i];
+    console.log(letter);
     results[letter.message.to.address] = letter.getFailureDescription();
   }
 
