@@ -4,11 +4,15 @@ const NewsletterTemplate = require('../../models/newsletterTemplate');
 const NewsletterRelease = require('../../models/newsletterRelease');
 const Newsletter = require('../../models/newsletter');
 const MailList = require('../../models/mailList');
+const mailer = require('mailer');
 const Letter = require('mailer').Letter;
 const CourseGroup = require('courses').CourseGroup;
 const ObjectId = require('mongoose').Types.ObjectId;
-const send = require('../../lib/send');
 const moment = require('momentWithLocale');
+const formatLetter = require('../../lib/formatLetter');
+const formatTestLetter = require('../../lib/formatTestLetter');
+const findRecipients = require('../../lib/findRecipients');
+
 require('mdeditor');
 
 function* loadById(id) {
@@ -17,12 +21,12 @@ function* loadById(id) {
   }
 
   let newsletterRelease = yield NewsletterRelease.findById(id)
-    .populate('to.courseGroup to.newsletter to.mailList');
+    .populate('user to.courseGroup to.newsletter to.mailList');
 
   if (!newsletterRelease) {
     this.throw(404);
   }
-  if (!this.isAdmin && !newsletterRelease.user.equals(this.user._id)) {
+  if (!this.isAdmin && !newsletterRelease.user._id.equals(this.user._id)) {
     this.throw(403);
   }
 
@@ -33,13 +37,12 @@ function *getFailedReasons(newsletterRelease) {
   let letters = yield Letter.find({
     labelId: newsletterRelease._id,
     $or:     [{
-      'transportResponse.status': {
-        $ne: 'sent'
+      sent: {
+        $ne: true
       }
     }, {
-      'transportState.state': {
-        $exists: true,
-        $ne: 'sent'
+      'lastSqsNotification.notificationType': {
+        $ne: 'Delivery'
       }
     }]
   }, {transportResponse: 1, transportState: 1});
@@ -48,7 +51,7 @@ function *getFailedReasons(newsletterRelease) {
 
   for (let i = 0; i < letters.length; i++) {
     let letter = letters[i];
-    Object.assign(results, letter.getFailureReasons());
+    results[letter.message.to.address] = letter.getFailureDescription();
   }
 
   return results;
@@ -79,7 +82,7 @@ function* getToVariants() {
   let dateGreater = new Date();
   dateGreater.setDate(dateGreater.getDate() - 30);
   let groups = yield CourseGroup.find({
-    teacher: this.isAdmin ? { $exists: true } : this.user._id,
+    teacher: this.isAdmin ? {$exists: true} : this.user._id,
     dateEnd: {
       $gt: dateGreater // finished not more than 1 month ago
     }
@@ -222,7 +225,7 @@ exports.post = function*() {
 
   // save the data, then apply actions
   try {
-    yield newsletterRelease.persist();
+    yield newsletterRelease.validate();
   } catch (e) {
     if (e.name != 'ValidationError') throw e;
 
@@ -231,15 +234,20 @@ exports.post = function*() {
       errors[key] = e.errors[key].message;
     }
 
-    this.locals.title = "Редактировать шаблон";
-
-    yield* renderForm.call(this, newsletterRelease);
+    this.status = 400;
+    if (this.accepts('html', 'json') == 'html') {
+      this.locals.title = "Редактировать рассылку";
+      yield* renderForm.call(this, newsletterRelease);
+    } else {
+      this.body = {errors};
+    }
     return;
-  }
 
+  }
 
   switch (this.request.body.action) {
   case 'save':
+    yield newsletterRelease.persist();
     this.addFlashMessage('success', 'Рассылка сохранена.');
     // already saved
     break;
@@ -254,7 +262,7 @@ exports.post = function*() {
       title:   newsletterRelease.title,
       content: newsletterRelease.content
     });
-    this.addFlashMessage('success', 'Шаблон создан.');
+    this.addFlashMessage('success', 'Шаблон готов. <a href="../add">Создать новую рассылку</a>?');
     break;
 
   case 'send':
@@ -315,14 +323,37 @@ exports.post = function*() {
 
     break;
 
+
+  case 'preview':
+    yield NewsletterRelease.populate(newsletterRelease, 'to.courseGroup to.newsletter to.mailList');
+
+
+    let previewLetter = yield* formatTestLetter(newsletterRelease, this.user.email);
+    console.log(previewLetter.message);
+    this.body = previewLetter.message.html;
+    return;
+
   case 'sendOne':
-    let sendOneTo = this.request.body.sendOneTo.toLowerCase();
-    yield NewsletterRelease.populate(newsletterRelease, 'user to.courseGroup to.newsletter to.mailList');
-    yield* send.one(newsletterRelease, sendOneTo);
-    this.addFlashMessage('success', `Письмо отослано ${sendOneTo}.`);
+    // AJAX
+    let email = this.request.body.sendOneEmail.toLowerCase();
+    if (!email) {
+      this.status = 400;
+      this.body = {
+        errors: {
+          email: 'Нет указан email'
+        }
+      };
+      return;
+    }
+    yield NewsletterRelease.populate(newsletterRelease, 'to.courseGroup to.newsletter to.mailList');
 
-    break;
+    let letter = yield* formatTestLetter(newsletterRelease, email);
+    yield* mailer.sendLetter(letter);
 
+    this.body = {
+      message: `Письмо отослано ${email}.`
+    };
+    return;
   }
 
   this.redirect('/newsletter/admin/newsletter-releases/edit/' + newsletterRelease.id);

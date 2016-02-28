@@ -49,6 +49,10 @@ const schema = new Schema({
 
 schema.methods.getFailureDescription = function() {
 
+  if (!this.sent) {
+    return "The letter was not sent";
+  }
+
   if (!this.lastSqsNotification) {
     return "unknown";
   }

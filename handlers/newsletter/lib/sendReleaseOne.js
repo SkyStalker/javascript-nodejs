@@ -17,7 +17,7 @@ const assert = require('assert');
 const template = require('lodash/template');
 
 // options.noLabel means send one letter w/o labelId, doesn't count as a newsletter
-function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
+function* sendReleaseOne(newsletterRelease, recipient, options) {
   options = options || {};
 
   let message = {
@@ -141,4 +141,4 @@ function* sendNewsletterReleaseOne(newsletterRelease, recipient, options) {
 }
 
 
-module.exports = sendNewsletterReleaseOne;
+module.exports = sendReleaseOne;

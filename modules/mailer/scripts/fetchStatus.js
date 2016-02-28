@@ -12,9 +12,11 @@ const sqs = new AWS.SQS();
 const log = require('log')();
 
 co(function* () {
+
   while(true) {
     yield* update();
   }
+
 }).then(console.log, console.error);
 
 

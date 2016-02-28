@@ -113,8 +113,12 @@ block content
           +e("span").text Добавить в шаблоны
 
       +e.line
-        input(type="email" name="sendOneTo")
-        +b("button").button._action(type="submit" name="action" value="sendOne")
+        +b("button").button._action(type="submit" name="action" value="preview" data-newsletter-preview)
+          +e("span").text Полный preview
+
+      +e.line
+        input(type="email" name="sendOneEmail")
+        +b("button").button._action(type="button" name="action" value="sendOne" data-newsletter-send-one)
           +e("span").text Одиночное письмо
 
       if !form.sendingPid

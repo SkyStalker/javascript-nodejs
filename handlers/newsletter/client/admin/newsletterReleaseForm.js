@@ -1,6 +1,10 @@
-const xhr = require('client/xhr');
-const clientRender = require('client/clientRender');
+'use strict';
 
+const xhr = require('client/xhr');
+var Spinner = require('client/spinner');
+const clientRender = require('client/clientRender');
+var notification = require('client/notification');
+var delegate = require('client/delegate');
 const toItemEmpty = require('../../templates/admin/toItemEmpty.jade');
 
 module.exports = class NewsletterReleaseForm {
@@ -28,18 +32,56 @@ module.exports = class NewsletterReleaseForm {
     };
 
 
-    form.addEventListener('click', function(e) {
-      if (!e.target.hasAttribute('data-newsletter-to-delete')) {
-        return;
-      }
+    delegate(form, '[data-newsletter-to-delete]', 'click', function(e) {
       e.preventDefault();
       e.target.closest('.newsletter-release-form-select').remove();
     });
 
-    form.addEventListener('click', function(e) {
-      if (!e.target.hasAttribute('data-newsletter-to-add')) {
-        return;
-      }
+
+    delegate(form, '[data-newsletter-send-one]', 'click', function(e) {
+
+      let formData = new FormData(form);
+      formData.append('action', 'sendOne');
+      let request = xhr({
+        method:         'POST',
+        url:            form.getAttribute('action'),
+        normalStatuses: [200, 400],
+        body:           formData
+      });
+
+
+      let spinner = new Spinner({
+        elem:  e.target,
+        size:  'small',
+        class: '',
+        elemClass: 'button_loading'
+      });
+      spinner.start();
+
+      request.addEventListener('loadend', function() {
+        spinner.stop();
+      });
+
+
+      request.addEventListener('success', (event) => {
+        if (request.status == 400) {
+          let message = "Ошибки:<ul>";
+          for (let key in event.result.errors) {
+            message += "<li>"+event.result.errors[key]+"</li>";
+          }
+          message += "</ul>";
+          new notification.Error(message);
+        } else {
+          new notification.Success(event.result.message);
+        }
+      });
+
+
+    });
+
+
+
+    delegate(form, '[data-newsletter-to-add]', 'click', function(e) {
       e.preventDefault();
 
       let selectBlocks = form.querySelectorAll('.newsletter-release-form-select');
@@ -57,6 +99,18 @@ module.exports = class NewsletterReleaseForm {
            toVariants,
         i: selectBlocks.length
       }));
+    });
+
+    let previewWindow;
+    delegate(form, '[data-newsletter-preview]', 'click', function(e) {
+
+      if (!previewWindow || previewWindow.closed) {
+        previewWindow = window.open("about:blank", "newsletterPreview", "width=600,height=" + (window.innerHeight - 100));
+      }
+      form.target = 'newsletterPreview';
+      setTimeout(function() {
+        form.target = '';
+      }, 100);
     });
   }
 };

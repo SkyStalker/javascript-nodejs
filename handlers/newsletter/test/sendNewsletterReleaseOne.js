@@ -10,7 +10,7 @@ const Subscription = require('../models/subscription');
 const NewsletterRelease = require('../models/newsletterRelease');
 const Letter = require('mailer').Letter;
 const should = require('should');
-const sendNewsletterReleaseOne = require('../lib/sendNewsletterReleaseOne');
+const sendReleaseOne = require('../lib/sendReleaseOne');
 
 describe('Send NewsletterRelease', function() {
 
@@ -24,7 +24,7 @@ describe('Send NewsletterRelease', function() {
       let release = yield NewsletterRelease.findOne({})
         .populate('user to.courseGroup to.newsletter to.mailList');
 
-      yield* sendNewsletterReleaseOne(release, 'to@mail.ru');
+      yield* sendReleaseOne(release, 'to@mail.ru');
       //(yield Letter.find()).length.should.eql(0);
     });
 

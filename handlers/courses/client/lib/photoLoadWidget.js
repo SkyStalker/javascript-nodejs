@@ -44,10 +44,6 @@ function PhotoLoadWidget({elem, onSuccess, onLoadStart, onLoadEnd}) {
       onLoadEnd();
     });
 
-    request.addEventListener('fail', (event) => {
-      new notification.Error("Ошибка загрузки: " + event.reason);
-    });
-
     request.addEventListener('success', (event) => {
       if (request.status == 400) {
         new notification.Error("Неверный тип файла или изображение повреждено.");
