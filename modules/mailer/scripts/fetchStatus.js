@@ -17,7 +17,9 @@ co(function* () {
     yield* update();
   }
 
-}).then(console.log, console.error);
+}).catch(function(err) {
+  console.error(err.message, err.stack);
+});
 
 
 function* update() {
