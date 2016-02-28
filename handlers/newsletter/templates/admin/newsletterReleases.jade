@@ -36,6 +36,6 @@ block content
                 = toItem.getTitle()
 
             td= moment(newsletterRelease.created).format('DD.MM.YYYY HH:mm')
-            td= newsletterRelease.firstSentAt ? moment(newsletterRelease.firstSentAt).format('DD.MM.YYYY HH:mm') : '—'
+            td= newsletterRelease.sendFinished ? 'да' : 'нет'
 
     +e("a")(href="/newsletter/admin/newsletter-releases/add") Создать новую рассылку
