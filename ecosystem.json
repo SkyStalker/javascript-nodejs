@@ -2,7 +2,7 @@
   "apps": [
     {
       "name":               "javascript",
-      "script":             "bin/server",
+      "script":             "bin/server.js",
       "instances":          "2",
       "node_args":          "",
       "exec_mode":          "cluster_mode",
@@ -18,25 +18,41 @@
         "ASSET_VERSIONING":            "file",
         "NODE_ENV":                    "production"
       },
-      "env_learn-ru":             {
+      "env_learn-ru":       {
         "NODE_LANG":   "ru",
         "SITE_HOST":   "https://learn.javascript.ru",
         "STATIC_HOST": "https://ru.js.cx"
       },
-      "env_yuri":             {
+      "env_yuri":           {
         "NODE_LANG":   "ru",
         "SITE_HOST":   "https://learn.javascript.ru",
         "STATIC_HOST": "https://ru.js.cx"
       },
-      "env_nightly":             {
+      "env_nightly":        {
         "NODE_LANG":   "ru",
         "SITE_HOST":   "https://learn.javascript.ru",
         "STATIC_HOST": "https://ru.js.cx"
       },
-      "env_learn-en":             {
+      "env_learn-en":       {
         "NODE_LANG":   "en",
         "SITE_HOST":   "https://learn.javascript.info",
         "STATIC_HOST": "https://en.js.cx"
+      }
+    },
+    {
+      "name":               "services",
+      "script":             "bin/services.js",
+      "instances":          "1",
+      "node_args":          "",
+      "exec_mode":          "cluster_mode",
+      "max_memory_restart": "2G",
+      "log_file":           "/var/log/node/services.log",
+      "error_file":         "/var/log/node/services-err.log",
+      "out_file":           "/var/log/node/services-out.log",
+      "env":                {
+        "PM2_GRACEFUL_LISTEN_TIMEOUT": 1000,
+        "PM2_GRACEFUL_TIMEOUT":        25000,
+        "NODE_ENV":                    "development"
       }
     }
   ]
