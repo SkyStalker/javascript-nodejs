@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const fixtures = require(path.join(__dirname, './fixtures/db'));
 const app = require('app');
-const send = require('../lib/send');
+const SenderService = require('../lib/senderService');
 const Subscription = require('../models/subscription');
 const NewsletterRelease = require('../models/newsletterRelease');
 const Letter = require('mailer').Letter;
@@ -21,7 +21,7 @@ describe('Send NewsletterRelease', function() {
 
   context('when no scheduled releases', function() {
     it('does nothing', function*() {
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find({})).length.should.eql(0);
     });
   });
@@ -36,7 +36,7 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find()).length.should.eql(2);
     });
 
@@ -47,7 +47,7 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find()).length.should.eql(3);
     });
 
@@ -58,11 +58,11 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find()).length.should.eql(1);
 
       // no more to send, same count
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find()).length.should.eql(1);
 
       yield Subscription.create({
@@ -72,7 +72,7 @@ describe('Send NewsletterRelease', function() {
       });
 
       // not rescheduled yet, same count
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find()).length.should.eql(1);
 
       yield nl.persist({
@@ -80,7 +80,7 @@ describe('Send NewsletterRelease', function() {
       });
 
       // now send more
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find()).length.should.eql(2);
 
     });
@@ -92,7 +92,7 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* send();
+      yield* new SenderService({once: true}).start();
       (yield Letter.find()).length.should.eql(1);
     });
 

@@ -24,15 +24,22 @@ const CONCURRENCY = 10;
 
 module.exports = class SenderService {
 
+  constructor(options) {
+    this.options = options;
+  }
+
   *start() {
     this.state = 'running';
 
     while (this.state != 'stopping') {
       yield* this.send();
 
+      if (this.options.once) break;
+
       yield function(callback) {
         setTimeout(callback, 5000);
       };
+
     }
   }
 
@@ -113,7 +120,7 @@ module.exports = class SenderService {
       recipientsQueue.push(recipientsByEmail[email]);
     }
 
-    let sendFinished = yield* sendBatch(newsletterRelease, recipientsQueue);
+    let sendFinished = yield* this.sendBatch(newsletterRelease, recipientsQueue);
 
     if (sendFinished) {
       newsletterRelease.sendScheduledAt = undefined;
@@ -132,8 +139,9 @@ module.exports = class SenderService {
 
     let cancelled = false;
 
-    setTimeout(() => {
-      if (this.state == 'stopping') {
+    let self = this;
+    setTimeout(function checkCancel() {
+      if (self.state == 'stopping') {
         cancelled = true;
         return;
       }
