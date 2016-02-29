@@ -24,6 +24,10 @@ const CONCURRENCY = 10;
 
 module.exports = class SenderService {
 
+  constructor(options) {
+    this.options = options;
+  }
+
   *start() {
     this.state = 'running';
 
@@ -33,6 +37,7 @@ module.exports = class SenderService {
       yield function(callback) {
         setTimeout(callback, 5000);
       };
+
     }
   }
 
@@ -40,6 +45,7 @@ module.exports = class SenderService {
     this.state = 'stopping';
   }
 
+  // Public API to send one letter
   *send() {
 
     let newsletterRelease = yield NewsletterRelease.findOneAndUpdate({
@@ -113,7 +119,7 @@ module.exports = class SenderService {
       recipientsQueue.push(recipientsByEmail[email]);
     }
 
-    let sendFinished = yield* sendBatch(newsletterRelease, recipientsQueue);
+    let sendFinished = yield* this.sendBatch(newsletterRelease, recipientsQueue);
 
     if (sendFinished) {
       newsletterRelease.sendScheduledAt = undefined;
@@ -132,8 +138,9 @@ module.exports = class SenderService {
 
     let cancelled = false;
 
-    setTimeout(() => {
-      if (this.state == 'stopping') {
+    let self = this;
+    setTimeout(function checkCancel() {
+      if (self.state == 'stopping') {
         cancelled = true;
         return;
       }
