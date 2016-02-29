@@ -134,6 +134,7 @@ exports.inlineCss = inlineCss;
 exports.send = send;
 exports.createLetter = createLetter;
 exports.sendLetter = sendLetter;
+exports.StatusService = require('./lib/statusService');
 
 if (process.env.MAILER_DISABLED) {
   console.log("MAILER DISABLED");

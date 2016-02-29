@@ -14,6 +14,7 @@ let Newsletter = exports.Newsletter = require('./models/newsletter');
 exports.NewsletterRelease = require('./models/newsletterRelease');
 let Subscription = exports.Subscription = require('./models/subscription');
 exports.SubscriptionAction = require('./models/subscriptionAction');
+exports.SenderService = require('./lib/senderService');
 
 exports.populateContext = function* (context) {
 
