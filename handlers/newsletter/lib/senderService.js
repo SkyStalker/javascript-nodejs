@@ -34,8 +34,6 @@ module.exports = class SenderService {
     while (this.state != 'stopping') {
       yield* this.send();
 
-      if (this.options.once) break;
-
       yield function(callback) {
         setTimeout(callback, 5000);
       };
@@ -47,6 +45,7 @@ module.exports = class SenderService {
     this.state = 'stopping';
   }
 
+  // Public API to send one letter
   *send() {
 
     let newsletterRelease = yield NewsletterRelease.findOneAndUpdate({

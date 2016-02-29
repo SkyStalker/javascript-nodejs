@@ -21,7 +21,7 @@ describe('Send NewsletterRelease', function() {
 
   context('when no scheduled releases', function() {
     it('does nothing', function*() {
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find({})).length.should.eql(0);
     });
   });
@@ -36,7 +36,7 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find()).length.should.eql(2);
     });
 
@@ -47,7 +47,7 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find()).length.should.eql(3);
     });
 
@@ -58,11 +58,11 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find()).length.should.eql(1);
 
       // no more to send, same count
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find()).length.should.eql(1);
 
       yield Subscription.create({
@@ -72,7 +72,7 @@ describe('Send NewsletterRelease', function() {
       });
 
       // not rescheduled yet, same count
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find()).length.should.eql(1);
 
       yield nl.persist({
@@ -80,7 +80,7 @@ describe('Send NewsletterRelease', function() {
       });
 
       // now send more
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find()).length.should.eql(2);
 
     });
@@ -92,7 +92,7 @@ describe('Send NewsletterRelease', function() {
         sendScheduledAt: new Date()
       });
 
-      yield* new SenderService({once: true}).start();
+      yield* new SenderService().send();
       (yield Letter.find()).length.should.eql(1);
     });
 
