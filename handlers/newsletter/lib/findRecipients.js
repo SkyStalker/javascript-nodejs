@@ -30,7 +30,7 @@ module.exports = function*(newsletterRelease) {
       let participants = yield CourseParticipant.find({
         isActive: true,
         group:    toItem.courseGroup
-      }).populate('user'); // only user email now, mb something else later when formatting
+      }).populate('user group');
 
       for (let j = 0; j < participants.length; j++) {
         let participant = participants[j];

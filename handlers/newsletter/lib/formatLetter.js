@@ -123,8 +123,14 @@ module.exports = function*(newsletterRelease, recipient, options) {
   // no content templating yet
   let parser = new BasicParser();
 
-  let content = newsletterRelease.content.replace(/PROFILE_URL/g,
+  let content = newsletterRelease.content;
+
+  content = content.replace(/PROFILE_URL/g,
     recipient.user ? ('https://' + config.domain.main + recipient.user.getProfileUrl()) : '/profile'
+  );
+
+  content = content.replace(/GROUP_FEEDBACK_URL/g,
+    'https://' + config.domain.main + recipient.group.getFeedbackUrl()
   );
 
   locals.messageBody = parser.render(content);
