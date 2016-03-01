@@ -111,6 +111,7 @@
     "prismjs": "*",
     "request": "*",
     "request-promise": "*",
+    "rupture": "^0.6.1",
     "sanitize-html": "*",
     "send": "*",
     "sha256": "*",

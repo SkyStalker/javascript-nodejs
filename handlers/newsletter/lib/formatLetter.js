@@ -129,9 +129,11 @@ module.exports = function*(newsletterRelease, recipient, options) {
     recipient.user ? ('https://' + config.domain.main + recipient.user.getProfileUrl()) : '/profile'
   );
 
-  content = content.replace(/GROUP_FEEDBACK_URL/g,
-    'https://' + config.domain.main + recipient.group.getFeedbackUrl()
-  );
+  if (recipient.group) {
+    content = content.replace(/GROUP_FEEDBACK_URL/g,
+      'https://' + config.domain.main + recipient.group.getFeedbackUrl()
+    );
+  }
 
   locals.messageBody = parser.render(content);
 
