@@ -16,7 +16,7 @@ const currencies = require('country-data').currencies;
 module.exports = function() {
 
   var args = require('yargs')
-    .example('gulp payments:yakassa:returnPayment --number 12345678 --amount 1234 --invoiceId 200232')
+    .example('gulp payments:yakassa:returnPayment --number 12345678 [--amount 1234 --invoiceId 200232]')
     .demand(['number'])
     .argv;
 

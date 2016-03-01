@@ -28,7 +28,7 @@ module.exports = function(config) {
 
   var modulesDirectories = ['node_modules'];
   if (process.env.NODE_PATH) {
-    modulesDirectories = modulesDirectories.concat(process.env.NODE_PATH.split(":").map(p => path.resolve(p)));
+    modulesDirectories = modulesDirectories.concat(process.env.NODE_PATH.split(/[:;]/).map(p => path.resolve(p)));
   }
 
   var webpackConfig = {

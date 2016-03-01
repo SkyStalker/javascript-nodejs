@@ -2,9 +2,11 @@
 
 const CourseParticipant = require('../models/courseParticipant');
 const CourseInvite = require('courses').CourseInvite;
-const _ = require('lodash');
-const sendOrderInvites = require('./sendOrderInvites');
+const uniq = require('lodash/uniq');
+const keyBy = require('lodash/keyBy');
 const Order = require('payments').Order;
+const createOrderInvites = require('./createOrderInvites');
+const sendInvite = require('./sendInvite');
 
 // called by payments/common/order
 module.exports = function*() {
@@ -18,7 +20,7 @@ module.exports = function*() {
     return {email: p.user.email, user: p.user.profileName};
   }));
 
-  let participantsByEmail = _.keyBy(participants, function(participant) {
+  let participantsByEmail = keyBy(participants, function(participant) {
     return participant.user.email;
   });
 
@@ -29,18 +31,18 @@ module.exports = function*() {
 
   this.log.debug("invitesAccepted", invitesAccepted);
 
-  const invitesAcceptedByEmail = _.keyBy(invitesAccepted, 'email');
+  const invitesAcceptedByEmail = keyBy(invitesAccepted, 'email');
 
   if ("emails" in this.request.body) {
 
-    let emails = _.uniq(this.request.body.emails.split(',').filter(Boolean)).map(String).map(s => s.toLowerCase());
+    let emails = uniq(this.request.body.emails.split(',').filter(Boolean)).map(String).map(s => s.toLowerCase());
 
     this.log.debug("Incoming emails", emails);
 
     // email belongs to a participant
     // if invite for it was accepted (user's email may change, but invite still was accepted)
     // OR if it's participant (for old orders, invite had no order)
-    let participatingEmails = _.uniq(
+    let participatingEmails = uniq(
       Object.keys(participantsByEmail).concat(Object.keys(invitesAcceptedByEmail))
     );
 
@@ -104,7 +106,14 @@ module.exports = function*() {
 
   let invites = [];
   if (this.order.status == Order.STATUS_SUCCESS) {
-    invites = yield* sendOrderInvites(this.order);
+
+    // first create invites, (in case if mailer dies we have them all)
+    invites = yield createOrderInvites(this.order);
+
+    yield invites.map(function(invite) {
+      return sendInvite(invite);
+    });
+
   }
 
   if (invites.length) {

@@ -69,6 +69,7 @@ exports.all = function*() {
     return;
   }
 
+
   yield CourseGroup.populate(invite.group, 'course');
 
   var userByEmail = yield User.findOne({
@@ -102,6 +103,9 @@ exports.all = function*() {
     }
   }
 
+  // invite may be outdated, email changed in order settings
+  // 1 order may have many invites, many of them are invalid
+  // so let's check if the invite is still actual
   // invalid invite, person not in list
   if (!~invite.order.data.emails.indexOf(invite.email)) {
     this.body = this.render('invite/deny', {
