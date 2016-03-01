@@ -1,0 +1,39 @@
+include ../about-benefits/index
+
+mixin about-banner(data)
+  +b.about-banner
+    +e('header').header
+      +e('h1').title=data.title
+        br
+        +e('span').name=data.name 
+
+      +e('hr').line
+  
+    +about-benefits({
+      items: [
+        {
+          num: 5,
+          text: ['конференции', 'JS. Talks']
+        },
+        {
+          num: 4940,
+          text: ['участников очных', 'мастер-классов']
+        },
+        {
+          num: 1255,
+          text: ['участников', 'дистанционного обучения']
+        },
+        {
+          num: '>282000',
+          text: ['посетителей в месяц', '(на основе последнего года)']
+        },
+        {
+          num: '>24000',
+          text: ['строк на js в', 'open-source коде сайта']
+        },
+        {
+          num: '>93000',
+          text: ['строк в учебнике', 'Javascript']
+        }
+      ]
+    })

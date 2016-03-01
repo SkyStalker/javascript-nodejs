@@ -1,6 +1,11 @@
+include ../blocks/about-banner/index
+include ../blocks/about-layout/index
+include ../blocks/about-map/index
+include ../blocks/about-text/index
+include ../blocks/about-list/index
+include ../blocks/about-humans/index
 
 extends /layouts/main
-
 
 block append variables
 
@@ -11,6 +16,7 @@ block append variables
   - var mainclass = "main-headered"
 
   //- var layout_main_class = "main_width-limit"
+  
 block append head
   !=css("about")
   script(defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js")
@@ -27,128 +33,96 @@ block append head
     }
 
 block content
-  +b.about-banner
-    +e("header").header
-      +e("h1").title проект
-        br
-        +e("span").name Javascript.ru
-
-      +e("hr").line
-
-    +b.about-list
-      +e("ul").list
-        +e("li").item
-          +e("h2").num 2
-          +e("p").description
-            | конференции
-            br
-            | JS. Talks
-
-        +e("li").item
-          +e("h2").num 4940
-          +e("p").description
-            | участников очных
-            br
-            | мастер-классов
-
-        +e("li").item
-          +e("h2").num 1255
-          +e("p").description
-            | участников
-            br
-            | дистанционного обучения
-
-        +e("li").item
-          +e("h2").num >282000
-          +e("p").description
-            | посетителей в месяц
-            br
-            | (на основе последнего года)
-
-        +e("li").item
-          +e("h2").num >24000
-          +e("p").description
-            | строк на js в
-            br
-            | open-source коде сайта
-
-        +e("li").item
-          +e("h2").num >93000
-          +e("p").description
-            | строк в учебнике
-            br
-            | Javascript
-
-  +b.about-layout.columns.columns_2
-
-    +b.about-text.about-layout__left.columns__col
-      +e('h1').title О проекте
-      +e.body
-        p Javascript.ru был запущен в 2007 году и с тех пор стал одним из крупнейших русскоязычных порталов по JavaScript. Сегодня основные цели проекта это:
-        +e('ol').list
-          +e('li').item Предоставлять грамотную и актуальную информацию по JavaScript и смежным технологиям.
-          +e('li').item Популяризировать современные фронтенд-технологии.
-          +e('li').item Проводить онлайн и оффлайн-мероприятия по обучению JavaScript.
-          +e('li').item Создание сообщества JS-разработчиков и обмен знаниями.
+  +about-banner({
+    title: 'проект',
+    name: 'Javascript.ru'
+  })
+  
+  +about-layout()
+    +e.col
+      +about-text({
+        title: 'О проекте'
+      })
+        p 
+          | Javascript.ru был запущен в 2007 году и с тех пор стал одним из 
+          | крупнейших русскоязычных | порталов по JavaScript. Сегодня 
+          | основные цели проекта это:
+          
+        +about-list({
+          items: [
+            'Предоставлять грамотную и актуальную информацию по JavaScript и смежным технологиям.',
+            'Популяризировать современные фронтенд-технологии.',
+            'Проводить онлайн и оффлайн-мероприятия по обучению JavaScript.',
+            'Создание сообщества JS-разработчиков и обмен знаниями.'
+          ]
+        })
         p
-          | Код этого сайта и содержимое учебника по Javascript находится в open-source доступе и его можно посмотреть на&nbsp;
+          | Код этого сайта и содержимое учебника по Javascript находится в 
+          | open-source доступе и его можно посмотреть на&nbsp;
           a(href="https://github.com/iliakan/javascript-nodejs") github
           | .
+          
+    +e.col
+      +about-text({
+        title: 'Люди'
+      }) 
+        +about-humans({
+          items: [
+            {
+              image: '/about/iliakan.jpg',
+              name: 'Илья Кантор',
+              url: 'https://ikantor.moikrug.ru/',
+              role: 'Координатор, тренер, JS-разработчик'
+            },
+            {
+              image: '/about/bezart.jpg',
+              name: 'Артем Безценный',
+              url: 'http://bezart.me/',
+              role: 'UX-дизайнер'
+            },
+            {
+              image: '/about/tyv.jpg',
+              name: 'Юрий Ткаченко',
+              url: 'https://ua.linkedin.com/in/tkachenkoyuri',
+              role: 'На дуде игрец'
+            },
+            {
+              image: '/about/amax.jpg',
+              name: 'Алексей Максимов',
+              url: 'https://www.linkedin.com/pub/aleksey-maximov/54/b76/215',
+              role: 'Админ'
+            },
+          ]
+        })
 
-    +b.about-text.about-layout__right.columns__col
-      +e('h1').title Люди
-      +e.body
-        +e('ul').humans
-
-          +e('li').human
-            +e('i').human-userpic
-              +e('img').human-userpic-i(src="/about/iliakan.jpg")
-            +e('h3').human-title
-              +e('a')(href="https://ikantor.moikrug.ru/") Илья Кантор
-            +e('p').human-role Координатор, тренер, JS-разработчик
-
-          +e('li').human
-            +e('i').human-userpic
-              +e('img').human-userpic-i(src="/about/bezart.jpg")
-            +e('h3').human-title
-              +e('a')(href="http://bezart.me/") Артем Безценный
-            +e('p').human-role UX-дизайнер
-
-          +e('li').human
-            +e('i').human-userpic
-              +e('img').human-userpic-i(src="/about/tyv.jpg")
-            +e('h3').human-title
-              +e('a')(href="https://ua.linkedin.com/in/tkachenkoyuri") Юрий Ткаченко
-            +e('p').human-role На дуде игрец
-
-          +e('li').human
-            +e('i').human-userpic
-              +e('img').human-userpic-i(src="/about/amax.jpg")
-            +e('h3').human-title
-              +e('a')(href="https://www.linkedin.com/pub/aleksey-maximov/54/b76/215") Алексей Максимов
-            +e('p').human-role Админ
-
-      +e('p') А также <a href="https://github.com/iliakan/javascript-nodejs/blob/master/CONTRIBUTORS.md">другие контрибьюторы</a>.
-
-  +b.about-map
-    +e('h1').title География офлайн событий
-    +e('h1').map-container#map
-
-  +b.about-layout.columns.columns_2
-
-    +b.about-text.about-layout__left.columns__col
-      +e('h1').title Принять участие в проекте
-      +e.body
-        p
-          | Если у вас есть идеи по улучшению работы сайта либо содержимого учебника по Javascript, не стесняйтесь присылать их нам либо заходите на наш&nbsp;
-          a(href="https://github.com/iliakan/javascript-nodejs") github
+        +e('p') 
+          | А также 
+          =' '
+          a(href="https://github.com/iliakan/javascript-nodejs/blob/master/CONTRIBUTORS.md") другие контрибьюторы
           | .
 
-    +b.about-text.about-layout__right.columns__col
-      +e('h1').title#contact-us Связаться с нами
-      +e.body._center
-        p
-          | Илья Кантор
+  +about-map({
+    title: 'География офлайн событий'
+  })
+
+  +about-layout()
+    +e.col
+      +about-text({
+        title: 'Принять участие в проекте'
+      })
+          p
+            | Если у вас есть идеи по улучшению работы сайта либо содержимого 
+            | учебника по Javascript, не стесняйтесь присылать их нам либо 
+            | заходите на наш&nbsp;
+            a(href="https://github.com/iliakan/javascript-nodejs") github
+            | .
+
+    +e.col
+      +about-text({
+        title: 'Принять участие в проекте',
+        center: true
+      })
+        p Илья Кантор
         p
           a(href="mailto:iliakan@javascript.ru") iliakan@javascript.ru
           br
