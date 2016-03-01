@@ -145,13 +145,15 @@ exports.get = function*() {
 
   var price = group.price;
 
+  var participantsMax = group.participantsLimit;
   if (discount && discount.data.slug.test(group.slug)) {
     price = discount.adjustAmount(price);
+    if (!participantsMax) participantsMax = 10;
   }
 
   this.locals.groupInfo = {
     price:           price,
-    participantsMax: group.participantsLimit,
+    participantsMax: participantsMax,
     slug:            group.slug
   };
 

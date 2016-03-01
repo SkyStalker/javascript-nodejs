@@ -11,12 +11,6 @@ const assert = require('assert');
 const runSequence = require('run-sequence');
 const ll   = require('gulp-ll');
 
-const linkModules = require('./modules/linkModules');
-
-linkModules({
-  src: ['client', 'styles', 'modules/*', 'handlers/*', 'extra/handlers/*']
-});
-
 const config = require('config');
 const mongoose = require('lib/mongoose');
 

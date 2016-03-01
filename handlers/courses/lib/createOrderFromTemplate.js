@@ -18,12 +18,26 @@ module.exports = function*(orderTemplate, user, requestBody) {
   };
   orderData.count = +requestBody.count;
 
-  if (group.participantsLimit === 0) {
-    throw new OrderCreateError("Извините, в этой группе уже нет мест.");
+  var discount;
+  if (requestBody.discountCode) {
+    discount = yield* Discount.findByCodeAndModule(requestBody.discountCode, 'courses');
+    if (discount && !discount.data.slug.test(group.slug)) {
+      discount = null;
+    }
   }
 
-  if (orderData.count > group.participantsLimit) {
-    throw new OrderCreateError("Извините, уже нет такого количества мест. Уменьшите количество участников до " + group.participantsLimit + '.');
+  if (!discount) {
+    if (!group.isOpenForSignup) {
+      throw new OrderCreateError("Запись в эту группу завершена, извините.");
+    }
+
+    if (group.participantsLimit === 0) {
+      throw new OrderCreateError("Извините, в этой группе уже нет мест.");
+    }
+
+    if (orderData.count > group.participantsLimit) {
+      throw new OrderCreateError("Извините, уже нет такого количества мест. Уменьшите количество участников до " + group.participantsLimit + '.');
+    }
   }
 
   orderData.contactName = String(requestBody.contactName);
@@ -46,21 +60,10 @@ module.exports = function*(orderTemplate, user, requestBody) {
 
 
   var price = group.price;
-  var discount;
-  if (requestBody.discountCode) {
-    discount = yield* Discount.findByCodeAndModule(requestBody.discountCode, 'courses');
-    if (discount && !discount.data.slug.test(group.slug)) {
-      discount = null;
-    }
-
-    if (discount) {
-      price = discount.adjustAmount(price);
-    }
+  if (discount) {
+    price = discount.adjustAmount(price);
   }
 
-  if (!group.isOpenForSignup && !discount) {
-    throw new OrderCreateError("Запись в эту группу завершена, извините.");
-  }
 
 
   var order = new Order({
