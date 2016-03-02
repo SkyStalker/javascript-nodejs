@@ -1,52 +1,42 @@
 .about-benefits
-    position absolute
-    bottom 30px
+  position absolute
+  bottom 30px
+  width 100%
+  text-align center
 
+  &__list
+    display inline-table
     width 100%
+    max-width 1200px
 
+    +below('small-tablet')
+      display block
+      text-align center
+
+  &__item
+    display table-cell
+    padding 0 10px
     text-align center
 
-    &__list
-        display inline-table
-        width 100%
-        max-width 1200px
+    +below('small-tablet')
+      display inline-block
+      margin-top 20px
 
-    &__item
-        display table-cell
+  &__num
+    font-size 2.8vw
+    line-height 2.8vw
+    font-weight bold
 
-        padding 0 10px
+    +below('tablet')
+      font-size 16px
 
-        text-align center
+    +above('largescreen')
+      font-size 42px
+      line-height 42px
 
-    &__num
-        font-size 2.8vw
-        line-height 2.8vw
-        font-weight bold
+  &__description
+    margin 10px 0 0 0
+    opacity 0.6
 
-    &__description
-        margin 10px 0 0 0
-
-        opacity 0.6
-
-    @media (min-width: largescreen)
-        &__num
-            font-size 42px
-            line-height 42px
-
-    @media tablet
-        &__num
-            font-size 16px
-
-        &__description
-            font-size 12px
-
-    @media (max-width: 690px)
-        &__list
-            display block
-
-            text-align center
-
-        &__item
-            display inline-block
-
-            margin-top 20px
+    +below('tablet')
+      font-size 12px
