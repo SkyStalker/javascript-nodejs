@@ -51,7 +51,6 @@ function *getFailedReasons(newsletterRelease) {
 
   for (let i = 0; i < letters.length; i++) {
     let letter = letters[i];
-    console.log(letter);
     results[letter.message.to.address] = letter.getFailureDescription();
   }
 
@@ -330,7 +329,6 @@ exports.post = function*() {
 
 
     let previewLetter = yield* formatTestLetter(newsletterRelease, this.user.email);
-    console.log(previewLetter.message);
     this.body = previewLetter.message.html;
     return;
 
