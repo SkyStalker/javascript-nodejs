@@ -16,6 +16,7 @@ module.exports = {
 
   cloudflare: {},
 
+  slack: {},
   aws: {},
   xmpp: {
     admin: {

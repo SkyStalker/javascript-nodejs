@@ -78,6 +78,8 @@ var schema = new Schema({
 
 });
 
+schema.index({ 'data.emails': 1 });
+
 schema.pre('save', function(next) {
   this.modified = new Date();
 

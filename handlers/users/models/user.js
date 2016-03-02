@@ -305,7 +305,7 @@ UserSchema.methods.checkPassword = function(password) {
 };
 
 
-UserSchema.methods.softDelete = function(callback) {
+UserSchema.methods.softDelete = function*() {
   // delete this.email does not work
   // need to assign to undefined to $unset
   this.aboutMe = undefined;
@@ -332,9 +332,7 @@ UserSchema.methods.softDelete = function(callback) {
 
   this.deleted = true;
 
-  this.save(function(err, user, numberAffected) {
-    callback(err, user);
-  });
+  yield this.persist();
 };
 
 UserSchema.statics.photoDefault = "//i.imgur.com/zSGftLc.png";
