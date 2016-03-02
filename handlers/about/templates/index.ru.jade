@@ -1,4 +1,5 @@
 include ../blocks/about-banner/index
+include ../blocks/about-benefits/index
 include ../blocks/about-layout/index
 include ../blocks/about-map/index
 include ../blocks/about-text/index
@@ -8,36 +9,54 @@ include ../blocks/about-humans/index
 extends /layouts/main
 
 block append variables
-
   - var headTitle = 'Современный учебник Javascript';
   - var sitetoolbar = true
   - var header = false
-  - var layout_page_class = "page_contains_header"
-  - var mainclass = "main-headered"
+  - var layout_page_class = 'page_contains_header'
+  - var mainclass = 'main-headered'
 
-  //- var layout_main_class = "main_width-limit"
-  
 block append head
-  !=css("about")
-  script(defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js")
-  !=js("about", {defer: true})
+  !=css('about')
+  script(defer src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js')
+  !=js('about', {defer: true})
   //- google maps will call about.init() when loaded
-  script(defer src="https://maps.googleapis.com/maps/api/js?v=3.exp&&callback=about.init")
-  link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css")
-  style.
-    .leaflet-map-pane {
-      z-index: 2 !important;
-    }
-    .leaflet-google-layer {
-      z-index: 1 !important;
-    }
+  script(defer src='https://maps.googleapis.com/maps/api/js?v=3.exp&&callback=about.init')
+  link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css')
 
 block content
   +about-banner({
     title: 'проект',
     name: 'Javascript.ru'
   })
-  
+    +about-benefits({
+      items: [
+        {
+          num: 2,
+          text: ['конференции', 'JS. Talks']
+        },
+        {
+          num: 4940,
+          text: ['участников очных', 'мастер-классов']
+        },
+        {
+          num: 1255,
+          text: ['участников', 'дистанционного обучения']
+        },
+        {
+          num: '>282000',
+          text: ['посетителей в месяц', '(на основе последнего года)']
+        },
+        {
+          num: '>24000',
+          text: ['строк на js в', 'open-source коде сайта']
+        },
+        {
+          num: '>93000',
+          text: ['строк в учебнике', 'Javascript']
+        }
+      ]
+    })
+
   +about-layout()
     +e.col
       +about-text({
@@ -59,9 +78,9 @@ block content
         p
           | Код этого сайта и содержимое учебника по Javascript находится в 
           | open-source доступе и его можно посмотреть на&nbsp;
-          a(href="https://github.com/iliakan/javascript-nodejs") github
+          a(href='https://github.com/iliakan/javascript-nodejs') github
           | .
-          
+
     +e.col
       +about-text({
         title: 'Люди'
@@ -98,7 +117,7 @@ block content
         +e('p') 
           | А также 
           =' '
-          a(href="https://github.com/iliakan/javascript-nodejs/blob/master/CONTRIBUTORS.md") другие контрибьюторы
+          a(href='https://github.com/iliakan/javascript-nodejs/blob/master/CONTRIBUTORS.md') другие контрибьюторы
           | .
 
   +about-map({
@@ -114,16 +133,16 @@ block content
             | Если у вас есть идеи по улучшению работы сайта либо содержимого 
             | учебника по Javascript, не стесняйтесь присылать их нам либо 
             | заходите на наш&nbsp;
-            a(href="https://github.com/iliakan/javascript-nodejs") github
+            a(href='https://github.com/iliakan/javascript-nodejs') github
             | .
 
     +e.col
       +about-text({
-        title: 'Принять участие в проекте',
+        title: 'Связаться с нами',
         center: true
       })
         p Илья Кантор
         p
-          a(href="mailto:iliakan@javascript.ru") iliakan@javascript.ru
+          a(href='mailto:iliakan@javascript.ru') iliakan@javascript.ru
           br
           | +79035419441
