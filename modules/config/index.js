@@ -52,6 +52,13 @@ var config = module.exports = {
     id: lang == 'ru' ? 17649010 : 32184394
   },
 
+  slack: {
+    token: secret.slack.token,
+    org:   secret.slack.org,
+    host: 'slack.javascript.ru',
+    port:  3000
+  },
+
   test: {
     e2e: {
       sshHost:  secret.test.e2e.sshHost, // remote host for testing e2e callbacks

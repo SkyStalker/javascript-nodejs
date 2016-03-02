@@ -17,6 +17,7 @@ block content
         th success
         th pending
         th pending (filtered)
+        th amount
       each group in groups
         tr
           td= group.title
@@ -25,3 +26,7 @@ block content
           td= orderCounts[group.id].success
           td= orderCounts[group.id].pending
           td= orderCounts[group.id].pendingFiltered
+          td
+            = amounts[group.id].amount
+            br
+            != amounts[group.id].missing.join('<br>')

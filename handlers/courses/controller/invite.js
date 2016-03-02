@@ -157,6 +157,7 @@ function* askParticipantDetails(invite) {
     );
     participantData.user = this.user;
     participantData.group = invite.group._id;
+    participantData.invite = invite._id;
 
     if (participantData.photoId) {
       var photo = yield ImgurImage.findOne({imgurId: this.request.body.photoId}).exec();

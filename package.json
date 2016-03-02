@@ -116,6 +116,7 @@
     "send": "*",
     "sha256": "*",
     "shimmer": "*",
+    "slackin": "^0.8.2",
     "ssh2": "^0.4.8",
     "sshconf-stream": "^0.1.2",
     "style-loader": "*",
