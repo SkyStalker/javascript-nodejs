@@ -45,7 +45,7 @@ block content
         +e("label").label Кому
         if form.to.length == 0
           +b.newsletter-release-form-select
-            +b('select')(name="to-1").input-select._small.__control
+            +b('select')(name="to-0").input-select._small.__control
               +e('option').option(value='' selected)
               each variant in toVariants
                 +e('option').option(value=variant.key)= variant.value
