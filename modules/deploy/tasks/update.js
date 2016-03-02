@@ -34,7 +34,7 @@ module.exports = function() {
         yield* client.runInTarget(`npm --silent run gulp cache:clean`);
         yield* client.runInTarget(`npm --silent run gulp cloudflare:clean | bunyan`);
         if (args.withNginx) {
-          yield* client.runInTarget(`npm --silent run gulp config:nginx --prefix /etc/nginx --env production --root /js/javascript-nodejs --sslEnabled`);
+          yield* client.runInTarget(`npm --silent run -- gulp config:nginx --prefix /etc/nginx --env production --root /js/javascript-nodejs --sslEnabled`);
           yield* client.runInTarget(`/etc/init.d/nginx reload`);
         }
       } finally {
