@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var nib = require('nib');
+var rupture = require('rupture');
 var path = require('path');
 var config = require('config');
 var webpack = require('webpack');
@@ -151,6 +152,7 @@ module.exports = function(config) {
 
     stylus: {
       use: [
+        rupture(),
         nib(),
         function(style) {
           style.define('lang', config.lang);
@@ -280,4 +282,3 @@ module.exports = function(config) {
 
   return webpackConfig;
 };
-

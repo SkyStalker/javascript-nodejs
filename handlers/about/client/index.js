@@ -1,4 +1,4 @@
-require('./styles');
+require('../blocks/styles');
 var citymap = require('./citymap');
 
 /*
