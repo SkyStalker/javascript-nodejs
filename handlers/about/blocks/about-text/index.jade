@@ -1,0 +1,7 @@
+mixin about-text(data)
+  +b.about-text
+    +e('h1').title=data.title
+    +e.body(class={
+      '_center': data.center
+    })
+      block
