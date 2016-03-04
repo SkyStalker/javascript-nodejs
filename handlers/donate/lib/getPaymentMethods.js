@@ -1,6 +1,6 @@
 const payments = require('payments');
 
-var methodsEnabled = [/*'yakassa',*/ 'webmoney', 'yandexmoney', 'paypal', 'banksimple', 'banksimpleua', 'payanyway', 'interkassa'];
+var methodsEnabled = ['yakassa','webmoney', 'yandexmoney', 'paypal', 'banksimple', 'banksimpleua', 'payanyway', 'interkassa'];
 
 module.exports = function*() {
 
