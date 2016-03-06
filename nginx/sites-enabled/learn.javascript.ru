@@ -31,7 +31,8 @@ server {
 
   root         <%=root%>/public;
 
-  add_header X-Frame-Options SAMEORIGIN;
+  # js.cx
+  #add_header X-Frame-Options SAMEORIGIN;
   add_header X-Content-Type-Options nosniff;
 
   include "partial/error-pages";
