@@ -22,6 +22,8 @@ const imgDescToAttrsPlugin = require('./plugins/imgDescToAttrs');
 // (also resolves links)
 const resolveRelativeSrcPlugin = require('./plugins/resolveRelativeSrc');
 
+const resolveMdnSrcPlugin = require('./plugins/resolveMdnSrc');
+
 const imgFiguresPlugin = require('./plugins/imgFigures');
 const headerAnchorPlugin = require('./plugins/headerAnchor');
 const headerLevelShiftPlugin = require('./plugins/headerLevelShift');
@@ -60,6 +62,7 @@ module.exports = class ServerParser {
     sourceBlocksPlugin(this.md);
     imgDescToAttrsPlugin(this.md);
     resolveRelativeSrcPlugin(this.md);
+    resolveMdnSrcPlugin(this.md);
     imgFiguresPlugin(this.md);
     headerAnchorPlugin(this.md);
     headerLevelShiftPlugin(this.md);

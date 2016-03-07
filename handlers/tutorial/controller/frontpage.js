@@ -14,6 +14,7 @@ exports.get = function *get(next) {
   this.locals.siteToolbarCurrentSection = "tutorial";
   this.locals.title = "Современный учебник JavaScript";
 
+
   var tutorial = yield CacheEntry.getOrGenerate({
     key:  'tutorial:frontpage',
     tags: ['article']

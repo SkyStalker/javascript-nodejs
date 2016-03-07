@@ -34,8 +34,7 @@ function lazyRequireTask(path) {
   };
 }
 
-/* the task does nothing, used to run linkModules only */
-gulp.task('init');
+ll.tasks('nodemon', 'client:webpack', 'server');
 
 gulp.task('lint-once', lazyRequireTask('./tasks/lint', { src: jsSources }));
 gulp.task('lint-or-die', lazyRequireTask('./tasks/lint', { src: jsSources, dieOnError: true }));
@@ -172,9 +171,9 @@ gulp.task('build', function(callback) {
 
 gulp.task('server', lazyRequireTask('./tasks/server'));
 
-gulp.task('edit', ['build', 'tutorial:import:watch', "client:sync-resources", 'client:livereload', 'server']);
+// no build
+gulp.task('edit', ['tutorial:import:watch', "client:sync-resources", 'client:livereload', 'server']);
 
-ll.tasks('nodemon', 'client:webpack');
 
 gulp.task('dev', function(callback) {
   runSequence("client:sync-resources", ['nodemon', 'client:livereload', 'client:webpack', 'watch'], callback);

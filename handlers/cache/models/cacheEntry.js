@@ -72,7 +72,7 @@ schema.statics.getOrGenerate = function* (doc, generator, skipCache) {
 
   // disable cache for development
   if (process.env.NODE_ENV == 'development' && !process.env.CACHEENTRY_ENABLED || skipCache) {
-    return yield generator();
+    return yield* generator();
   }
 
   result = yield CacheEntry.findOne({key: doc.key}).exec();

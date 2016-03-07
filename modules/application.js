@@ -52,9 +52,9 @@ Application.prototype.waitBoot = function* () {
 Application.prototype.waitBootAndListen = function*(host, port) {
   yield* this.waitBoot();
 
-  yield function(callback) {
+  yield (callback) => {
     this.server = this.listen(port, host, callback);
-  }.bind(this);
+  };
 
   this.log.info('Server is listening %s:%d', host, port);
 };
