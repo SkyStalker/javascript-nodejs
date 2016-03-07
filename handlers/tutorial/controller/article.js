@@ -16,7 +16,7 @@ exports.get = function *get(next) {
   var renderedArticle = yield* CacheEntry.getOrGenerate({
     key:  'tutorial:article:' + this.params.slug,
     tags: ['article']
-  }, renderArticle.bind(this, this.params.slug));
+  }, renderArticle.bind(this, this.params.slug), process.env.TUTORIAL_CACHE_DISABLED);
 
   if (!renderedArticle) {
     yield* next;

@@ -32,7 +32,7 @@ var config = module.exports = {
 
   server: {
     port:       env.PORT || 3000,
-    host:       env.HOST || '0.0.0.0',
+    host:       env.HOST || '127.0.0.1',
     siteHost:   env.SITE_HOST || '',
     staticHost: env.STATIC_HOST || ''
   },
@@ -172,7 +172,6 @@ var config = module.exports = {
     address:   'http://ondemand.saucelabs.com:80/wd/hub'
   },
 
-  renderedCacheEnabled:  env.NODE_ENV == 'production',
   projectRoot:           process.cwd(),
   // public files, served by nginx
   publicRoot:            path.join(process.cwd(), 'public'),

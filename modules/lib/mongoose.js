@@ -29,6 +29,13 @@ if (process.env.MONGOOSE_DEBUG) {
 
 mongoose.connect(config.mongoose.uri, config.mongoose.options);
 
+if (process.env.MONGOOSE_DEBUG) {
+  mongoose.connection.emit = function(event) {
+    console.log("Mongoose connection: ", event);
+    return require('events').EventEmitter.prototype.emit.apply(this, arguments);
+  };
+}
+
 autoIncrement.initialize(mongoose.connection);
 
 // bind context now for thunkify without bind
