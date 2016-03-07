@@ -1,6 +1,6 @@
 open_task:
   sandbox:
-    tests: Open a sandbox for the task with tests.
+    tests: Open a sandbox with tests.
     no_tests: Open a sandbox for the task.
 
 open_solution:
