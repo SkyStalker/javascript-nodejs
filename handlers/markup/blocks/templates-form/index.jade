@@ -1,0 +1,29 @@
+include /blocks/text-input/index
+include /blocks/textarea-input/index
+include /blocks/button/index
+
+mixin templates-form(data)
+  +b('form').templates-form
+    +e.field
+      +e('label').label(for='title')
+        | Тема
+      +text-input()(name='title' id='title' value=data.title)
+
+    +e.field 
+      +e('label').label(for='message')
+        | Сообщение
+      +textarea-input()(name='message' id='message').templates-form__textarea
+        =data.message
+
+    +e.controls
+      +button({
+        mod: 'action'
+      })(type='submit')
+        | Сохранить
+      
+      +e('a').cancel(href='#')
+        | отмена
+        
+      if data.isEdit
+        +e('a').remove(href='#')
+          | удалить шаблон

@@ -1,0 +1,25 @@
+.templates-item
+  text-align left
+  counter-increment template-list
+  height 50px
+  display flex
+  align-items center
+  border-bottom 1px solid #E4DDD2
+  transition background-color .3s ease
+
+  &::before
+    content counter(template-list)
+    display inline-block
+    width 42px
+    text-align center
+    font-weight bold
+    font-family secondary_font
+    color #959595
+
+  &:hover
+    background-color rgba(background_blocks, 0.5)
+    text-decoration none
+    color alternate_link_color
+
+  &:last-child
+    border-bottom 0

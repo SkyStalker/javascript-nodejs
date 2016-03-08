@@ -69,6 +69,7 @@ module.exports = function(config) {
       about:                     'about/client',
       //markit: 'markit/basicParser',
       auth:                      'auth/client',
+      markup:                    'markup/client',
       angular:                   'client/angular',
       head:                      'client/head',
       tutorial:                  'tutorial/client',

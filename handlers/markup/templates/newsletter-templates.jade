@@ -1,0 +1,32 @@
+include ../blocks/templates-list/index
+
+extends /layouts/main
+
+block append variables
+  - var headTitle = 'Шаблоны рассылок';
+  - var title = 'Шаблоны рассылок';
+  - var sitetoolbar = true
+  - var header = false
+  - var layout_main_class = "main_width-limit-wide"
+  - var layout_header_class = "main__header_center"
+
+block append head
+  !=css('markup')
+
+block content
+  +templates-list({
+    items: [
+      {
+        title: 'Тема шаблона',
+        href: './new-mailing',
+      },
+      {
+        title: 'Тема шаблона, которая, скорее всего не нужна',
+        href: './new-mailing',
+      },
+      {
+        title: 'Уже и так слишком много тем шаблонов, но это еще одна',
+        href: './new-mailing',
+      },
+    ]
+  })

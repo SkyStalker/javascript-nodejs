@@ -1,0 +1,25 @@
+include /blocks/button/index
+include ../templates-item/index
+
+mixin templates-list(data)
+  - haveTemplates = data.items && data.items.length !== 0
+  +b.templates-list
+    +e.content
+      if (haveTemplates)
+        each item in data.items
+          +templates-item(item)
+      else
+        p У вас пока еще нет шаблонов
+        +e.button
+          +button({
+            mod: 'common',
+            tag: 'a'
+          })(href='./newsletter-new-template')
+            | Cоздать шаблон
+    if (haveTemplates)
+      +e.button
+        +button({
+          mod: 'common',
+          tag: 'a'
+        })(href='./newsletter-new-template')
+          | Cоздать новый шаблон
