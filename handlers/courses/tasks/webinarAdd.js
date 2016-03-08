@@ -79,9 +79,9 @@ module.exports = function() {
 
         console.log("Adding the end date");
 
-        // take last date, increase by 21 days and add to the webinar
+        // take last date, increase by 1 months and add to the webinar
         let extraEndDate = new Date(group.dateEnd);
-        extraEndDate.setDate(extraEndDate.getDate() + 21);
+        extraEndDate.setMonth(extraEndDate.getMonth() + 1);
         let extraEndDateTo = new Date(+extraEndDate + group.duration * 60 * 1000);
 
         let responsePut = yield request({
