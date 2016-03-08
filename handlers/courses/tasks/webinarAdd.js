@@ -19,14 +19,12 @@ module.exports = function() {
       .argv;
 
     return co(function*() {
-      var group = yield CourseGroup.findOne({slug: argv.group}).populate('course teacher');
+      var group = yield CourseGroup.findOne({
+        slug: argv.group
+      }).populate('course teacher');
 
       if (!group) {
         throw new Error("No group:" + argv.group);
-      }
-
-      if (group.webinarId) {
-        throw new Error("Group already has webinarId!");
       }
 
       let auth = config.gotowebinar.auth[group.teacher.profileName];
@@ -34,47 +32,85 @@ module.exports = function() {
         throw new Error("No auth config for user:" + group.teacher.profileName);
       }
 
-      let end = new Date(group.dateStart);
-      end.setMinutes(end.getMinutes() + group.duration);
 
-      let options = {
-        url: `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars`,
-        json: true,
-        headers: {
-          'Authorization': auth.accessToken,
-          'content-type': 'application/json; charset=utf-8'
-        },
-        body: {
-          subject: group.title,
-          times: [
-            {
-              startTime: group.dateStart.toJSON().replace('.000', ''),
-              endTime: end.toJSON().replace('.000', '')
-            }
-          ],
-          timeZone: "Europe/Moscow"
-        }
-      };
+      if (!group.webinarId) {
+        console.log("Creating the webinar");
+        let end = new Date(group.dateStart);
+        end.setMinutes(end.getMinutes() + group.duration);
 
-      let response = yield request.post(options);
+        let options = {
+          url:     `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars`,
+          json:    true,
+          headers: {
+            'Authorization': auth.accessToken,
+            'content-type':  'application/json; charset=utf-8'
+          },
+          body:    {
+            subject:  group.title,
+            times:    [
+              {
+                startTime: group.dateStart.toJSON().replace('.000', ''),
+                endTime:   end.toJSON().replace('.000', '')
+              }
+            ],
+            timeZone: "Europe/Moscow"
+          }
+        };
 
-      console.log(response);
+        let response = yield request.post(options);
 
-      group.webinarKey = response.webinarKey;
+        console.log("Response ", response);
 
-      let webinars = yield request({
-        url: `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars/`,
-        json: true,
-        headers: {
-          'Authorization': auth.accessToken
-        }
-      });
+        group.webinarKey = response.webinarKey;
 
-      let newWebinar = webinars.find(w => w.webinarKey == group.webinarKey);
-      group.webinarId = newWebinar.webinarID;
+        let webinars = yield request({
+          url:     `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars/`,
+          json:    true,
+          headers: {
+            'Authorization': auth.accessToken
+          }
+        });
 
-      console.log("Done", newWebinar);
-      yield group.persist();
+        let newWebinar = webinars.find(w => w.webinarKey == group.webinarKey);
+        group.webinarId = newWebinar.webinarID;
+
+        console.log("Created", newWebinar);
+        yield group.persist();
+
+        console.log("Adding the end date");
+
+        // take last date, increase by 21 days and add to the webinar
+        let extraEndDate = new Date(group.dateEnd);
+        extraEndDate.setDate(extraEndDate.getDate() + 21);
+        let extraEndDateTo = new Date(+extraEndDate + group.duration * 60 * 1000);
+
+        let responsePut = yield request({
+          method: 'PUT',
+          url:     `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars/${group.webinarKey}`,
+          json:    true,
+          headers: {
+            'Authorization': auth.accessToken,
+            'content-type':  'application/json; charset=utf-8'
+          },
+          body:    {
+            times:    [
+              {
+                startTime: group.dateStart.toJSON().replace('.000', ''),
+                endTime:   end.toJSON().replace('.000', '')
+              },
+              {
+                startTime: extraEndDate.toJSON().replace('.000', ''),
+                endTime:   extraEndDateTo.toJSON().replace('.000', '')
+              }
+            ],
+            timeZone: "Europe/Moscow"
+          }
+        });
+
+        console.log("Added end date", responsePut);
+
+      }
+
 
     });
 
