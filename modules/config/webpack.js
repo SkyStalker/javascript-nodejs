@@ -203,7 +203,7 @@ module.exports = function(config) {
 
       new ExtractTextPlugin(extHash('[name]', 'css', '[contenthash]'), {allChunks: true}),
 
-      function generateStylesList() {
+      function() {
         // create config.tmpRoot/styles.styl with common styles & styles from handlers
         let content = `
           @require '~styles/common.styl'
@@ -212,11 +212,11 @@ module.exports = function(config) {
         `;
 
         config.handlers.forEach(handler => {
-          if (fs.existsSync(`${config.projectRoot}/node_modules/${handler}/client/styles/global/common.styl`)) {
+          if (fs.existsSync(`${config.projectRoot}/handlers/${handler}/client/styles/global/common.styl`)) {
             content += `\n@require '~${handler}/client/styles/global/common.styl'`;
           }
 
-          if (fs.existsSync(`${config.projectRoot}/node_modules/${handler}/client/styles/global/${config.lang}.styl`)) {
+          if (fs.existsSync(`${config.projectRoot}/handlers/${handler}/client/styles/global/${config.lang}.styl`)) {
             content += `\n@require('~${handler}/client/styles/global/${config.lang}.styl'`;
           }
         });
