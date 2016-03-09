@@ -21,17 +21,17 @@
       "env_learn-ru":       {
         "NODE_LANG":   "ru",
         "SITE_HOST":   "https://learn.javascript.ru",
-        "STATIC_HOST": "https://learn.javascript.ru"
+        "STATIC_HOST": "https://js.cx"
       },
       "env_yuri":           {
         "NODE_LANG":   "ru",
         "SITE_HOST":   "https://learn.javascript.ru",
-        "STATIC_HOST": "https://learn.javascript.ru"
+        "STATIC_HOST": "https://js.cx"
       },
       "env_nightly":        {
         "NODE_LANG":   "ru",
         "SITE_HOST":   "https://learn.javascript.ru",
-        "STATIC_HOST": "https://learn.javascript.ru"
+        "STATIC_HOST": "https://js.cx"
       },
       "env_learn-en":       {
         "NODE_LANG":   "en",
