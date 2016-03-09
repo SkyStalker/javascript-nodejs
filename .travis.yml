@@ -64,6 +64,5 @@ notifications:
 
 # blacklist
 branches:
-  except:
-    - production-ru
-    - production-en
+  only:
+    - master
