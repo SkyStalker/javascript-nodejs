@@ -65,4 +65,5 @@ notifications:
 # blacklist
 branches:
   except:
-    - production
+    - production-ru
+    - production-en
