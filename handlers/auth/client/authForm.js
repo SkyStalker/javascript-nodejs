@@ -23,7 +23,7 @@ class AuthForm {
     this.options = options;
 
     if (!options.successRedirect) {
-      options.successRedirect = window.location.href;
+      options.successRedirect = window.STATUS_CODE < 300 ? window.location.href : '/';
     }
   }
 
