@@ -40,6 +40,12 @@ module.exports = function*(newsletterRelease, recipient, options) {
   }, config.jade);
 
 
+  // no content templating yet
+  let parser = new BasicParser({
+    html: newsletterRelease.user.hasRole('admin')
+  });
+
+
   // from = informer
   if (recipient instanceof Subscription) {
     locals.unsubscribeUrl = config.server.siteHost + '/newsletter/subscriptions/' + recipient.accessKey;
@@ -79,7 +85,7 @@ module.exports = function*(newsletterRelease, recipient, options) {
     }
 
     locals.signature = newsletterRelease.user.emailSignature ?
-      new BasicParser().render(newsletterRelease.user.emailSignature) :
+      parser.render(newsletterRelease.user.emailSignature) :
       `<em>Успешной разработки!<br>${newsletterRelease.user.displayName}</em>`;
 
   } else if (recipient instanceof MailListEmail) {
@@ -119,9 +125,6 @@ module.exports = function*(newsletterRelease, recipient, options) {
     log.error("Unknown recipient", recipient);
     throw new Error("Unknown recipient type: " + recipient);
   }
-
-  // no content templating yet
-  let parser = new BasicParser();
 
   let content = newsletterRelease.content;
 
