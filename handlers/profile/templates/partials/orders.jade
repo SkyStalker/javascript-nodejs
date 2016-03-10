@@ -10,6 +10,7 @@ include /bem
     +e('tr').data(ng-repeat-start="order in orders" ng-class="{'invoice-table__data_show_settings': order.isEditing}")
       +e('th').main
         +e('span').number Заказ&nbsp;№&nbsp;{{ order.number }}
+        = ' '
         +e('time').time(datetime="{{order.created}}") {{order.created | longDate}}
         +e('h3').title {{ order.title }}
 
