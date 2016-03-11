@@ -1,0 +1,36 @@
+.newsletter-form
+  border 4px solid #F2E7B3
+  border-radius 10px
+  padding 40px 50px
+  margin 0 auto
+  box-sizing border-box
+
+  &__field
+    margin-bottom 20px
+
+  &__button
+    margin-right 10px
+    display inline-block
+    vertical-align middle
+
+  &__remove
+    margin-left 20px
+    color color_red
+
+  &__line
+    display flex
+    flex-wrap wrap
+    justify-content space-between
+
+  &__select
+    flex-grow 1
+
+  &__link
+    width 220px
+    text-align right
+    font-size 14px
+
+    &_preview
+      &::after
+        margin-left 5px
+        @extend $font-external

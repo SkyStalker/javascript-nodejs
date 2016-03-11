@@ -1,0 +1,72 @@
+include /blocks/text-input/index
+include /blocks/textarea-input/index
+include /blocks/input-select/index
+include /blocks/button/index
+include /blocks/label/index
+
+mixin newsletter-form(data)
+  - data = data || {}
+
+  +b.newsletter-form
+    +e.field
+      +label.label(for='who')
+        | Кому
+      +e.line
+        +input-select({
+          size: 'small',
+          items: [
+            {
+              value: 'all',
+              text: 'Всем участникам группы'
+            }
+          ]
+        })(name='who' id='who' value=data.title class='newsletter-form__select')
+        +e('a').link
+          | добавить/исключить группу
+    +e.field
+      +label.label(for='template')
+        | Шаблон рассылки
+      +e.line
+        +input-select({
+          size: 'small',
+          items: [
+            {
+              value: 'new',
+              text: 'Новая рассылка'
+            }
+          ]
+        })(name='template' id='template' value=data.title class='newsletter-form__select')
+        +e('a').link
+          | управление шаблонами
+      
+    +e.field
+      +label.label(for='title')
+        | Тема
+      +text-input()(name='title' id='title' value=data.title)
+
+    +e.field 
+      +label.label(for='message')
+        +e.line
+          span 
+            | Сообщение
+          +e('a').link._preview
+            | предпросмотр
+      +textarea-input()(name='message' id='message').templates-form__textarea
+        =data.message
+
+    +e.controls
+      +e.button
+        +button({
+          mod: 'common'
+        })(type='submit')
+          | Сохранить рассылку
+        
+      +e.button
+        +button({
+          mod: 'common'
+        })(type='submit')
+          | Добавить в шаблоны
+      
+      +e('a').remove(href='#')
+        | Удалить
+        
