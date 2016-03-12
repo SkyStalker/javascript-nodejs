@@ -16,7 +16,7 @@ exports.get = function*() {
     dateEnd: {
       $gt: cutDate
     }
-  }).sort({dateStart: -1});
+  }).sort({dateEnd: -1}).populate('teacher');
 
   let orderCounts = this.locals.orderCounts = {};
   let amounts = this.locals.amounts = {};

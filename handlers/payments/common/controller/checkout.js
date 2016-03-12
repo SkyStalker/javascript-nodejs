@@ -71,6 +71,7 @@ exports.post = function*(next) {
 
   var form = yield* paymentMethod.renderForm(transaction, this.order);
 
+
   yield* transaction.log('form', form);
 
   this.body = {

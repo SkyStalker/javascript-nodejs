@@ -1,0 +1,31 @@
+extends /layouts/email
+
+block body
+
+  p Здравствуйте,
+
+  p Подтверждаем, что на сайте #{site} выписан счёт на оплату по заказу #{order.title}.
+
+  if transaction.paymentDetails.agreementRequired
+    p Вы можете скачать счёт по ссылке:
+    ul
+      li
+        a(href=invoiceUrl)= invoiceUrl
+
+    p Договор с актом – по ссылке:
+    ul
+      li
+        a(href=agreementUrl)= agreementUrl
+
+  else
+    | Вы можете скачать счёт по ссылке
+    = ' '
+    a(href=invoiceUrl)= invoiceUrl
+    | .
+
+  p
+    | Посмотреть информацию о заказе вы также можете в своём личном кабинете, по ссылке&nbsp;
+    a(href=profileOrdersUrl)= profileOrdersUrl
+    | .
+
+
