@@ -2,6 +2,7 @@ const Transaction = require('../models/transaction');
 const path = require('path');
 const config = require('config');
 const money = require('money');
+const sendMail = require('mailer').send;
 
 exports.renderForm = require('./renderForm');
 
@@ -17,6 +18,17 @@ exports.createTransaction = function*(order) {
   });
 
   yield transaction.persist();
+
+  yield sendMail({
+    from: 'orders',
+    templatePath: path.join(__dirname, 'templates/notificationEmail'),
+    site: 'https://' + config.domain.main,
+    invoiceUrl: `https://${config.domain.main}/payments/banksimpleua/${transaction.number}/invoice.docx`,
+    order: order,
+    profileOrdersUrl: `https://${config.domain.main}${order.user.getProfileUrl()}/orders`,
+    to: order.email,
+    subject: "Выписан счёт на оплату"
+  });
 
   return transaction;
 };

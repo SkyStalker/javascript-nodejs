@@ -71,6 +71,8 @@ exports.get = function*(next) {
       groupInfo.feedbackLink = `/courses/groups/${group.slug}/feedback`;
     }
 
+    groupInfo.joinUrl = participant.joinUrl;
+
     groupInfo.links = [{
       url:   group.course.getUrl(),
       title: 'Описание курса'
