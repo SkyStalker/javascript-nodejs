@@ -1,4 +1,4 @@
-include ../blocks/templates-form/index
+include ../blocks/newsletter-template/index
 
 extends /layouts/main
 
@@ -14,7 +14,7 @@ block append head
   !=css('markup')
 
 block content
-  +templates-form({
+  +newsletter-template({
     title: 'Бурый медведь',
     message: 'Бурый медведь - самый известный из своих соплеменников. Он стал персонажем многих сказок и легенд у разных народов. Его нередко можно увидеть в цирковых представлениях. Он обладает большим уровнем интеллекта, хорошо поддается дрессировке.',
     isEdit: false

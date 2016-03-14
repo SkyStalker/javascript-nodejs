@@ -1,4 +1,4 @@
-include ../blocks/templates-list/index
+include ../blocks/newsletter-templates/index
 
 extends /layouts/main
 
@@ -14,19 +14,19 @@ block append head
   !=css('markup')
 
 block content
-  +templates-list({
+  +newsletter-templates({
     items: [
       {
         title: 'Тема шаблона',
-        href: './newsletter-new-template',
+        href: './newsletter-template-edit',
       },
       {
         title: 'Тема шаблона, которая, скорее всего не нужна',
-        href: './newsletter-new-template',
+        href: './newsletter-template-edit',
       },
       {
         title: 'Уже и так слишком много тем шаблонов, но это еще одна',
-        href: './newsletter-new-template',
+        href: './newsletter-template-edit',
       },
     ]
   })

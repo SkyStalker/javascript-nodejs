@@ -75,7 +75,7 @@ mixin newsletter-form(data)
             | Сообщение
           +e('a').link._preview
             | предпросмотр
-      +textarea-input()(name='message' id='message').templates-form__textarea
+      +textarea-input()(name='message' id='message').newsletter-form__textarea
         =data.message
 
     if data.havePreview

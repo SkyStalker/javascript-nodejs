@@ -28,6 +28,7 @@
     width 100%
     display flex
     align-items center
+    flex-wrap wrap
 
     &:last-of-type
       margin-bottom 10px
@@ -65,6 +66,9 @@
       &::after
         @extend $font-external
         margin-left 5px
+
+  &__textarea
+    min-height 314px
 
   &__preview
     margin-bottom 30px
