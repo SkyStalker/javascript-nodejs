@@ -32,7 +32,7 @@ mixin newsletter-form(data)
                   text: 'Исключить'
                 }
               ]
-            })(name='action' class='newsletter-form__select')
+            })(name='action' class='newsletter-form__select newsletter-form__select_small')
             +input-select({
               size: 'small',
               items: [
@@ -70,7 +70,7 @@ mixin newsletter-form(data)
 
     +e.field 
       +label.label(for='message')
-        +e.line
+        +e.label
           span 
             | Сообщение
           +e('a').link._preview
