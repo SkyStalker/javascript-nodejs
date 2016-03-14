@@ -1,3 +1,4 @@
+include ../blocks/newsletter-failed/index
 include ../blocks/newsletter-form/index
 include ../blocks/newsletter-layout/index
 include ../blocks/newsletter-test/index
@@ -19,11 +20,15 @@ block append head
 block content
   +newsletter-layout()
     +e.section
-      +newsletter-form()
+      +newsletter-form({
+        havePreview: true,
+        haveSubgroup: true
+      })
+
     +e.section
       +newsletter-test()
+
     +e.section
       +newsletter-status({
-        status: 'planned',
-        date: '12.04.2016 13:00 UTC+3'
+        status: 'new'
       })

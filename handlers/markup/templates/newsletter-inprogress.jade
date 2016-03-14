@@ -1,3 +1,4 @@
+include ../blocks/newsletter-form/index
 include ../blocks/newsletter-layout/index
 include ../blocks/newsletter-test/index
 include ../blocks/newsletter-status/index
@@ -17,6 +18,8 @@ block append head
 
 block content
   +newsletter-layout()
+    +e.section
+      +newsletter-form()
     +e.section
       +newsletter-test()
     +e.section

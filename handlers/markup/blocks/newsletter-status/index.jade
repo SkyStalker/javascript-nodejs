@@ -17,7 +17,7 @@ mixin newsletter-status(data)
           | Эта рассылка будет разослана 
           =' '
           +e('span').highlighted
-            | 12.04.2016 13:00 UTC+3
+            =data.date
         else if status === 'inprogress'
           | Рассылка
           =' '
