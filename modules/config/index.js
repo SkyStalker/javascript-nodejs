@@ -153,7 +153,7 @@ var config = module.exports = {
     hash: {
       length:     128,
       // may be slow(!): iterations = 12000 take ~60ms to generate strong password
-      iterations: env.NODE_ENV == 'production' ? 12000 : 1
+      iterations: env.NODE_ENV == 'test' ? 1 : 12000
     }
   },
 

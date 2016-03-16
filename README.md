@@ -4,7 +4,9 @@
 
 А это исходный код для движка сайта [https://learn.javascript.ru](https://learn.javascript.ru) на платформе Node.JS.
 
+<!--
 [![Build Status](https://travis-ci.org/iliakan/javascript-nodejs.svg?branch=master)](https://travis-ci.org/iliakan/javascript-nodejs)
+-->
 
 ## Что делаем?
 

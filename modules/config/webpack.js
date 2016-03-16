@@ -69,6 +69,7 @@ module.exports = function(config) {
       about:                     'about/client',
       //markit: 'markit/basicParser',
       auth:                      'auth/client',
+      markup:                    'markup/client',
       angular:                   'client/angular',
       head:                      'client/head',
       tutorial:                  'tutorial/client',
@@ -118,7 +119,7 @@ module.exports = function(config) {
           // which must not be run in strict mode (global becomes undefined)
           // babel would make all modules strict!
           exclude: /node_modules\/(angular|prismjs|moment|blueimp-canvas-to-blob|codemirror|markdown-it)/,
-          loaders: ['ng-annotate', 'babel'] // babel will work first
+          loaders: ['ng-annotate', 'babel?presets[]=es2015,plugins[]=transform-es2015-modules-commonjs'] // babel will work first
         },
         {
           test:   /\.styl$/,
