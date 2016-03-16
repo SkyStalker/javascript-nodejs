@@ -37,12 +37,10 @@ exports.get = function*(next) {
 };
 
 /* Deleting a user */
-exports.del = function*(next) {
+exports.del = function*() {
   var user = this.params.user;
 
-  yield function(callback) {
-    user.softDelete(callback);
-  };
+  yield* user.softDelete();
 
   this.logout();
 
@@ -53,7 +51,7 @@ exports.del = function*(next) {
 };
 
 /* Partial update */
-exports.patch = function*(next) {
+exports.patch = function*() {
 
   var user = this.params.user;
 
