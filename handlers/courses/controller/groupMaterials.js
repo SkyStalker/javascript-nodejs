@@ -283,6 +283,8 @@ function* processFiles(name, files) {
 
   let jobs = [];
 
+  const tutorialFiles = ["01_dom_nodes.mp4","02_dom_console.mp4","03_traversing_dom.mp4","04_basic_dom_node_properties.mp4","05_attributes_and_custom_properties.mp4","06_searching_elements_dom.mp4","07_modifying_document.mp4","08_multi_insert.mp4","09_document_write.mp4","10_styles_and_classes.mp4","11_metrics.mp4","12_metrics_window.mp4","13_coordinates.mp4","14_introduction_browser_events.mp4","15_obtaining_event_object.mp4","js","01_intro.mp4","02_alternatives.mp4","03_browsers.mp4","04_editor.mp4","05_editor_advanced.mp4","06_hello.mp4","07_structure.mp4","08_variables.mp4","09_variable_names.mp4","10_types_intro.mp4","11_operators.mp4","12_comparison.mp4","13_uibasic.mp4","14_ifelse.mp4","15_logical_ops.mp4","16_while_for.mp4","17_break_continue.mp4","18_switch.mp4","19_function_basics.mp4","20_recursion.mp4","21_javascript_specials.mp4","22_debugging_chrome.mp4","23_strings.mp4","24_number.mp4","25_types_conversion.mp4","26_object.mp4","27_array.mp4","28_array_methods.mp4","29_datetime.mp4","30_function_is_value.mp4","31_function_declaration_expression.mp4","32_named_function_expression.mp4","33_global_object.mp4","34_closures.mp4","35_closures_usage.mp4","36_static_variables.mp4","37_with.mp4","38_arguments_pseudoarray.mp4","39_arguments-named.mp4","40_object_methods.mp4","41_this.mp4","42_decorators.mp4","43_object_conversion.mp4","44_type_detection.mp4"];
+
   for (let i = 0; i < files.length; i++) {
     let file = files[i];
 
@@ -302,7 +304,7 @@ function* processFiles(name, files) {
           }
         });
       });
-    } else if (originalFilename.match(/\.mp4$/)) {
+    } else if (originalFilename.match(/\.mp4$/) && tutorialFiles.indexOf(originalFilename) == -1) {
       jobs.push(iprotect.protect(originalFilename.replace(/\.mp4$/, ''), file.path, workingDir));
     } else {
       let filePath = path.join(workingDir, originalFilename);
