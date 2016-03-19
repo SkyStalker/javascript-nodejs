@@ -1,3 +1,6 @@
+# Disable cloudflare!
+# Does not support websocket except for enterprise
+
 server {
 
   listen 80;
@@ -19,7 +22,6 @@ server {
 
   access_log  /var/log/nginx/slack.javascript.ru.log main;
 
-  add_header X-Frame-Options SAMEORIGIN;
   add_header X-Content-Type-Options nosniff;
 
   include "partial/error-pages";
