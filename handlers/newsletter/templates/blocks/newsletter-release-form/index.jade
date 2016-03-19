@@ -5,15 +5,16 @@ include /blocks/button/index
 include /blocks/label/index
 
 mixin newsletter-release-form(form)
+
   +b("form").newsletter-release-form(method="POST" action="/newsletter/admin/newsletter-releases")
     input(type="hidden", name="_csrf", value=csrf())
     input(type="hidden", name="id", value=form.id)
 
-    +e.field
+    +e.field(data-newsletter-release-to)
       +label.label Кому
 
-      if form.to.length == 0
-        +e.line(data-newsletter-release-to-line)
+      +e.line
+        if form.to.length == 0
           +input-select({
             size:  'small',
             selected: '',
@@ -25,30 +26,30 @@ mixin newsletter-release-form(form)
             ].concat(toVariants)
           })(name='to-0' class='newsletter-release-form__select' required)
 
-      else
-        each toItem, i in form.to
-          +e.line(data-newsletter-release-to-line)
-            if i>0
+        else
+          each toItem, i in form.to
+            +e.group
+              if i>0
+                +input-select({
+                  size:  'small',
+                  items: [
+                    {
+                      value: '',
+                      text:  'Включить'
+                    },
+                    {
+                      value: 'exclude',
+                      text:  'Исключить'
+                    }
+                  ]
+                })(name='to-exclude-'+i disabled=form.sendFinished checked=toItem.exclude class='newsletter-release-form__select newsletter-release-form__select_small')
               +input-select({
                 size:  'small',
-                items: [
-                  {
-                    value: '',
-                    text:  'Включить'
-                  },
-                  {
-                    value: 'exclude',
-                    text:  'Исключить'
-                  }
-                ]
-              })(name='to-exclude-'+i disabled=form.sendFinished checked=toItem.exclude class='newsletter-release-form__select newsletter-release-form__select_small')
-            +input-select({
-              size:  'small',
-              selected: toItem.getKey(),
-              items: toVariants
-            })(name='to-'+i disabled=form.sendFinished class='newsletter-release-form__select newsletter-release-form__select_middle')
-            if (!form.sendFinished)
-              +e('a')(href='#' data-newsletter-to-delete).remove
+                selected: toItem.getKey(),
+                items: toVariants
+              })(name='to-'+i disabled=form.sendFinished class='newsletter-release-form__select newsletter-release-form__select_middle')
+              if (!form.sendFinished)
+                +e('a')(href='#' data-newsletter-to-delete).remove
 
       if (!form.sendFinished)
         +e('div')
