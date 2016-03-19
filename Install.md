@@ -41,6 +41,15 @@ git clone -b master --single-branch https://github.com/iliakan/javascript-nodejs
 npm install -g mocha bunyan gulp nodemon   
 ```
 
+Чтобы автоматически ставилась переменная `NODE_PATH`, для запуска `gulp` далее используется команда: `npm --silent run gulp --`.
+
+На практике для удобства используется alias:
+```
+alias glp="npm --silent run gulp -- "
+```
+
+Или же можно запускать gulp как: `NODE_PATH=./handlers:./modules gulp`. 
+
 ## 5. Системные пакеты
 
 Для работы также нужны Nginx, GraphicsMagick и ImageMagick (обычно используется GM, он лучше, но иногда IM).
@@ -76,7 +85,7 @@ chmod 777 /var/log/nginx
 
 Cтавим настройки для сайта запуском:
 ```
-gulp config:nginx --prefix /opt/local/etc/nginx --root /js/javascript-nodejs --env development --clear 
+npm --silent run gulp -- config:nginx --prefix /opt/local/etc/nginx --root /js/javascript-nodejs --env development --clear 
 ```
 
 Здесь `--prefix` -- место для конфигов nginx, обычно `/etc/nginx`, в случае MacPorts это `/opt/local/etc/nginx`.
@@ -100,7 +109,7 @@ gulp config:nginx --prefix /opt/local/etc/nginx --root /js/javascript-nodejs --e
 После этого выполните предыдущую секцию без `--clear` в команде: 
 
 ```
-gulp config:nginx --prefix /opt/local/etc/nginx --root /js/javascript-nodejs --env development  
+npm --silent run gulp -- config:nginx --prefix /opt/local/etc/nginx --root /js/javascript-nodejs --env development  
 ```
 
 Такая команда скопирует файлы из директории `/js/javascript-nodejs/nginx` в указанную директорию `--prefix`, но без перезаписывания.
@@ -116,7 +125,7 @@ gulp config:nginx --prefix /opt/local/etc/nginx --root /js/javascript-nodejs --e
 Инициализуйте базу сайта командой:
  
 ```
-gulp db:load --from fixture/init 
+npm --silent run gulp -- db:load --from fixture/init 
 ```
 
 
@@ -128,7 +137,7 @@ git clone -b ru --single-branch https://github.com/iliakan/javascript-tutorial
 
 После клонирования импортируйте учебник в базу командой:
 ```
-PLUNK_REMOTE_OFF=1 gulp tutorial:import --root /js/javascript-tutorial
+PLUNK_REMOTE_OFF=1 npm --silent run gulp -- tutorial:import --root /js/javascript-tutorial
 ```
 
 Здесь `/js/javascript-tutorial` -- директория с репозитарием учебника.
