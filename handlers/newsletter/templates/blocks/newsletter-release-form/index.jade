@@ -1,0 +1,134 @@
+include /blocks/text-input/index
+include /blocks/textarea-input/index
+include /blocks/input-select/index
+include /blocks/button/index
+include /blocks/label/index
+
+mixin newsletter-release-form(form)
+  +b("form").newsletter-release-form(method="POST" action="/newsletter/admin/newsletter-releases")
+    input(type="hidden", name="_csrf", value=csrf())
+    input(type="hidden", name="id", value=form.id)
+
+    +e.field
+      +label.label Кому
+
+      if form.to.length == 0
+        +e.line(data-newsletter-release-to-line)
+          +input-select({
+            size:  'small',
+            selected: '',
+            items: [
+              {
+                value: '',
+                text:  ''
+              }
+            ].concat(toVariants)
+          })(name='to-0' class='newsletter-release-form__select' required)
+
+      else
+        each toItem, i in form.to
+          +e.line(data-newsletter-release-to-line)
+            if i>0
+              +input-select({
+                size:  'small',
+                items: [
+                  {
+                    value: '',
+                    text:  'Включить'
+                  },
+                  {
+                    value: 'exclude',
+                    text:  'Исключить'
+                  }
+                ]
+              })(name='to-exclude-'+i disabled=form.sendFinished checked=toItem.exclude class='newsletter-release-form__select newsletter-release-form__select_small')
+            +input-select({
+              size:  'small',
+              selected: toItem.getKey(),
+              items: toVariants
+            })(name='to-'+i disabled=form.sendFinished class='newsletter-release-form__select newsletter-release-form__select_middle')
+            if (!form.sendFinished)
+              +e('a')(href='#' data-newsletter-to-delete).remove
+
+      if (!form.sendFinished)
+        +e('div')
+          +e('a')(href='#' data-newsletter-to-add).link добавить/исключить группу
+
+      if errors && errors.to
+        +e.err= errors.to
+
+
+
+    +e.field
+      +label.label(for='template')
+        | Шаблон рассылки
+      +e.line
+        +input-select({
+          size: 'small',
+          selected: '',
+          items: [
+            {
+              value: '',
+              text: 'Загрузить'
+            }
+          ].concat(templates)
+        })(name='template' id='template' value=form.title class='newsletter-release-form__select' data-newsletter-template-select)
+        +e('a').link(
+          href='/newsletter/admin/newsletter-templates'
+          onclick="return confirm('Текущие изменения будут потеряны, перейти?')"
+          ) управление шаблонами
+
+    +e.field
+      +label.label(for='title')
+        | Тема
+      +text-input({
+        errors: errors && errors.title
+      })(type="text", minlength=10, required, name="title", id="title", value=form.title, autofocus)
+
+
+
+
+    +e.field
+      +label.label(for='message')
+        +e.label
+          span
+            | Сообщение
+          +e('a').link._preview
+            | предпросмотр
+      +textarea-input()(name='message' id='message').newsletter-release-form__textarea
+        =form.message
+
+    if form.havePreview
+      +e.preview
+        +e.preview-link._active
+          | предпросмотр
+        +e.preview-content._active
+          p
+            b Бурый медведь
+            | - самый известный из своих соплеменников. Он стал персонажем многих
+            | сказок и легенд у разных народов. Его нередко можно увидеть в
+            | цирковых представлениях. Он обладает большим уровнем интеллекта,
+            | хорошо поддается дрессировке.
+          p
+            | Его вес от 80 до 800 килограмм, длина тела 250 см, высота в холке
+            | 120см. Самки мельче самцов. У мишки крупная голова, маленькие
+            | круглые ушки, небольшие глазки, на лапах когти. А цвет меха бурый,
+            | отсюда и его название. Медведь имеет теплую мохнатую шубу. Морда у
+            | него вытянутая. Ходит медведь тяжело, двигая лапами как-то вкось,
+            | потому его и назвали косолапым.
+
+    +e.controls
+      +e.button
+        +button({
+          mod: 'common'
+        })(type='submit')
+          | Сохранить рассылку
+
+      +e.button
+        +button({
+          mod: 'common'
+        })(type='submit')
+          | Добавить в шаблоны
+
+      +e('a').delete(href='#')
+        | Удалить

@@ -1,11 +1,32 @@
 
 include /bem
+include /blocks/input-select/index
 
-+b.newsletter-release-form-select
-  +b('select')(name="to-"+i).input-select._small.__control
-    +e('option').option(value='' selected) ---------
-    each variant in toVariants
-      +e('option').option(value=variant.key)= variant.value
-  = ' Исключить'
-  input(type="checkbox" name="to-exclude-"+i)
-  +e('a')(href='#' data-newsletter-to-delete) [x]
++input-select({
+  size:  'small',
+  selected: '',
+  items: [
+    {
+      value: '',
+      text:  'Включить'
+    },
+    {
+      value: 'exclude',
+      text:  'Исключить'
+    }
+  ]
+})(name='to-exclude-' + i class='newsletter-release-form__select newsletter-release-form__select_small')
+
++input-select({
+  size:     'small',
+  selected: '',
+  items:    [
+              {
+                value: '',
+                text:  '-----------'
+              }
+            ].concat(toVariants)
+})(name='to-'+i class='newsletter-release-form__select' required)
+
++e('a')(href='#' data-newsletter-to-delete).remove
+

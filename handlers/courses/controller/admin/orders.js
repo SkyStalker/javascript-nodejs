@@ -33,7 +33,7 @@ exports.get = function*() {
   // do we need to show all TX ?
   transactions = yield Transaction.find({
     order:  this.order._id,
-    status: {$in: [Transaction.STATUS_PENDING, Transaction.STATUS_SUCCESS]}
+    status: {$in: [Transaction.STATUS_REFUND, Transaction.STATUS_PENDING, Transaction.STATUS_SUCCESS]}
   });
 
   this.locals.order = this.order;

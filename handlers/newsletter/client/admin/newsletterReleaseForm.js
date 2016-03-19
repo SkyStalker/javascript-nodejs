@@ -34,7 +34,7 @@ module.exports = class NewsletterReleaseForm {
 
     delegate(form, '[data-newsletter-to-delete]', 'click', function(e) {
       e.preventDefault();
-      e.target.closest('.newsletter-release-form-select').remove();
+      e.target.closest('.newsletter-release-form__select').remove();
     });
 
 
@@ -84,16 +84,18 @@ module.exports = class NewsletterReleaseForm {
     delegate(form, '[data-newsletter-to-add]', 'click', function(e) {
       e.preventDefault();
 
-      let selectBlocks = form.querySelectorAll('.newsletter-release-form-select');
+      let selectBlocks = form.querySelectorAll('[data-newsletter-release-to-line]');
       let insertPoint = selectBlocks[selectBlocks.length - 1];
 
 
       let toVariants = [];
-      let selectExampleOptions = form.querySelector('.newsletter-release-form-select select').options;
+      let selectExampleOptions = form.querySelector('[data-newsletter-release-to-line] select').options;
+
       for (let i = 0; i < selectExampleOptions.length; i++) {
         let option = selectExampleOptions[i];
         toVariants.push({key: option.value, value: option.innerHTML});
       }
+
 
       insertPoint.insertAdjacentHTML('afterEnd', clientRender(toItemEmpty, {
            toVariants,

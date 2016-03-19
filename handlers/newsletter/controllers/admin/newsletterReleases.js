@@ -65,16 +65,16 @@ function* getToVariants() {
     for (let i = 0; i < newsletters.length; i++) {
       let newsletter = newsletters[i];
       variants.push({
-        key:   'newsletter:' + newsletter.id,
-        value: newsletter.title
+        value: 'newsletter:' + newsletter.id,
+        text:  newsletter.title
       });
     }
     let mailLists = yield MailList.find().sort({modified: -1});
     for (let i = 0; i < mailLists.length; i++) {
       let mailList = mailLists[i];
       variants.push({
-        key:   'mailList:' + mailList.id,
-        value: mailList.title
+        value: 'mailList:' + mailList.id,
+        text:  mailList.title
       });
     }
   }
@@ -92,8 +92,8 @@ function* getToVariants() {
     let group = groups[i];
 
     variants.push({
-      key:   'courseGroup:' + group.id,
-      value: group.title
+      value:   'courseGroup:' + group.id,
+      text: group.title
     });
   }
 
@@ -138,9 +138,14 @@ function* renderForm(newsletterRelease) {
 
   this.locals.toVariants = yield* getToVariants.call(this);
 
-  this.locals.templates = yield NewsletterTemplate.find({
+  let templates = yield NewsletterTemplate.find({
     user: this.user
   }).sort({created: -1});
+
+  this.locals.templates = templates.map(template => ({
+    value: template.id,
+    text: template.title
+  }));
 
   this.locals.letterSentCount = yield Letter.count({
     labelId: newsletterRelease._id,
