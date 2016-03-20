@@ -21,28 +21,29 @@ mixin newsletter-form(data)
             }
           ]
         })(name='who' id='who' class='newsletter-form__select')
-
+  
         if data.haveSubgroup
-          +e.group
-            +input-select({
-              size: 'small',
-              items: [
-                {
-                  value: 'remove',
-                  text: 'Исключить'
-                }
-              ]
-            })(name='action' class='newsletter-form__select newsletter-form__select_small')
-            +input-select({
-              size: 'small',
-              items: [
-                {
-                  value: 'group',
-                  text: 'Название исключенной группы'
-                }
-              ]
-            })(name='group' class='newsletter-form__select newsletter-form__select_middle')
-            +e('a').remove
+          each val in [1, 2, 3]
+            +e.group
+              +input-select({
+                size: 'small',
+                items: [
+                  {
+                    value: 'remove',
+                    text: 'Исключить'
+                  }
+                ]
+              })(name='action' class='newsletter-form__select newsletter-form__select_small')
+              +input-select({
+                size: 'small',
+                items: [
+                  {
+                    value: 'group',
+                    text: 'Название исключенной группы'
+                  }
+                ]
+              })(name='group' class='newsletter-form__select newsletter-form__select_middle')
+              +e('a').remove
 
         +e('a').link
           | добавить/исключить группу
