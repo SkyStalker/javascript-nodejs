@@ -67,7 +67,9 @@ mixin newsletter-form(data)
     +e.field
       +label.label(for='title')
         | Тема
-      +text-input()(name='title' id='title' value=data.title)
+      +text-input({
+        error: 'Поле невалидное'
+      })(name='title' id='title' value=data.title)
 
     +e.field 
       +label.label(for='message')
