@@ -12,13 +12,17 @@
 
 ## Выпуски скринкаста
 
-```warn header="Babel 5"
+````warn header="Babel 6"
 В первых частях скринкаста используется модуль `babel-loader` версии 5, который ставится через `"npm i babel-loader@5"`.
 
-Для шестой версии Babel нужно ставить `"npm i babel-loader babel-core babel-preset-es2015"` и использовать лоадер `"babel?presets[]=es2015"`.
+Текущая версия это Babel 6. Чтобы её использовать, поставьте несколько модулей:
 
-Впрочем, в Babel 6 есть много "шероховатостей", не факт что обновление на него сейчас будет оправданным.
 ```
+npm i babel-loader babel-core babel-preset-es2015 babel-plugin-transform-es2015-modules-commonjs
+```
+
+Затем замените настройки babel-loader'а в конфиге на `"babel?presets[]=es2015,plugins[]=transform-es2015-modules-commonjs"`. 
+````
 
 ## Часть 1: Введение
 
