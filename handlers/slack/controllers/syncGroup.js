@@ -1,8 +1,8 @@
 'use strict';
 
-let syncUsers = require('./syncUsers');
-let CourseGroup = require('courses').CourseGroup;
-let webClient = require('../lib/client');
+const syncUsers = require('./syncUsers');
+const CourseGroup = require('courses').CourseGroup;
+const webClient = require('../lib/client');
 const CourseParticipant = require('courses').CourseParticipant;
 
 exports.get = function*() {
