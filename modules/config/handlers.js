@@ -60,6 +60,7 @@ var handlers = [
   ru && 'ebook',
   ru && 'donate',
   ru && 'cache',
+  ru && 'slackApi',
   'search',
   'staticPage', // must be before courses & other arbitrary url stuff
   ru && 'profile',
@@ -74,8 +75,7 @@ var handlers = [
   ru && 'payments',
   ru && 'downloadByLink',
   ru && 'newsletter',
-  ru && 'courses',
-  ru && 'slackApi'
+  ru && 'courses'
 ];
 
 if (process.env.NODE_ENV == 'development') {
