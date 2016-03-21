@@ -2,6 +2,7 @@
 
 let webClient = require('./client');
 let User = require('users').User;
+const log = require('log')();
 
 module.exports = function*() {
 
@@ -20,7 +21,7 @@ module.exports = function*() {
         slackId: member.id
       }
     });
-    console.log("updated user", member.profile.email);
+    log.debug("slack sync user", member.profile.email);
   }
 
 };
