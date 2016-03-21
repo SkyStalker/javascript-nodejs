@@ -60,7 +60,7 @@ var handlers = [
   ru && 'ebook',
   ru && 'donate',
   ru && 'cache',
-  ru && 'slackApi',
+  ru && 'slack',
   'search',
   'staticPage', // must be before courses & other arbitrary url stuff
   ru && 'profile',
