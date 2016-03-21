@@ -74,7 +74,8 @@ var handlers = [
   ru && 'payments',
   ru && 'downloadByLink',
   ru && 'newsletter',
-  ru && 'courses'
+  ru && 'courses',
+  ru && 'slackApi'
 ];
 
 if (process.env.NODE_ENV == 'development') {

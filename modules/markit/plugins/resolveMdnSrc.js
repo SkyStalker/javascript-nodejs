@@ -22,8 +22,18 @@ module.exports = function(md) {
           let href = tokenUtils.attrGet(inlineToken, 'href');
 
           if (href.startsWith('mdn:')) {
-            let prefix = `https://developer.mozilla.org/${process.env.NODE_LANG == 'ru' ? 'ru' : 'en-US'}/docs/Web/JavaScript/Reference/Global_Objects/`;
-            href = prefix + href.slice(4);
+            let parts = href.slice(4).split('/');
+
+            let prefix = `https://developer.mozilla.org/${process.env.NODE_LANG == 'ru' ? 'ru' : 'en-US'}/docs/Web`;
+
+            if (parts[0] == 'js') {
+              prefix += '/JavaScript/Reference/Global_Objects/';
+            } else if (parts[0] == 'api') {
+              prefix += '/API/';
+            }
+
+            parts.shift();
+            href = prefix + parts.join('/');
 
             tokenUtils.attrReplace(inlineToken, 'href', href);
           }
