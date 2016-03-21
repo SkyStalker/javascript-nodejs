@@ -204,6 +204,10 @@ var UserSchema = new mongoose.Schema({
     }],
     default: []
   },
+  slackId: {
+    type: String
+  },
+  
   aboutMe:                   {
     type:      String,
     maxlength: 600,
@@ -309,6 +313,7 @@ UserSchema.methods.softDelete = function*() {
   // delete this.email does not work
   // need to assign to undefined to $unset
   this.aboutMe = undefined;
+  this.slackId = undefined;
   this.email = undefined;
   this.realName = undefined;
   this.displayName = 'Аккаунт удалён';

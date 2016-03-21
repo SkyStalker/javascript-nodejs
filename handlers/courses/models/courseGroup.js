@@ -65,6 +65,8 @@ var schema = new Schema({
     required: true
   },
 
+  slackGroup: {},
+
   teacher: {
     type:     Schema.Types.ObjectId,
     ref:      'User',
