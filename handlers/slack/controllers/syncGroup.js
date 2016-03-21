@@ -1,6 +1,6 @@
 'use strict';
 
-const syncUsers = require('./syncUsers');
+const syncUsers = require('../lib/syncUsers');
 const CourseGroup = require('courses').CourseGroup;
 const webClient = require('../lib/client');
 const CourseParticipant = require('courses').CourseParticipant;
