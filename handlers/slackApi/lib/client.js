@@ -1,3 +1,4 @@
+'use strict';
 
 let WebClient = require('@slack/client').WebClient;
 let config = require('config');
