@@ -1,18 +1,21 @@
 'use strict';
 
 const syncUsers = require('../lib/syncUsers');
+const syncGroups = require('../lib/syncGroups');
 const CourseGroup = require('courses').CourseGroup;
 const webClient = require('../lib/client');
 const CourseParticipant = require('courses').CourseParticipant;
 
 exports.get = function*() {
+
+  yield* syncUsers();
+  yield* syncGroups();
+
   let group = yield CourseGroup.findOne({slug: this.params.groupId});
 
   if (!group) {
     this.throw(404);
   }
-
-  yield* syncUsers();
 
   if (!group.slackGroup) {
     let response = yield new Promise((resolve, reject) => {
@@ -47,6 +50,8 @@ exports.get = function*() {
       continue;
     }
 
+    this.log.debug("Invite", user.slackId, user.email);
+    
     let response = yield new Promise((resolve, reject) => {
       webClient.groups.invite(group.slackGroup.id, user.slackId, function(err, result) {
         err ? reject(err) : resolve(result);
