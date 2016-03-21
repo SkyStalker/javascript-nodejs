@@ -207,7 +207,7 @@ var UserSchema = new mongoose.Schema({
   slackId: {
     type: String
   },
-  
+
   aboutMe:                   {
     type:      String,
     maxlength: 600,
@@ -329,6 +329,8 @@ UserSchema.methods.softDelete = function*() {
   this.passwordResetRedirect = undefined;
   this.providers = [];
   this.password = undefined;
+  this.verifiedEmailsHistory = [];
+  this.verifiedEmail = false;
   this.teachesCourses = undefined;
   this.teacherEmail = undefined;
   this.photo = undefined;
