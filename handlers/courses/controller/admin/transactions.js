@@ -54,7 +54,7 @@ exports.post = function*() {
       } // empty part
 
       hasDocuments = true;
-      let filePath = transactionDirPath + '/' + part.filename.replace(/[.\W-]/g, '');
+      let filePath = transactionDirPath + '/' + part.filename.replace(/[^-.\wа-яё]/gi, '');
       this.log.debug("Creating file " + filePath);
       let stream = part.pipe(fs.createWriteStream(filePath));
       part.on('error', function() {
