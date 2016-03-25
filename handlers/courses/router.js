@@ -27,6 +27,7 @@ router.get('/orders/:orderNumber(\\d+)', require('./controller/signup').get);
 
 router.get('/admin/orders/:orderNumber(\\d+)?', mustBeAdmin, require('./controller/admin/orders').get);
 router.post('/admin/orders/:orderNumber(\\d+)', mustBeAdmin, require('./controller/admin/orders').post);
+router.post('/admin/transactions/:transactionNumber(\\d+)', mustBeAdmin, require('./controller/admin/transactions').post);
 
 router.post('/admin/invites', mustBeAdmin, require('./controller/admin/invites').post);
 router.get('/admin/groups', mustBeAdmin, require('./controller/admin/groups').get);

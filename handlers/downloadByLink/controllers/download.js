@@ -8,7 +8,7 @@ exports.get = function*() {
 
   var downloadLink = yield ExpiringDownloadLink.findOne({
     linkId: linkId
-  }).exec();
+  });
 
   if (!downloadLink) {
     this.throw(404);

@@ -23,7 +23,7 @@ exports.createTransaction = function*(order) {
     from: 'orders',
     templatePath: path.join(__dirname, 'templates/notificationEmail'),
     site: 'https://' + config.domain.main,
-    invoiceUrl: `https://${config.domain.main}/payments/banksimpleua/${transaction.number}/invoice.docx`,
+    invoiceUrl: `https://${config.domain.main}/payments/banksimpleua/invoice-${transaction.number}.docx`,
     order: order,
     profileOrdersUrl: `https://${config.domain.main}${order.user.getProfileUrl()}/orders`,
     to: order.email,

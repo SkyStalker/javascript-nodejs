@@ -54,7 +54,8 @@ var schema = new Schema({
       companyAddress: String,
       companyMail: String,
       companyMailSent: Boolean,  // true iff paper letter sent
-      bankDetails: String
+      bankDetails: String,
+      hasDocuments: Boolean
     },
     default: {}
   },
