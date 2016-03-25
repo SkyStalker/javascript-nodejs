@@ -52,7 +52,12 @@ var schema = new Schema({
       agreementRequired: Boolean,
       contractHead: String,
       companyAddress: String,
-      companyMail: String,
+
+      companyMail: String, // deprecated
+      companyMailIndex: String,
+      companyMailWho: String,
+      companyMailAddress: String,
+
       companyMailSent: Boolean,  // true iff paper letter sent
       bankDetails: String,
       hasDocuments: Boolean

@@ -166,7 +166,7 @@ function* getOrderInfo(order) {
       } else if (transaction.paymentMethod == 'invoice') {
         var invoiceButton = `<button class="submit-button" onclick="location.href='/payments/invoice/invoice-${transaction.number}.docx'" type="button"><span class="submit-button__text">Скачать счёт</span></button>`;
         var agreementButton = transaction.paymentDetails.agreementRequired ?
-          `<button class="submit-button" onclick="location.href='/payments/invoice/${transaction.number}/agreement.docx'" type="button"><span class="submit-button__text">Скачать договор и акт</span></button>` :
+          `<button class="submit-button" onclick="location.href='/payments/invoice/agreement-${transaction.number}.docx'" type="button"><span class="submit-button__text">Скачать договор и акт</span></button>` :
           '';
 
         var documents = '';
