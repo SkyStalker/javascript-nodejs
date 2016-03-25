@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
 var Order = require('payments').Order;
 var Transaction = require('payments').Transaction;
 var User = require('users').User;
