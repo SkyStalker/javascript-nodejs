@@ -1,3 +1,6 @@
+# Disable cloudflare!
+# Does not support websocket except for enterprise
+
 server {
 
   listen 80;
@@ -19,7 +22,6 @@ server {
 
   access_log  /var/log/nginx/slack.javascript.ru.log main;
 
-  add_header X-Frame-Options SAMEORIGIN;
   add_header X-Content-Type-Options nosniff;
 
   include "partial/error-pages";
@@ -34,6 +36,12 @@ server {
     proxy_redirect off;
     proxy_buffering off;
     proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Nginx-Geo $geoip_country_code;
+    proxy_set_header Host $http_host;
     proxy_read_timeout 3600;
     proxy_send_timeout   90;
     proxy_connect_timeout 5;

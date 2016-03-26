@@ -1,6 +1,8 @@
-mixin text-input(options)
-  - options = options || {}
-  +b.div(class=['text-input', options.errors && options.errors.title && '_invalid'])
+mixin text-input(data)
+  - data = data || {}
+  +b.text-input(class={
+    _invalid: data.error
+  })
     +e('input').control&attributes(attributes)
-    if options.errors && options.errors.title
-      +e.err= options.errors.title
+    +e.err
+      =data.error

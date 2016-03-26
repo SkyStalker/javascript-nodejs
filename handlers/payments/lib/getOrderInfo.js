@@ -42,19 +42,28 @@ function* getOrderInfo(order) {
     transaction = yield Transaction.findOne({
       order:  order._id,
       status: Transaction.STATUS_SUCCESS
-    }).exec();
+    });
 
+    let descriptionProfile = '';
+    if (transaction && transaction.paymentMethod == 'invoice' && transaction.paymentDetails.agreementRequired) {
+      descriptionProfile += `<div>Вы можете повторно скачать <a href="/payments/invoice/invoice-${transaction.number}.docx">счёт</a>
+        и <a href="/payments/invoice/agreement-${transaction.number}.docx">договор с актом</a>.</div>`;
+    }
+
+    if (transaction && transaction.paymentDetails.hasDocuments) {
+      descriptionProfile += `<p>Для вас есть <b><a href="/payments/invoice/documents-${transaction.number}.zip">документы от администратора</a></b>.</p>`;
+    }
+
+
+    console.log(transaction && transaction.toObject(), descriptionProfile, '!!!!!');
     // it is possible that there is no transaction at all
     // (if order status is set manually)
     return {
       number:             order.number,
       status:             "success",
       statusText:         "Оплата получена",
-      transaction:        transaction,
-      descriptionProfile: transaction && transaction.paymentMethod == 'invoice' && transaction.paymentDetails.agreementRequired ?
-                            `Вы можете повторно скачать <a href="/payments/invoice/${transaction.number}/invoice.docx">счёт</a>
-        и <a href="/payments/invoice/${transaction.number}/agreement.docx">договор с актом</a>.` :
-                            ''
+      transaction,
+      descriptionProfile
       // no title/accent/description, because the action on success is order-module-dependant
     };
   }
@@ -132,12 +141,12 @@ function* getOrderInfo(order) {
           title:              thanks,
           accent:             `Для завершения скачайте квитанцию и оплатите ее через банк.`,
           description:        `
-          <div><button class="submit-button" onclick="location.href='/payments/banksimple/${transaction.number}/invoice.docx'" type="button"><span class="submit-button__text">Скачать квитанцию</span></button></div>
+          <div><button class="submit-button" onclick="location.href='/payments/banksimple/invoice-${transaction.number}.docx'" type="button"><span class="submit-button__text">Скачать квитанцию</span></button></div>
             <p>Квитанция действительна три дня. Оплатить можно в Сбербанке РФ (3% комиссия) или любом банке, где у вас есть счёт.</p>
             ${afterInfo}
             <p>Если у вас возникли какие-либо вопросы, присылайте их на ${mailUrl}.</p>
             `,
-          descriptionProfile: `<div>Вы можете повторно <a href="/payments/banksimple/${transaction.number}/invoice.docx">скачать квитанцию</a>. Изменить метод оплаты можно нажатием на кнопку ниже.</div>`
+          descriptionProfile: `<div>Вы можете повторно <a href="/payments/banksimple/invoice-${transaction.number}.docx">скачать квитанцию</a>. Изменить метод оплаты можно нажатием на кнопку ниже.</div>`
         };
       } else if (transaction.paymentMethod == 'banksimpleua') {
         return {
@@ -147,18 +156,23 @@ function* getOrderInfo(order) {
           transaction:        transaction,
           title:              thanks,
           accent:             `Для завершения скачайте счёт и оплатите его через банк.`,
-          description:        `<div><button class="submit-button" onclick="location.href='/payments/banksimpleua/${transaction.number}/invoice.docx'" type="button"><span class="submit-button__text">Скачать квитанцию</span></button></div>
+          description:        `<div><button class="submit-button" onclick="location.href='/payments/banksimpleua/invoice-${transaction.number}.docx'" type="button"><span class="submit-button__text">Скачать квитанцию</span></button></div>
             <p>Квитанция – в гривнах, действительна три дня.</p>
             ${afterInfo}
             <p>Если у вас возникли какие-либо вопросы, присылайте их на ${mailUrl}.</p>
             `,
-          descriptionProfile: `<div>Вы можете повторно <a href="/payments/banksimpleua/${transaction.number}/invoice.docx">скачать квитанцию</a>. Изменить метод оплаты можно нажатием на кнопку ниже.</div>`
+          descriptionProfile: `<div>Вы можете повторно <a href="/payments/banksimpleua/invoice-${transaction.number}.docx">скачать квитанцию</a>. Изменить метод оплаты можно нажатием на кнопку ниже.</div>`
         };
       } else if (transaction.paymentMethod == 'invoice') {
-        var invoiceButton = `<button class="submit-button" onclick="location.href='/payments/invoice/${transaction.number}/invoice.docx'" type="button"><span class="submit-button__text">Скачать счёт</span></button>`;
+        var invoiceButton = `<button class="submit-button" onclick="location.href='/payments/invoice/invoice-${transaction.number}.docx'" type="button"><span class="submit-button__text">Скачать счёт</span></button>`;
         var agreementButton = transaction.paymentDetails.agreementRequired ?
-          `<button class="submit-button" onclick="location.href='/payments/invoice/${transaction.number}/agreement.docx'" type="button"><span class="submit-button__text">Скачать договор и акт</span></button>` :
+          `<button class="submit-button" onclick="location.href='/payments/invoice/agreement-${transaction.number}.docx'" type="button"><span class="submit-button__text">Скачать договор и акт</span></button>` :
           '';
+
+        var documents = '';
+        if (transaction.paymentDetails && transaction.paymentDetails.hasDocuments) {
+          documents = `<p>Для вас есть <b><a href="/payments/invoice/documents-${transaction.number}.zip">документы от администратора</a></b>.</p>`;
+        }
 
         return {
           number:             order.number,
@@ -173,9 +187,9 @@ function* getOrderInfo(order) {
             <p>После оплаты мы вышлем вам всю необходимую информацию на адрес <b>${order.email}</b>.</p>
             <p>Если у вас возникли какие-либо вопросы, присылайте их на ${mailUrl}.</p>
             `,
-          descriptionProfile: `<div>Вы можете повторно <a href="/payments/invoice/${transaction.number}/invoice.docx">скачать счёт</a>` +
-                              (transaction.paymentDetails.agreementRequired ? ` и <a href="/payments/invoice/${transaction.number}/agreement.docx">договор с актом</a>` : '') +
-                              `. Изменить детали и метод оплаты можно нажатием на кнопку ниже.</div>`
+          descriptionProfile: `<div>Вы можете повторно <a href="/payments/invoice/invoice-${transaction.number}.docx">скачать счёт</a>` +
+                              (transaction.paymentDetails.agreementRequired ? ` и <a href="/payments/invoice/agreement-${transaction.number}.docx">договор с актом</a>` : '') +
+                              `. Изменить детали и метод оплаты можно нажатием на кнопку ниже.</div>${documents}`
         };
       } else {
         return {

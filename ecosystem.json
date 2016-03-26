@@ -10,13 +10,15 @@
       "log_file":           "/var/log/node/javascript.log",
       "error_file":         "/var/log/node/javascript-err.log",
       "out_file":           "/var/log/node/javascript-out.log",
+      "cwd":                "/js/javascript-nodejs",
       "env":                {
         "HOST":                        "127.0.0.1",
         "PORT":                        "3000",
         "PM2_GRACEFUL_LISTEN_TIMEOUT": 1000,
         "PM2_GRACEFUL_TIMEOUT":        5000,
         "ASSET_VERSIONING":            "file",
-        "NODE_ENV":                    "production"
+        "NODE_ENV":                    "production",
+        "NODE_PATH":                   "./handlers:./modules"
       },
       "env_learn-ru":       {
         "NODE_LANG":   "ru",
@@ -71,6 +73,5 @@
         "NODE_ENV":                    "development"
       }
     }
-
   ]
 }

@@ -60,6 +60,7 @@ module.exports = function* formatCourseOrder(order) {
 
   if (orderInfo.transaction) {
     orderToShow.paymentMethod = allPaymentMethods[orderInfo.transaction.paymentMethod].info.title;
+    orderToShow.hasDocuments = orderInfo.transaction.paymentDetails && orderInfo.transaction.paymentDetails.hasDocuments;
   }
 
   return orderToShow;

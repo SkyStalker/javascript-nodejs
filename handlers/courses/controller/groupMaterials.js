@@ -52,7 +52,7 @@ exports.get = function*() {
     logs = [];
   }
 
-  logs = logs.sort();
+  logs = logs.sort().reverse();
 
   let contents = yield logs.map(file => fs.readFile(config.jabberLogsRoot + '/' + group.webinarId + '/' + file, {encoding: 'utf8'}));
 
