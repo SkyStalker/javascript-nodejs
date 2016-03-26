@@ -1,3 +1,5 @@
+'use strict';
+
 const config = require('config')
 const paypalConfig = config.payments.modules.paypal;
 const Order = require('../../models/order');
@@ -17,8 +19,7 @@ exports.post = function* (next) {
 
   yield this.transaction.logRequest('ipn: request received', this.request);
 
-
-  var qs = {
+  const qs = {
     'cmd': '_notify-validate'
   };
 
@@ -27,9 +28,9 @@ exports.post = function* (next) {
   }
 
   // request oauth token
-  var options = {
-    method: 'GET',
-    qs:     qs,
+  const options = {
+    method: 'POST',
+    form:    qs,
     url:    'https://www.paypal.com/cgi-bin/webscr',
     headers: {
       'User-Agent': 'request'
