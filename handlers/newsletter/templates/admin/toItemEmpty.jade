@@ -2,31 +2,36 @@
 include /bem
 include /blocks/input-select/index
 
-+input-select({
-  size:  'small',
-  selected: '',
-  items: [
-    {
-      value: '',
-      text:  'Включить'
-    },
-    {
-      value: 'exclude',
-      text:  'Исключить'
-    }
-  ]
-})(name='to-exclude-' + i class='newsletter-release-form__select newsletter-release-form__select_small')
+-
+  bem_chain = ['newsletter-release-form']
 
-+input-select({
-  size:     'small',
-  selected: '',
-  items:    [
-              {
-                value: '',
-                text:  '-----------'
-              }
-            ].concat(toVariants)
-})(name='to-'+i class='newsletter-release-form__select' required)
 
-+e('a')(href='#' data-newsletter-to-delete).remove
++e.group
+  +input-select({
+    size:  'small',
+    selected: '',
+    items: [
+      {
+        value: '',
+        text:  'Включить'
+      },
+      {
+        value: 'exclude',
+        text:  'Исключить'
+      }
+    ]
+  })(name='to-exclude-' + i class='newsletter-release-form__select newsletter-release-form__select_small')
+
+  +input-select({
+    size:     'small',
+    selected: '',
+    items:    [
+                {
+                  value: '',
+                  text:  '-----------'
+                }
+              ].concat(toVariants)
+  })(name='to-'+i class='newsletter-release-form__select newsletter-release-form__select_middle' required)
+
+  +e('a')(href='#' data-newsletter-to-delete).remove
 

@@ -9,6 +9,23 @@
     padding-left 30px
     padding-right 30px
 
+  &__group
+    margin-top 10px
+    width 100%
+    display flex
+    align-items center
+    flex-wrap wrap
+
+    &:first-of-type
+      margin-bottom 10px
+
+    +below('phone')
+      display block
+
+  &__group + &__link
+    text-align left
+
+
   &__field
     margin-bottom 20px
 
@@ -43,18 +60,6 @@
     +below('phone')
       display block
 
-  &__group
-    margin-top 20px
-    width 100%
-    display flex
-    align-items center
-    flex-wrap wrap
-
-    +below('phone')
-      display block
-
-  &__group + &__link
-    text-align left
 
   &__remove
     width auto
@@ -79,6 +84,7 @@
       width 100%
 
     &_middle
+      width auto
       flex-grow 3
       margin-bottom 10px
 
@@ -88,6 +94,8 @@
     &_small
       margin-right 10px
       margin-bottom 10px
+      width auto
+      flex-grow 1
 
       +below('phone')
         width 100%

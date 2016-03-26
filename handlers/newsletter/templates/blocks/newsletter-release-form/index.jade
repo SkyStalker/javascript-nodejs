@@ -15,16 +15,17 @@ mixin newsletter-release-form(form)
 
       +e.line
         if form.to.length == 0
-          +input-select({
-            size:  'small',
-            selected: '',
-            items: [
-              {
-                value: '',
-                text:  ''
-              }
-            ].concat(toVariants)
-          })(name='to-0' class='newsletter-release-form__select' required)
+          +e.group
+            +input-select({
+              size:  'small',
+              selected: '',
+              items: [
+                {
+                  value: '',
+                  text:  ''
+                }
+              ].concat(toVariants)
+            })(name='to-0' class='newsletter-release-form__select' required)
 
         else
           each toItem, i in form.to
@@ -67,7 +68,7 @@ mixin newsletter-release-form(form)
         +input-select({
           size: 'small',
           selected: '',
-          items: [
+          items: templates.length ? [{value:'',text:'Нет шаблонов'}] : [
             {
               value: '',
               text: 'Загрузить'
@@ -77,7 +78,7 @@ mixin newsletter-release-form(form)
         +e('a').link(
           href='/newsletter/admin/newsletter-templates'
           onclick="return confirm('Текущие изменения будут потеряны, перейти?')"
-          ) управление шаблонами
+        ) управление шаблонами
 
     +e.field
       +label.label(for='title')
@@ -87,10 +88,16 @@ mixin newsletter-release-form(form)
       })(type="text", minlength=10, required, name="title", id="title", value=form.title, autofocus)
 
 
+    //-
+      +e.line
+        +e("label").label Сообщение
+        if errors && errors.content
+          +e.err= errors.content
+        +mdeditor({buttonSet: 'email', value: form.content, textareaName: "content", editorClass: "_large"})
 
 
     +e.field
-      +label.label(for='message')
+      +label.label(for='content')
         +e.label
           span
             | Сообщение
