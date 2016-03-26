@@ -52,6 +52,8 @@ exports.post = function*(next) {
   if (response.body != "VERIFIED") {
     yield this.transaction.log('ipn: invalid IPN', response.body);
     this.throw(403, "Invalid IPN");
+  } else {
+    yield this.transaction.log('ipn: verified IPN', response.body);
   }
 
   // ipn is verified now! But we check if it's data matches the transaction (as recommended in docs)
