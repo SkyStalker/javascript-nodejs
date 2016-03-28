@@ -65,16 +65,16 @@ function* getToVariants() {
     for (let i = 0; i < newsletters.length; i++) {
       let newsletter = newsletters[i];
       variants.push({
-        key:   'newsletter:' + newsletter.id,
-        value: newsletter.title
+        value: 'newsletter:' + newsletter.id,
+        text:  newsletter.title
       });
     }
     let mailLists = yield MailList.find().sort({modified: -1});
     for (let i = 0; i < mailLists.length; i++) {
       let mailList = mailLists[i];
       variants.push({
-        key:   'mailList:' + mailList.id,
-        value: mailList.title
+        value: 'mailList:' + mailList.id,
+        text:  mailList.title
       });
     }
   }
@@ -92,8 +92,8 @@ function* getToVariants() {
     let group = groups[i];
 
     variants.push({
-      key:   'courseGroup:' + group.id,
-      value: group.title
+      value:   'courseGroup:' + group.id,
+      text: group.title
     });
   }
 
@@ -138,9 +138,14 @@ function* renderForm(newsletterRelease) {
 
   this.locals.toVariants = yield* getToVariants.call(this);
 
-  this.locals.templates = yield NewsletterTemplate.find({
+  let templates = yield NewsletterTemplate.find({
     user: this.user
   }).sort({created: -1});
+
+  this.locals.templates = templates.map(template => ({
+    value: template.id,
+    text: template.title
+  }));
 
   this.locals.letterSentCount = yield Letter.count({
     labelId: newsletterRelease._id,
@@ -257,32 +262,49 @@ exports.post = function*() {
     throw new Error("Must never reach here");
 
   case 'template':
-    yield NewsletterTemplate.create({
+    let newsletterTemplate = yield NewsletterTemplate.create({
       user:    this.user,
       title:   newsletterRelease.title,
       content: newsletterRelease.content
     });
-    this.addFlashMessage('success', 'Шаблон готов. <a href="../add">Создать новую рассылку</a>?');
+
+    this.addFlashMessage('success', 'Шаблон готов.');
+    this.redirect('/newsletter/admin/newsletter-templates/edit/' + newsletterTemplate.id);
     break;
 
   case 'send':
-    yield newsletterRelease.persist({
-      sendScheduledAt: new Date()
-    });
+    switch(this.request.body.sendType) {
+    case 'now':
+      yield newsletterRelease.persist({
+        sendScheduledAt: new Date()
+      });
 
-    this.addFlashMessage('success', 'Рассылка будет отослана в ближайшее время.');
+      this.addFlashMessage('success', 'Рассылка будет отослана в ближайшее время.');
+      break;
+    case '5min':
+      let datePlus = new Date();
+      datePlus.setMinutes(datePlus.getMinutes() + 5);
+      yield newsletterRelease.persist({
+        sendScheduledAt: datePlus
+      });
 
-    break;
+      this.addFlashMessage('success', 'Рассылка будет отослана через 5 минут.');
+      break;
+    case 'schedule':
+      let dateStr = this.request.sendDate || moment().format('YYYY-MM-DD');
+      let timeStr = this.request.sendTime || moment().format('HH:mm');
 
-  case 'schedule':
-    newsletterRelease.sendScheduledAt = moment(this.request.body.scheduleAt).toDate();
+      let dateSchedule = new Date(dateStr + 'T' + timeStr);
+      yield newsletterRelease.persist({
+        sendScheduledAt: dateSchedule
+      });
 
-    yield newsletterRelease.persist();
+      this.addFlashMessage('success',
+        'Рассылка будет отослана ' + moment(dateSchedule).format('YYYY-MM-DD HH:mm')
+      );
 
-    this.addFlashMessage('success',
-      `Рассылка запланирована в ${moment(newsletterRelease.sendScheduledAt).format('YYYY-MM-DD HH:mm Z')}.`
-    );
-
+      break;
+    }
     break;
 
   case 'cancelSend':

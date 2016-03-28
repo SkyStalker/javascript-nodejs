@@ -1,0 +1,19 @@
+include /blocks/section/index
+include /blocks/text-input/index
+include /blocks/button/index
+
+mixin newsletter-test()
+  +b.newsletter-test
+    +section({
+      color: 'gray',
+      title: 'Тестовая рассылка'
+    })
+      +e.fields
+        +e.input
+          +text-input()(placeholder='Тестовый e-mail' type="email" name='sendOneEmail')
+        +button({
+          mod: 'common'
+        })(type="button" name="action" value="sendOne" data-newsletter-send-one)
+          | Отправить
+
+

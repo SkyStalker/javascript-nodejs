@@ -1,16 +1,13 @@
 'use strict';
 
-require('./styles');
+require('../../templates/blocks/newsletter.styl');
 
-require('mdeditor/client');
 const NewsletterSendUi = require('./newsletterSendUi');
 const NewsletterReleaseForm = require('./newsletterReleaseForm');
 
 function init() {
 
-  let form;
-
-  form = document.querySelector('.newsletter-release-form');
+  let form = document.querySelector('.newsletter-release-form');
   if (form) {
     new NewsletterReleaseForm({elem: form});
   }

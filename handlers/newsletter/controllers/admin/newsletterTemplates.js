@@ -5,10 +5,6 @@ const NewsletterTemplate = require('../../models/newsletterTemplate');
 const ObjectId = require('lib/mongoose').Types.ObjectId;
 
 exports.getList = function*() {
-  if (!this.user || this.user.roles.indexOf('teacher') == -1) {
-    this.throw(403);
-  }
-
   this.locals.title = "Шаблоны групповых рассылок";
 
   this.locals.templates = yield NewsletterTemplate.find({
