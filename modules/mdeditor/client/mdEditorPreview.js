@@ -9,7 +9,7 @@ class MdEditorPreview {
 
   constructor(options) {
     this.editor = options.editor;
-    this.elem = this.editor.getPreviewElem();
+    this.elem = options.elem;
 
     this.renderThrottled = throttle(this.render.bind(this), 100);
 

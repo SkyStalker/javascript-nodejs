@@ -1,0 +1,129 @@
+include /blocks/text-input/index
+include /blocks/textarea-input/index
+include /blocks/input-select/index
+include /blocks/button/index
+include /blocks/label/index
+
+mixin newsletter-release-edit(form)
+
+  +b.newsletter-release-edit
+
+    input(type="hidden", name="_csrf", value=csrf())
+    input(type="hidden", name="id", value=form.id)
+
+    +e.field(data-newsletter-release-to)
+      +label.label Кому
+
+      +e.line
+        if form.to.length == 0
+          +e.group
+            +input-select({
+              size:  'small',
+              selected: '',
+              items: [
+                {
+                  value: '',
+                  text:  ''
+                }
+              ].concat(toVariants)
+            })(name='to-0' class='newsletter-release-edit__select' required)
+
+        else
+          each toItem, i in form.to
+            +e.group
+              if i>0
+                +input-select({
+                  size:  'small',
+                  items: [
+                    {
+                      value: '',
+                      text:  'Включить'
+                    },
+                    {
+                      value: 'exclude',
+                      text:  'Исключить'
+                    }
+                  ]
+                })(name='to-exclude-'+i disabled=form.sendFinished checked=toItem.exclude class='newsletter-release-edit__select newsletter-release-edit__select_small')
+              +input-select({
+                size:  'small',
+                selected: toItem.getKey(),
+                items: toVariants
+              })(name='to-'+i disabled=form.sendFinished class='newsletter-release-edit__select newsletter-release-edit__select_middle')
+              if (!form.sendFinished)
+                +e('a')(href='#' data-newsletter-to-delete).remove
+
+      if (!form.sendFinished)
+        +e('div')
+          +e('a')(href='#' data-newsletter-to-add).link добавить/исключить группу
+
+      if errors && errors.to
+        +e.err= errors.to
+
+
+
+    +e.field
+      +label.label(for='template')
+        | Шаблон рассылки
+      +e.line
+        +input-select({
+          size: 'small',
+          selected: '',
+          items: !templates.length ? [{value:'',text:'Нет шаблонов'}] : [
+            {
+              value: '',
+              text: 'Загрузить'
+            }
+          ].concat(templates)
+        })(name='template' id='template' value=form.title class='newsletter-release-edit__select' data-newsletter-template-select)
+        +e('a').link(
+          href='/newsletter/admin/newsletter-templates'
+          onclick="return confirm('Текущие изменения будут потеряны, перейти?')"
+        ) управление шаблонами
+
+    +e.field
+      +label.label(for='title')
+        | Тема
+      +text-input({
+        errors: errors && errors.title
+      })(type="text", minlength=10, required, name="title", id="title", value=form.title, autofocus)
+
+
+    +e.field
+      +label.label
+        +e.label
+          span
+            | Сообщение
+          +e('button').button-preview(type="submit" name="action" value="preview" data-newsletter-preview-full)
+            | полный предпросмотр
+      +mdeditor({
+        buttonSet: 'email',
+        editorClass: "_large"
+      })(name='content').newsletter-release-edit__textarea
+        =form.content
+
+    +e.preview._active(data-editor-preview)
+      +e('a')(href='#' data-editor-preview-toggler).preview-link
+        | быстрый предпросмотр
+      +e.preview-content(data-editor-preview-content)
+
+    +e.controls
+      if !form.sendingPid && !form.sendFinished
+        +e.button
+          +button({
+            mod: 'common'
+          })(type="submit" name="action" value="save")
+            | Сохранить рассылку
+
+      +e.button
+        +button({
+          mod: 'common'
+        })(type="submit" name="action" value="template")
+          | Добавить в шаблоны
+
+      if !letterSentCount
+        +button({
+          mod: 'common'
+        })(type="submit" name="action" value="delete")
+          | Удалить
+

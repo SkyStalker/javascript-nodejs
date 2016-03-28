@@ -1,12 +1,18 @@
+include ../blocks/newsletter-failed/index
+include ../blocks/newsletter-release-edit/index
+include ../blocks/newsletter-release-form/index
+include ../blocks/newsletter-test/index
+include ../blocks/newsletter-status/index
+include /blocks/mdeditor
 
 extends /layouts/main
-include /blocks/mdeditor
 
 block append variables
   -
     var sitetoolbar = true
     var layout_main_class = "main_width-limit"
     var layout_header_class = "main__header_center"
+    var header = false
     var breadcrumbs = [
       { title: 'Учебник', url: '/' }, { title: 'Рассылки', url: '/newsletter/admin/newsletter-releases' }
     ]
@@ -14,7 +20,6 @@ block append variables
 block append head
   !=js("newsletterAdmin", {defer: true})
   !=css("newsletterAdmin")
-
 
 block content
 
@@ -25,117 +30,23 @@ block content
 
 
   +b("form").newsletter-release-form(method="POST" action="/newsletter/admin/newsletter-releases")
-    input(type="hidden", name="_csrf", value=csrf())
-    input(type="hidden", name="id", value=form.id)
+    +e.section
+      +newsletter-release-edit(form)
 
-    +e.form
-      +e.line
-        +e("label").label Шаблон
-        +e.select
-          +b('select').input-select._small.__control(data-newsletter-template-select)
-            +e('option').option(value='' selected) Загрузить
-            each template in templates
-              +e('option').option(value=template.id)= template.title
-        +e('a')(
-          href='/newsletter/admin/newsletter-templates'
-          onclick="return confirm('Текущие изменения будут потеряны, перейти?')"
-        ) Управление шаблонами
+    +e.section
+      +newsletter-test()
 
-      +e.line
-        +e("label").label Кому
-        if form.to.length == 0
-          +b.newsletter-release-form-select
-            +b('select')(name="to-0").input-select._small.__control
-              +e('option').option(value='' selected)
-              each variant in toVariants
-                +e('option').option(value=variant.key)= variant.value
-        else
-          each toItem, i in form.to
-            +b.newsletter-release-form-select
-              +b('select')(name="to-"+i disabled=form.sendFinished).input-select._small.__control
-                each variant in toVariants
-                  +e('option').option(value=variant.key selected=toItem.getKey()==variant.key)= variant.value
-              if (i > 0)
-                = ' Исключить'
-                input(type="checkbox" name="to-exclude-"+i checked=toItem.exclude disabled=form.sendFinished)
-                if (!form.sendFinished)
-                  = ' '
-                  +e('a')(href='#' data-newsletter-to-delete) [x]
+    +e.section
+      +newsletter-status({form: form, letterSentCount: letterSentCount})
 
-        if (!form.sendFinished)
-          +e('a')(href='#' data-newsletter-to-add) [+]
+  if Object.keys(failedReasons).length
 
-        if errors && errors.to
-          +e.err= errors.to
+    +e.section
 
+      h2 Не доставлено
 
-
-
-      +e.line
-        +e("label").label(for="title") Тема
-        +b("span")(class=['text-input', errors && errors.title && '_invalid'])
-          +e("input").control(type="text", minlength=10, required, name="title", id="title", value=form.title, autofocus)
-          if errors && errors.title
-            +e.err= errors.title
-
-      +e.line
-        +e("label").label Сообщение
-        if errors && errors.content
-          +e.err= errors.content
-        +mdeditor({buttonSet: 'email', value: form.content, textareaName: "content", editorClass: "_large"})
-
-
-      if Object.keys(failedReasons).length
-        h2 Не доставлено
-
-        table
-          each reason, email in failedReasons
-            tr
-              td= email
-              td= reason
-
-      h2 Действия
-
-      p Отослано писем этой рассылки: #{letterSentCount}.
-
-      if !form.sendingPid && !form.sendFinished
-        +e.line
-          +b("button").button._action(type="submit" name="action" value="save")
-            +e("span").text Сохранить
-
-      if !letterSentCount
-        +e.line
-          +b("button").button._action(type="submit" name="action" value="delete")
-            +e("span").text Удалить
-
-      +e.line
-        +b("button").button._action(type="submit" name="action" value="template")
-          +e("span").text Добавить в шаблоны
-
-      +e.line
-        +b("button").button._action(type="submit" name="action" value="preview" data-newsletter-preview)
-          +e("span").text Полный preview
-
-      +e.line
-        input(type="email" name="sendOneEmail")
-        +b("button").button._action(type="button" name="action" value="sendOne" data-newsletter-send-one)
-          +e("span").text Одиночное письмо
-
-      if !form.sendingPid
-        +e.line
-          +b("button").button._action(type="submit" name="action" value="send")
-            +e("span").text Разослать/дослать сейчас
-
-      if !form.sendingPid
-        +e.line
-          input(type="text" name="scheduleAt")
-          +b("button").button._action(type="submit" name="action" value="schedule")
-            +e("span").text Запланировать
-
-      if form.sendingPid || form.sendScheduledAt
-        +e.line
-          +b("button").button._action(type="submit" name="action" value="cancelSend")
-            +e("span").text Отменить
-
-
-
+      table
+        each reason, email in failedReasons
+          tr
+            td= email
+            td= reason

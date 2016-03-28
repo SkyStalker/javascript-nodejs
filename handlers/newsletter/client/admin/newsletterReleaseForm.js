@@ -1,11 +1,14 @@
 'use strict';
 
 const xhr = require('client/xhr');
-var Spinner = require('client/spinner');
+const Spinner = require('client/spinner');
 const clientRender = require('client/clientRender');
-var notification = require('client/notification');
-var delegate = require('client/delegate');
+const notification = require('client/notification');
+const delegate = require('client/delegate');
 const toItemEmpty = require('../../templates/admin/toItemEmpty.jade');
+const MdEditorPreview = require('mdeditor/client/mdEditorPreview');
+const MdEditor = require('mdeditor/client/mdEditor');
+
 
 module.exports = class NewsletterReleaseForm {
 
@@ -34,11 +37,11 @@ module.exports = class NewsletterReleaseForm {
 
     delegate(form, '[data-newsletter-to-delete]', 'click', function(e) {
       e.preventDefault();
-      e.target.closest('.newsletter-release-form-select').remove();
+      e.target.closest('.newsletter-release-edit__group').remove();
     });
 
 
-    delegate(form, '[data-newsletter-send-one]', 'click', function(e) {
+    form.querySelector('[data-newsletter-send-one]').onclick = function(e) {
 
       let formData = new FormData(form);
       formData.append('action', 'sendOne');
@@ -77,23 +80,24 @@ module.exports = class NewsletterReleaseForm {
       });
 
 
-    });
+    };
 
 
 
     delegate(form, '[data-newsletter-to-add]', 'click', function(e) {
       e.preventDefault();
 
-      let selectBlocks = form.querySelectorAll('.newsletter-release-form-select');
+      let selectBlocks = form.querySelectorAll('.newsletter-release-edit__group');
       let insertPoint = selectBlocks[selectBlocks.length - 1];
 
-
       let toVariants = [];
-      let selectExampleOptions = form.querySelector('.newsletter-release-form-select select').options;
+      let selectExampleOptions = form.querySelector('[data-newsletter-release-to] select').options;
+
       for (let i = 0; i < selectExampleOptions.length; i++) {
         let option = selectExampleOptions[i];
-        toVariants.push({key: option.value, value: option.innerHTML});
+        toVariants.push({value: option.value, text: option.innerHTML});
       }
+
 
       insertPoint.insertAdjacentHTML('afterEnd', clientRender(toItemEmpty, {
            toVariants,
@@ -102,15 +106,54 @@ module.exports = class NewsletterReleaseForm {
     });
 
     let previewWindow;
-    delegate(form, '[data-newsletter-preview]', 'click', function(e) {
+    delegate(form, '[data-newsletter-preview-full]', 'click', function(e) {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        alert('Пожалуйста, завершите заполнение формы.');
+        return;
+      }
 
       if (!previewWindow || previewWindow.closed) {
         previewWindow = window.open("about:blank", "newsletterPreview", "width=600,height=" + (window.innerHeight - 100));
       }
+
+      previewWindow.focus();
+
       form.target = 'newsletterPreview';
+      let actionElem = document.createElement('input');
+      actionElem.type = 'hidden';
+      actionElem.name = 'action';
+      actionElem.value = 'preview';
+      form.appendChild(actionElem);
+      form.submit();
       setTimeout(function() {
         form.target = '';
+        actionElem.remove();
       }, 100);
     });
+
+    let editor = new MdEditor({
+      elem: form.querySelector('.mdeditor')
+    });
+
+    let preview = new MdEditorPreview({
+      editor: editor,
+      elem: form.querySelector('[data-editor-preview-content]')
+    });
+
+    form.querySelector('[data-editor-preview-toggler]').onclick = e => {
+      e.preventDefault();
+      form.querySelector('[data-editor-preview]').classList.toggle('newsletter-release-edit__preview_active');
+    };
+
+    form.elements.sendType.onchange = function() {
+      let elem = form.querySelector('[data-newsletter-schedule]');
+      if (this.value == 'schedule') {
+        elem.hidden = false;
+      } else {
+        elem.hidden = true;
+      }
+    };
+
   }
 };

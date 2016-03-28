@@ -67,12 +67,38 @@ class MdEditor {
 
   }
 
+  insertList(prefix) {
+
+    let area = this.textarea;
+    let nextLinePos = area.value.indexOf("\n", area.selectionStart);
+    if (nextLinePos == -1) nextLinePos = area.value.length;
+
+    let before = area.value.slice(0, nextLinePos);
+    let after = area.value.slice(nextLinePos);
+
+    if (area.value[area.selectionStart] != '\n' && area.selectionStart !== 0) {
+      prefix = "\n" + prefix;
+    }
+
+    area.value = before + prefix + t('mdeditor.text.ol') + after;
+    area.selectionStart = before.length + prefix.length;
+    area.selectionEnd = area.selectionStart + t('mdeditor.text.ol').length;
+  }
+
   actionOl() {
-    this.replaceSelection("\n\n1. ", "\n", t('mdeditor.text.ol'));
+    let area = this.textarea;
+    let prevNewLinePos = area.value.lastIndexOf("\n", area.selectionStart - 1);
+    if (prevNewLinePos == -1) prevNewLinePos = 0;
+
+    let num = parseInt(area.value.slice(prevNewLinePos));
+    num = num ? num + 1 : 1;
+
+    let prefix = `${num}. `;
+    this.insertList(prefix);
   }
 
   actionUl() {
-    this.replaceSelection("\n\n- ", "\n", t('mdeditor.text.ol'));
+    this.insertList("- ");
   }
 
   actionHeading() {
@@ -163,13 +189,14 @@ class MdEditor {
 
     this.textarea.addEventListener("input", () => this.triggerChange());
 
+    /*
     // maybe preview is made with a webservice
     if (!options.noPreview) {
       require.ensure([], (require) => {
         let MdEditorPreview = require('./mdEditorPreview');
         new MdEditorPreview({editor: this});
       });
-    }
+    }*/
   }
 
   triggerChange() {
@@ -181,11 +208,11 @@ class MdEditor {
     }));
   }
 
-
+/*
   getPreviewElem() {
     return this.elem.querySelector('[data-editor-preview]');
-  }
-
+  } // TODO: where editoor comes from? Adapt newslettreEReleaseForm!!!
+*/
   getValue() {
     return this.textarea.value;
   }

@@ -1,0 +1,25 @@
+include /blocks/button/index
+
+mixin newsletter-templates()
+  +b.newsletter-templates
+    +e.content
+      if templates.length
+        each template in templates
+          +e('a').item(href="/newsletter/admin/newsletter-templates/edit/" + template.id)= template.title
+      else
+        p У вас пока еще нет шаблонов
+        +e.button
+          +button({
+            mod: 'common',
+            tag: 'a'
+          })(href="/newsletter/admin/newsletter-templates/add")
+            | Cоздать шаблон
+    if templates.length
+      +e.button
+        +button({
+          mod: 'common',
+          tag: 'a'
+        })(href="/newsletter/admin/newsletter-templates/add")
+          | Cоздать новый шаблон
+
+

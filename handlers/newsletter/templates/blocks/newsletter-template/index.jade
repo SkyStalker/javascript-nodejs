@@ -1,0 +1,35 @@
+include /blocks/text-input/index
+include /blocks/textarea-input/index
+include /blocks/button/index
+
+mixin newsletter-template()
+  +b('form').newsletter-template(method="POST" action="/newsletter/admin/newsletter-templates")
+    input(type="hidden", name="_csrf", value=csrf())
+    input(type="hidden", name="id", value=form.id)
+
+    +e.field
+      +e('label').label(for='title')
+        | Тема
+      +text-input()(name='title' id='title' minlength=10 requird value=form.title autofocus)
+
+    +e.field
+      +e('label').label(for='content')
+        | Сообщение
+      +mdeditor({
+        buttonSet: 'email',
+        editorClass: "__mdeditor"
+      })(name="content")
+        = form.content
+
+    +e.controls
+      +button({
+        mod: 'action'
+      })(type='submit')
+        | Сохранить
+      if form.id
+        +button({
+          mod: 'action',
+          tag: 'a'
+        }).remove(type="submit" name="action" value="delete")
+          | Удалить
+

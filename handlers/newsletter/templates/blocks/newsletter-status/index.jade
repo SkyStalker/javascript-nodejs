@@ -1,0 +1,79 @@
+include /blocks/button/index
+include /blocks/input-select/index
+
+mixin newsletter-status(data)
+  - data = data || {}
+  - form = data.form
+
+  +b.newsletter-status
+    +section({
+      color: (form.sendingPid || form.sendScheduledAt) ? 'green' : 'yellow',
+      title: 'Состояние и запуск рассылки'
+    })
+      +e.text
+        if form.sendingPid
+          | Рассылка
+          =' '
+          +e('span').highlighted
+            | запущена в данный момент
+        else if form.sendScheduledAt
+          | Эта рассылка запланирована на
+          = ' '
+          +e('span').highlighted
+            = moment(form.sendScheduledAt).format('YYYY-MM-DD HH:mm:ss')
+          = '.'
+        else if form.sendFinished
+          | Эта рассылка уже
+          +e('span').highlighted
+            | &nbsp;завершена.
+          +e Вы можете дослать ее новым участникам выбранной группы адресатов.
+
+        if !form.sendingPid
+          +e.fields
+            +e('span')
+              if !data.letterSentCount
+                | Разослать рассылку
+              else
+                | Дослать
+            +e.select
+              +input-select({
+                size: 'small',
+                items: [
+                  {
+                    value: '5min',
+                    text: 'Через 5 минут'
+                  },
+                  {
+                    value: 'now',
+                    text: 'Немедленно'
+                  },
+                  {
+                    value: 'schedule',
+                    text: 'Запланировать'
+                  }
+                ]
+              })(name="sendType")
+            span(hidden data-newsletter-schedule)
+              input(type="date" name="sendDate")
+              input(type="time" name="sendTime")
+              | GMT +3&nbsp;
+            +button({mod: 'action'})(type='submit' name="action" value="send")
+              | Запустить
+
+        if form.sendingPid || form.sendScheduledAt
+          +e.button
+            +button({mod: 'common'})(type='submit' name="action" value="cancelSend")
+              +e.button-text
+                if form.sendingPid
+                  | Остановить рассылку
+                else if status === 'inprogress'
+                  | Отменить запуск
+
+        if form.sendScheduledAt && !form.sendingPid
+          +e.label
+            | Вы сможете изменить запланированную дату или начать рассылку немедленно.
+        else if form.sendFinished
+          +e.label
+            | Рассылка уже была отослана, но вы можете отредактировать и дослать её тем, кто не получил прошлые письма.
+
+
