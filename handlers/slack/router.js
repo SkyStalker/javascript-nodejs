@@ -7,7 +7,15 @@ const syncUsers = require('./controllers/syncUsers');
 
 const router = module.exports = new Router();
 
-const mustBeAdmin = require('auth').mustBeAdmin;
+function* canSync() {
 
-router.get('/sync-users', mustBeAdmin, syncUsers.get);
-router.get('/sync-group/:groupId', mustBeAdmin, syncGroup.get);
+  if (this.isAdmin || this.user && this.user.hasRole('teacher')) {
+    yield* next;
+  } else {
+    this.throw(403);
+  }
+
+}
+
+router.get('/sync-users', canSync, syncUsers.get);
+router.get('/sync-group/:groupId', canSync, syncGroup.get);
