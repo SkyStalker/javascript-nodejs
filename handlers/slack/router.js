@@ -7,7 +7,7 @@ const syncUsers = require('./controllers/syncUsers');
 
 const router = module.exports = new Router();
 
-function* canSync() {
+function* canSync(next) {
 
   if (this.isAdmin || this.user && this.user.hasRole('teacher')) {
     yield* next;
