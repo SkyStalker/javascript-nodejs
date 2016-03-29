@@ -51,7 +51,7 @@ exports.get = function*() {
     }
 
     this.log.debug("Invite", user.slackId, user.email);
-    
+
     let response = yield new Promise((resolve, reject) => {
       webClient.groups.invite(group.slackGroup.id, user.slackId, function(err, result) {
         err ? reject(err) : resolve(result);
@@ -65,6 +65,7 @@ exports.get = function*() {
 
   }
 
+  this.set('Content-Type', 'text/html;charset=utf-8');
   this.body = failures.join("<br>") + '<br>DONE ' + new Date();
 
 };
