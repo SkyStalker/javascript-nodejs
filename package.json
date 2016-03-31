@@ -139,6 +139,7 @@
     "vinyl-source-stream": "*",
     "webpack": "*",
     "webpack-sources": "*",
+    "xml2js": "^0.4.16",
     "yaml-loader": "*",
     "yargs": "*"
   },
