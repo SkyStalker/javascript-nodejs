@@ -83,7 +83,11 @@ where `~` resolves to `node_modules/`
 
 ## Install
 
-`npm install stylus-loader --save-dev`
+`npm install stylus-loader stylus --save-dev`
+
+**Important**: in order to have ability use any `stylus` package version,
+it won't be installed automatically. So it's required to
+add it to `package.json` along with `stylus-loader`.
 
 ## Testing
 
@@ -98,6 +102,9 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 * Please see https://github.com/shama/stylus-loader/releases
+* 2.0.0 - Remove dependency on stylus (@kossnocorps)
+* 1.6.1 - Remove version breaking change in 1.6.0
+* 1.6.0 - Remove dependency on stylus (@kossnocorps)
 * 1.3.0 - resolve use() calls (@mzgoddard), manual imports through path cache (@mzgoddard)
 * 1.2.0 - files in package.json (@SimenB), test running with testem (@mzgoddard), and some performance changes (@mzgoddard)
 * 1.1.0 - Pass through sourceMap option to stylus instead of defaulting to inline. Inherit source-map from devtool (@jordansexton).
