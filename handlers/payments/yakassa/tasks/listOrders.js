@@ -22,12 +22,18 @@ module.exports = function() {
         .argv;
 
       let date = new Date();
+
+      let dateFrom = new Date(args.from);
+      let dateTo = new Date(args.to);
+      dateTo.setDate(dateTo.getDate() + 1);
+      dateTo = new Date(dateTo.getTime() - 1);
+
       let params = {
         requestDT:                          date.toJSON(),
         outputFormat:                       'XML',
         shopId:                             yakassaConfig.shopId,
-        orderCreatedDatetimeLessOrEqual:    new Date(args.to).toJSON(),
-        orderCreatedDatetimeGreaterOrEqual: new Date(args.from).toJSON()
+        orderCreatedDatetimeLessOrEqual:    dateTo.toJSON(),
+        orderCreatedDatetimeGreaterOrEqual: dateFrom.toJSON()
       };
 
       let result = yield* mws.sendFormRequest('listOrders', params);

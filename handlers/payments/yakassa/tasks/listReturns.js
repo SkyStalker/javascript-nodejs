@@ -22,39 +22,48 @@ module.exports = function() {
         .argv;
 
       let date = new Date();
+
+      let dateFrom = new Date(args.from);
+      let dateTo = new Date(args.to);
+      dateTo.setDate(dateTo.getDate() + 1);
+      dateTo = new Date(dateTo.getTime() - 1);
+
       let params = {
         requestDT:    date.toJSON(),
         outputFormat: 'XML',
         shopId:       yakassaConfig.shopId,
-        till:         new Date(args.to).toJSON(),
-        from:         new Date(args.from).toJSON()
+        till:         dateTo.toJSON(),
+        from:         dateFrom.toJSON()
       };
 
       let result = yield* mws.sendFormRequest('listReturns', params);
+
+      //let result = '<?xml version="1.0" encoding="UTF-8" ?><listReturnsResponse status="0" error="0" processedDT="2016-04-01T15:21:43.379+03:00" techMessage="Успех"><returnPayment returnId="324772819" status="0" error="0" invoiceId="2000369081340" shopId="113215" amount="25272.00" currency="643" articleAmount="25272.00" articleCurrency="643" createdDT="2016-02-09T15:05:14.622+03:00" cause="ВозвратыПоИм" sender="1cuser" processedDT="2016-02-09T15:05:14.879+03:00" orderNumber="700928545" clientOrderId="57817"></returnPayment><returnPayment returnId="335652212" status="0" error="0" invoiceId="2000367423725" shopId="113215" amount="26000.00" currency="643" articleAmount="26000.00" articleCurrency="643" createdDT="2016-02-25T14:27:02.819+03:00" cause="ВозвратыПоИм" sender="1cuser" processedDT="2016-02-25T14:27:02.756+03:00" orderNumber="770537198" clientOrderId="58576"></returnPayment></listReturnsResponse>';
 
       let resultObj = yield function(callback) {
         parseString(result, callback);
       };
 
-      console.log(result);
+      console.log(resultObj);
 
-      let returns = resultObj.listReturnsResponse.$.returnPayment;
+      let returns = resultObj.listReturnsResponse.returnPayment;
 
+      returns = returns.map(ret => ret.$);
       console.log(returns);
-/*
+
       let sum = 0;
-      for (let i = 0; i < orders.length; i++) {
-        let order = orders[i];
-        if (order.paid != 'true') {
-          console.error(order);
-          throw new Error("Order not paid?");
+      for (let i = 0; i < returns.length; i++) {
+        let ret = returns[i];
+        if (ret.status != '0') {
+          console.error(ret);
+          throw new Error("Return not done?");
         }
-        sum += ++order.orderSumAmount;
+        sum += ++ret.amount;
       }
 
       console.log("Sum ", sum);
       // console.log(require('util').inspect(orders, false, null));
-*/
+
     });
 
   };
