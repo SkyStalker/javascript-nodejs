@@ -29,7 +29,7 @@ module.exports = function() {
         shopId:                             yakassaConfig.shopId,
         orderCreatedDatetimeLessOrEqual:    args.to + 'T23:59:59.999+03:00',
         orderCreatedDatetimeGreaterOrEqual: args.from + 'T00:00:00.000+03:00',
-        outputFields:                       'shopId;shopName;articleId;articleName;invoiceId;orderNumber; paymentSystemOrderNumber;customerNumber; createdDatetime;paid;orderSumAmount;orderSumCurrencyPaycash;orderSumBankPaycash;paidSumAmount;paidSumCurrencyPaycash;paidSumBankPaycash;receivedSumAmount;receivedSumCurrencyPaycash;receivedSumBankPaycash;shopSumAmount;shopSumCurrencyPaycash;shopSumBankPaycash;paymentDatetime;paymentAuthorizationTime;payerCode;payerAddress;payeeCode;paymentSystemDatetime;avisoReceivedDatetime;avisoStatus;agentId;uniLabel'
+        outputFields:                       'shopId;shopName;articleId;articleName;invoiceId;orderNumber;paymentSystemOrderNumber;customerNumber;createdDatetime;paid;orderSumAmount;orderSumCurrencyPaycash;orderSumBankPaycash;paidSumAmount;paidSumCurrencyPaycash;paidSumBankPaycash;receivedSumAmount;receivedSumCurrencyPaycash;receivedSumBankPaycash;shopSumAmount;shopSumCurrencyPaycash;shopSumBankPaycash;paymentDatetime;paymentAuthorizationTime;payerCode;payerAddress;payeeCode;paymentSystemDatetime;avisoReceivedDatetime;avisoStatus;agentId;uniLabel;avisoRegistryId'
       };
 
       let result = yield* mws.sendFormRequest('listOrders', params);
