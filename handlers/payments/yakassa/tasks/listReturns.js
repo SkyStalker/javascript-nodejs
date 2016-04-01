@@ -36,13 +36,12 @@ module.exports = function() {
         parseString(result, callback);
       };
 
-      console.log(resultObj);
-      /*
-      let orders = resultObj.listReturnsResponse.order;
+      console.log(result);
 
-      returnPayments = orders.map(order => order.$);
-      console.log(orders);
+      let returns = resultObj.listReturnsResponse.$.returnPayment;
 
+      console.log(returns);
+/*
       let sum = 0;
       for (let i = 0; i < orders.length; i++) {
         let order = orders[i];
