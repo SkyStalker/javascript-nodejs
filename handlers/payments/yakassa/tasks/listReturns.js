@@ -23,17 +23,13 @@ module.exports = function() {
 
       let date = new Date();
 
-      let dateFrom = new Date(args.from);
-      let dateTo = new Date(args.to);
-      dateTo.setDate(dateTo.getDate() + 1);
-      dateTo = new Date(dateTo.getTime() - 1);
 
       let params = {
         requestDT:    date.toJSON(),
         outputFormat: 'XML',
         shopId:       yakassaConfig.shopId,
-        till:         dateTo.toJSON(),
-        from:         dateFrom.toJSON()
+        till:         args.to + 'T23:59:59.999+03:00',
+        from:         args.from + 'T00:00:00.000+03:00'
       };
 
       let result = yield* mws.sendFormRequest('listReturns', params);
