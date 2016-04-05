@@ -66,23 +66,31 @@ exports.get = function*() {
     let participants = yield CourseParticipant.find({
       group:    group._id,
       isActive: true
-    }).populate('user');
+    }).populate('user invite');
 
     amounts[group.id] = {
       amount: 0,
       missing: []
     };
 
+    // console.log(participants);
     //console.log("COUNT GROUP", group.title, participants.length);
     for(let j=0; j<participants.length; j++) {
-      let order = yield Order.findOne({
-        'data.group': group._id,
-        'data.emails': participants[j].user.email,
-        status: Order.STATUS_SUCCESS
-      });
+      let participant = participants[j];
+
+      let order;
+      if (participant.invite) {
+        order = yield Order.findById(participant.invite.order);
+      } else {
+        order = yield Order.findOne({
+          'data.group':  group._id,
+          'data.emails': participant.user.email,
+          status:        Order.STATUS_SUCCESS
+        });
+      }
 
       if (!order) {
-        amounts[group.id].missing.push(participants[j].user.email);
+        amounts[group.id].missing.push(participant.user.email);
       } else {
         //console.log("ADD", order.amount / order.data.count);
         amounts[group.id].amount += order.amount / order.data.count;

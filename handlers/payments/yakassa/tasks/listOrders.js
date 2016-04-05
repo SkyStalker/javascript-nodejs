@@ -23,6 +23,13 @@ module.exports = function() {
 
       let date = new Date();
 
+      // if a payment is accepted & returned the same day, then it is NOT included in reestr
+      // it will NOT be in the act
+      // but it will be here in listOrders!
+      //
+      // avisoStatus 103, 1020, 1021 denote payment return, 1022 partial return
+      // @see https://tech.yandex.ru/money/doc/payment-solution/reference/notifications-codes-docpage/
+      // avisoRegistryId is not implemented ATM
       let params = {
         requestDT:                          date.toJSON(),
         outputFormat:                       'XML',
@@ -55,7 +62,9 @@ module.exports = function() {
 
         if (order.avisoStatus != '1000') {
           console.log(`Strange avisoStatus ${order.avisoStatus} for order`, order);
+          continue;
         }
+
         sum += ++order.orderSumAmount;
       }
 
