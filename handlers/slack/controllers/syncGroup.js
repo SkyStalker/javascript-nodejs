@@ -11,7 +11,7 @@ exports.get = function*() {
   yield* syncUsers();
   yield* syncGroups();
 
-  let group = yield CourseGroup.findOne({slug: this.params.groupId});
+  let group = yield CourseGroup.findOne({slug: this.params.groupId}).populate('teacher');
 
   if (!group) {
     this.throw(404);
@@ -41,12 +41,15 @@ exports.get = function*() {
 
   let failures = [];
 
-  for (let i = 0; i < participants.length; i++) {
-    let participant = participants[i];
-    let user = participant.user;
+  let users = participants.map(p => p.user);
+  users.push(group.teacher);
+
+
+  for (let i = 0; i < users.length; i++) {
+    let user = users[i];
 
     if (!user.slackId) {
-      failures.push(`${participant.fullName} ${user.email} not in slack`);
+      failures.push(`${user.email} not in slack`);
       continue;
     }
 
