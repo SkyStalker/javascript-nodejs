@@ -36,16 +36,28 @@ mixin newsletter-status(data)
                 | Начать рассылку
               if status === 'finished'
                 | Дослать
-            +e.select
-              +input-select({
-                size: 'small',
-                items: [
-                  {
-                    value: 'now',
-                    text: 'Немедленно'
-                  }
-                ]
-              })
+            +e.row
+              +e.field_select
+                +input-select({
+                  size: 'small',
+                  items: [
+                    {
+                      value: 'now',
+                      text: 'Немедленно'
+                    }
+                  ]
+                })
+
+              +e.field_medium
+                +text-input()(
+                  placeholder='dd/mm/yyyy'
+                )
+
+              +e.field_small
+                +text-input()(
+                  placeholder='--:--'
+                )
+
             +button({mod: 'action'})(type='submit')
               | Запустить
 
