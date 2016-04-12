@@ -25,5 +25,5 @@ mixin newsletter-template(data)
         | отмена
         
       if data.isEdit
-        +e('a').remove(href='#')
+        +e('button').remove(type='submit')
           | удалить шаблон
