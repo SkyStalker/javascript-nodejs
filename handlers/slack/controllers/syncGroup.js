@@ -5,6 +5,7 @@ const syncGroups = require('../lib/syncGroups');
 const CourseGroup = require('courses').CourseGroup;
 const webClient = require('../lib/client');
 const CourseParticipant = require('courses').CourseParticipant;
+const config = require('config');
 
 exports.get = function*() {
 
@@ -68,6 +69,8 @@ function* inviteGroup(group) {
   for (let i = 0; i < users.length; i++) {
     let user = users[i];
 
+    if (user.email == config.slack.email) continue; // can't invite self
+    
     if (!user.slackId) {
       failures.push(user.email);
       continue;
