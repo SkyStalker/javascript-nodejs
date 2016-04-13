@@ -100,8 +100,17 @@ block content
                 | Уведомлять
                 +e('input')(type="checkbox" name="notify" checked)
               +e('input')(type="submit" value="Загрузить")
-
-
+      if transaction.companyMail
+        tr
+          td(colspan=8)= transaction.companyMail
+      if transaction.companyMailIndex
+        tr
+          td(colspan=8)
+            = transaction.companyMailIndex
+            = ' '
+            = transaction.companyMailWho
+            = ' '
+            = transaction.companyMailAddress
 
   h2 Инвайты
 

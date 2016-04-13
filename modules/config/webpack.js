@@ -119,7 +119,7 @@ module.exports = function(config) {
           // which must not be run in strict mode (global becomes undefined)
           // babel would make all modules strict!
           exclude: /node_modules\/(angular|prismjs|moment|blueimp-canvas-to-blob|codemirror|markdown-it)/,
-          loaders: ['ng-annotate', 'babel?presets[]=es2015,plugins[]=transform-es2015-modules-commonjs'] // babel will work first
+          loaders: ['ng-annotate', 'babel?presets[]=es2015'] // babel will work first
         },
         {
           test:   /\.styl$/,
