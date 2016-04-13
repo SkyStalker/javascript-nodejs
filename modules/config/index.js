@@ -1,4 +1,3 @@
-
 // make sure Promise is wrapped early,
 // to assign mongoose.Promise = global.Promise the wrapped variant any time later
 var path = require('path');
@@ -55,7 +54,8 @@ var config = module.exports = {
   slack: {
     token: secret.slack.token,
     org:   secret.slack.org,
-    host: '127.0.0.1',
+    email: 'mk@javascript.ru',
+    host:  '127.0.0.1',
     port:  3001
   },
 
