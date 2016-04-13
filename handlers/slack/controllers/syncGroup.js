@@ -11,12 +11,32 @@ exports.get = function*() {
   yield* syncUsers();
   yield* syncGroups();
 
-  let group = yield CourseGroup.findOne({slug: this.params.groupId}).populate('teacher');
+  let groups;
+  if (this.params.groupId) {
+    let group = yield CourseGroup.findOne({slug: this.params.groupId}).populate('teacher');
 
-  if (!group) {
-    this.throw(404);
+    if (!group) {
+      this.throw(404);
+    }
+
+    groups = [group];
+  } else {
+    groups = yield CourseGroup.find().populate('teacher').lean();
   }
 
+  let failures = {};
+  for (let i = 0; i < groups.length; i++) {
+    let group = groups[i];
+    failures[group.slug] = yield* inviteGroup.call(this, group);
+  }
+
+  this.locals.failures = failures;
+
+  this.body = this.render('syncGroup');
+
+};
+
+function* inviteGroup(group) {
   if (!group.slackGroup) {
     let response = yield new Promise((resolve, reject) => {
       webClient.groups.create(group.slug, function(err, result) {
@@ -49,7 +69,7 @@ exports.get = function*() {
     let user = users[i];
 
     if (!user.slackId) {
-      failures.push(`${user.email} not in slack`);
+      failures.push(user.email);
       continue;
     }
 
@@ -68,7 +88,5 @@ exports.get = function*() {
 
   }
 
-  this.set('Content-Type', 'text/html;charset=utf-8');
-  this.body = failures.join("<br>") + '<br>DONE ' + new Date();
-
+  return failures;
 };
