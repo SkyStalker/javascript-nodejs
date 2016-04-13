@@ -21,7 +21,7 @@ exports.get = function*() {
 
     groups = [group];
   } else {
-    groups = yield CourseGroup.find().populate('teacher').lean();
+    groups = yield CourseGroup.find().populate('teacher');
   }
 
   let failures = {};
