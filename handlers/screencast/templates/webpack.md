@@ -21,7 +21,7 @@
 npm i babel-loader babel-core babel-preset-es2015 babel-plugin-transform-es2015-modules-commonjs
 ```
 
-Затем замените настройки babel-loader'а в конфиге на `"babel?presets[]=es2015,plugins[]=transform-es2015-modules-commonjs"`. 
+Затем замените настройки babel-loader'а в конфиге на `"babel?presets[]=es2015"`. 
 ````
 
 ## Часть 1: Введение
