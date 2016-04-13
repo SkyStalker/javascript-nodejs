@@ -11,6 +11,10 @@ block content
 
   p= order.title
 
+  p #{order.data.contactName} #{order.data.contactPhone}
+
+  orderData.contactPhone = this.contactInfo.phone;
+
   form(method="POST" action="")
     input(type="hidden" name="_csrf" value=csrf())
     div
