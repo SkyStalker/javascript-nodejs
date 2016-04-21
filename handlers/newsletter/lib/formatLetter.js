@@ -42,7 +42,7 @@ module.exports = function*(newsletterRelease, recipient, options) {
 
   // no content templating yet
   let parser = new BasicParser({
-    html: newsletterRelease.user.hasRole('admin')
+    html: newsletterRelease.user.hasRole('admin') || newsletterRelease.user.hasRole('teacher')
   });
 
 
