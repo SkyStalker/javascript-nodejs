@@ -1,4 +1,4 @@
-var User = require('users').User;
+const User = require('users').User;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const authenticateByProfile = require('../lib/authenticateByProfile');
 const config = require('config');

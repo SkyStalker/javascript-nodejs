@@ -22,6 +22,9 @@ exports.get = function*() {
 
     groups = [group];
   } else {
+    if (!this.isAdmin) {
+      this.throw(403);
+    }
     groups = yield CourseGroup.find().populate('teacher');
   }
 
@@ -70,7 +73,7 @@ function* inviteGroup(group) {
     let user = users[i];
 
     if (user.email == config.slack.email) continue; // can't invite self
-    
+
     if (!user.slackId) {
       failures.push(user.email);
       continue;
