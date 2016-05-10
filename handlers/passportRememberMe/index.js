@@ -12,7 +12,7 @@ exports.init = function(app) {
   // works automatically, just as sessions (and essentialy is a session add-on)
 
   var options = config.auth.rememberMe;
-  passport.use(new RememberMeStrategy(options, RememberMeToken.consume, RememberMeToken.issue));
+  passport.use(new RememberMeStrategy(options, RememberMeToken.verify, RememberMeToken.issue));
 
   app.use(passport.authenticate('remember-me'));
 
