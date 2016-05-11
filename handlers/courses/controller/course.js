@@ -31,6 +31,9 @@ exports.get = function*() {
   this.locals.groups = yield CourseGroup.find({
     isListed: true,
     isOpenForSignup: true,
+    dateStart: {
+      $gt: new Date()
+    },
     course: this.locals.course._id
   }).sort({
     dateStart: 1,

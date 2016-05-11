@@ -64,6 +64,9 @@ schema.methods.getUrl = function() {
 
 schema.methods.hasOpenGroups = function*() {
   var anyGroup = yield CourseGroup.findOne({
+    dateStart: {
+      $gt: new Date()
+    },
     isOpenForSignup: true,
     isListed: true,
     course: this._id
