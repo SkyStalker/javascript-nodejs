@@ -133,6 +133,9 @@ exports.get = function*(next) {
     }, {
       url:   `/courses/groups/${group.slug}/participants-info`,
       title: 'Анкеты участников'
+    }, {
+      url: `/slack/sync-group/${group.slug}`,
+      title: 'Скрипт инвайта участников в группу Slack'
     }];
 
 

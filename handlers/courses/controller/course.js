@@ -8,7 +8,7 @@ exports.get = function*() {
 
   this.locals.course = yield Course.findOne({
     slug: this.params.course
-  }).exec();
+  });
 
   if (!this.locals.course) {
     this.throw(404);
