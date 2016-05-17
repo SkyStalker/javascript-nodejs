@@ -28,13 +28,13 @@ exports.get = function*() {
     groups = yield CourseGroup.find().populate('teacher');
   }
 
-  let failures = {};
+  let results = {};
   for (let i = 0; i < groups.length; i++) {
     let group = groups[i];
-    failures[group.slug] = yield* inviteGroup.call(this, group);
+    results[group.slug] = yield* inviteGroup.call(this, group);
   }
 
-  this.locals.failures = failures;
+  this.locals.results = results;
 
   this.body = this.render('syncGroup');
 
@@ -63,7 +63,8 @@ function* inviteGroup(group) {
     isActive: true
   }).populate('user');
 
-  let failures = [];
+  let inSlack = [];
+  let notInSlack = [];
 
   let users = participants.map(p => p.user);
   users.push(group.teacher);
@@ -75,7 +76,7 @@ function* inviteGroup(group) {
     if (user.email == config.slack.email) continue; // can't invite self
 
     if (!user.slackId) {
-      failures.push(user.email);
+      notInSlack.push(user.email);
       continue;
     }
 
@@ -92,7 +93,9 @@ function* inviteGroup(group) {
       throw new Error("Failed to invite to slack group " + group.slug);
     }
 
+    inSlack.push(user.email);
+
   }
 
-  return failures;
-};
+  return {inSlack, notInSlack };
+}
