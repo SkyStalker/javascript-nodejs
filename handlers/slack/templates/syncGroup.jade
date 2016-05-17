@@ -8,10 +8,15 @@ block append variables
 
 block content
 
-  each failure, slug in failures
+  each result, slug in results
     h2= slug
 
     p Not in slack:
-    each email in failure
+    each email in result.notInSlack
+      div= email
+
+    p In slack:
+
+    each email in result.inSlack
       div= email
 
