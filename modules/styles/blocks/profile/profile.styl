@@ -20,6 +20,26 @@ $profile-action-button
         text-decoration underline
 
 .profile
+    &__label
+        padding 30px
+        border 3px solid #eee
+        border-radius 10px
+        margin-bottom 20px
+        position relative
+
+        &::after
+          content ''
+          width 17px
+          height 17px
+          border-top 3px solid #eee
+          border-left 3px solid #eee
+          background #fff
+          position absolute
+          margin-left: -7px
+          left 50%
+          top -11px
+          transform rotate(45deg)
+          box-sizing border-box
 
     &__view
         display block
