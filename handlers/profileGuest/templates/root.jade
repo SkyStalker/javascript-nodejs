@@ -17,6 +17,9 @@ block content
         +e.sign
           +e('span').sign-text Преподаватель
 
+    if profileUser.label
+      +e.label!= profileUser.label
+
     +e.content
 
       if tabs.length == 1

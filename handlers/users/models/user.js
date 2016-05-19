@@ -204,6 +204,10 @@ var UserSchema = new mongoose.Schema({
     }],
     default: []
   },
+  isTeacherFrontpage: {
+    type: Boolean,
+    index: true
+  },
   slackId: {
     type: String
   },
