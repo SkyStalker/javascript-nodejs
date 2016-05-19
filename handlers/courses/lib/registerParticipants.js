@@ -42,16 +42,20 @@ function* grantWebinar(group, participants, teacher) {
     return !participant.registrantKey;
   });
 
-  let auth = config.gotowebinar.auth[teacher.profileName];
+  let gotowebinar = teacher.gotowebinar;
+
+  if (!gotowebinar) {
+    throw new Error("Teacher has no gotowebinar configured");
+  }
 
   for (var i = 0; i < participantsWithoutKeys.length; i++) {
     var participant = participantsWithoutKeys[i];
 
     let response = yield request.post({
-      url: `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars/${group.webinarKey}/registrants`,
+      url: `https://api.citrixonline.com/G2W/rest/organizers/${gotowebinar.organizer_key}/webinars/${group.webinarKey}/registrants`,
       json: true,
       headers: {
-        'Authorization': auth.accessToken,
+        'Authorization': gotowebinar.access_token,
         'content-type': 'application/json;charset=utf-8'
       },
       body: {

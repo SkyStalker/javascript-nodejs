@@ -39,6 +39,9 @@ var UserSchema = new mongoose.Schema({
       }
     ]
   },
+
+  gotowebinar: { },
+
   email:         {
     type:      String,
     lowercase: true,
