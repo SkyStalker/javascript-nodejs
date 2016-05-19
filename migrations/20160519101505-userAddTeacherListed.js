@@ -13,6 +13,7 @@ exports.up = function*() {
     if (user.teachesCourses.length && user.isTeacherFrontpage !== false) {
       user.isTeacherFrontpage = true;
     }
+    console.log(user);
     yield user.persist();
   }
 
