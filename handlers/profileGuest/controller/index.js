@@ -59,6 +59,8 @@ exports.get = function* (next) {
 
   this.locals.tabs[tabName].active = true;
 
+  debugger;
+  // console.log("!!!!!", user, user.profileLabel);
   this.body = this.render(tabName, {
     profileUser: user
   });
