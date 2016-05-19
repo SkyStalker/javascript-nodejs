@@ -9,6 +9,8 @@ exports.up = function*() {
 
   for (var i = 0; i < users.length; i++) {
     var user = users[i];
+    if (user.profileName.length < 2) user.profileName += '-';
+    
     if (user.isAdmin) {
       user.roles.addToSet('admin');
       user.isAdmin = undefined;

@@ -377,6 +377,8 @@ UserSchema.methods.generateProfileName = function*() {
 
   profileName = transliterate(profileName);
 
+  while (profileName.length < 2) profileName += '-';
+
   var existingUser;
   while (true) {
     existingUser = yield User.findOne({profileName: profileName}).exec();
@@ -385,6 +387,7 @@ UserSchema.methods.generateProfileName = function*() {
     // add one more random digit and retry the search
     profileName += Math.random() * 10 ^ 0;
   }
+
 
   this.profileName = profileName;
 };
