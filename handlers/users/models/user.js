@@ -82,6 +82,9 @@ var UserSchema = new mongoose.Schema({
       message: "Неизвестное значение для пола."
     }
   },
+  profileLabel: { // label in profileGuest below the avatar
+    type: String
+  },
   profileName:   {
     type:     String,
     validate: [
