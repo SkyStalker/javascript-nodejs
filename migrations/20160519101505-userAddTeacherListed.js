@@ -3,7 +3,7 @@
 var User = require('users').User;
 
 exports.up = function*() {
-  var users = yield User.find();
+  var users = yield User.find({deleted: false});
 
   for (var i = 0; i < users.length; i++) {
     var user = users[i];
