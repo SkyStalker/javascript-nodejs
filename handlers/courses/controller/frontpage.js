@@ -22,7 +22,7 @@ exports.get = function*() {
   }
 
   let teachers = yield User.find({
-    roles: 'teacher'
+    isTeacherFrontpage: true
   }).sort({created: 1});
 
   this.locals.formatGroupDate = function(date) {
