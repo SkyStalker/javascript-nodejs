@@ -15,7 +15,7 @@ exports.get = function*() {
   var filter = {};
 
   // for non-admin user filter isPublic
-  if (!this.isAdmin) {
+  if (!this.user || !this.user.hasRole('admin')) {
     filter.$or = [{
       isPublic: true
     }];
