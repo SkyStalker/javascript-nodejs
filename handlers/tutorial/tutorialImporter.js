@@ -101,7 +101,7 @@ TutorialImporter.prototype.syncFolder = function*(sourceFolderPath, parent) {
   }
 
   data.weight = parseInt(folderFileName);
-  data.slug = folderFileName.slice(String(data.weight).length + 1);
+  data.slug = folderFileName.slice(folderFileName.indexOf('-') + 1);
 
   yield Article.destroyTree({slug: data.slug});
 
@@ -171,7 +171,7 @@ TutorialImporter.prototype.syncArticle = function* (articlePath, parent) {
   }
 
   data.weight = parseInt(articlePathName);
-  data.slug = articlePathName.slice(String(data.weight).length + 1);
+  data.slug = articlePathName.slice(articlePathName.indexOf('-') + 1);
 
   yield Article.destroyTree({slug: data.slug});
 
@@ -306,7 +306,7 @@ TutorialImporter.prototype.syncTask = function*(taskPath, parent) {
   };
 
   data.weight = parseInt(taskPathName);
-  data.slug = taskPathName.slice(String(data.weight).length + 1);
+  data.slug = taskPathName.slice(taskPathName.indexOf('-') + 1);
 
   data.githubLink = config.tutorialGithubBaseUrl + taskPath.slice(this.root.length);
 

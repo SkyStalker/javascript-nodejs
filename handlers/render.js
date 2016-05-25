@@ -41,6 +41,8 @@ function addStandardHelpers(locals, ctx) {
 
   locals.analyticsEnabled = ctx.query.noa ? false : (ctx.host == config.domain.main && process.env.NODE_ENV == 'production');
 
+  locals.livereloadEnabled = process.env.TUTORIAL_EDIT;
+  
   locals.js = function(name, options) {
     options = options || {};
 

@@ -181,6 +181,7 @@
     "js-beautify": "*",
     "jshint": "*",
     "lazypipe": "*",
+    "livereload-js": "^2.2.2",
     "mocha": "*",
     "mysql": "*",
     "node-notifier": "*",
