@@ -28,6 +28,7 @@ const quizSchema = new Schema({
   },
   slug: {
     type:     String,
+    lowercase: true,
     required: true,
     index:    true
   },

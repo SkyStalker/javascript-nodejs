@@ -28,6 +28,7 @@ const schema = new Schema({
   },
   slug:       { // makeAnchor.js
     type:     String,
+    lowercase: true,
     required: true,
     unique:   true
   },
