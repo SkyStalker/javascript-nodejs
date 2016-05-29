@@ -24,6 +24,7 @@ var schema = new Schema({
   slug:        {
     type:     String,
     required: true,
+    lowercase: true,
     unique:   true
   },
   weight:      {

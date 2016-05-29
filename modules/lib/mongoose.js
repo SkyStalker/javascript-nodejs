@@ -121,7 +121,7 @@ mongoose.plugin(function(schema) {
           // example:
           // err = { path="email", message="Email is not unique", type="notunique", value=model.email }
           valError.errors[field] = new ValidatorError({
-            path: "email",
+            path: field,
             message: errorMessage,
             type: 'notunique',
             value: model[field]
@@ -129,6 +129,7 @@ mongoose.plugin(function(schema) {
 
           valError.code = err.code; // if (err.code == 11000) in the outer code will still work
 
+          // console.log(valError.errors, model.toObject());
           return callback(valError);
         });
 

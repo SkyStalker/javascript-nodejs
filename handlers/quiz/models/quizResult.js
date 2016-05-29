@@ -14,6 +14,7 @@ const schema = new Schema({
   // and even deleted
   // but the information must stay
   quizSlug:        {
+    lowercase: true,
     type: String,
     required: true
   },

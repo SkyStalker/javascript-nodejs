@@ -310,6 +310,7 @@ TutorialImporter.prototype.syncTask = function*(taskPath, parent) {
 
   data.githubLink = config.tutorialGithubBaseUrl + taskPath.slice(this.root.length);
 
+  console.log("DESTROY", data);
   yield Task.destroy({slug: data.slug});
 
   const options = {
@@ -349,6 +350,8 @@ TutorialImporter.prototype.syncTask = function*(taskPath, parent) {
   const task = new Task(data);
   yield task.persist();
 
+  log.debug("task saved");
+
   const subPaths = fs.readdirSync(taskPath);
 
   for (var i = 0; i < subPaths.length; i++) {
@@ -383,7 +386,7 @@ TutorialImporter.prototype.syncView = function*(dir, parent) {
   var webPath = parent.getResourceWebRoot() + '/' + pathName;
 
   log.debug("syncView webpath", webPath);
-  var plunk = yield Plunk.findOne({webPath: webPath}).exec();
+  var plunk = yield Plunk.findOne({webPath: webPath});
 
   if (plunk) {
     log.debug("Plunk from db", plunk);
@@ -399,6 +402,8 @@ TutorialImporter.prototype.syncView = function*(dir, parent) {
   log.debug("Files for plunk", filesForPlunk);
 
   if (!filesForPlunk) return; // had errors
+
+  log.debug("Merging plunk");
 
   yield* plunk.mergeAndSyncRemote(filesForPlunk);
 

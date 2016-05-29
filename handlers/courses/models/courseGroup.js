@@ -42,6 +42,7 @@ var schema = new Schema({
   // like "nodejs-0402", for urls
   slug: {
     type:     String,
+    lowercase: true,
     required: true,
     unique:   true
   },
