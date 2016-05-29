@@ -76,6 +76,11 @@ var config = module.exports = {
     email:  secret.cloudflare.email
   },
 
+  recaptcha: {
+    id:     secret.recaptcha.id,
+    secret: secret.recaptcha.secret
+  },
+
   xmpp: {
     server: 'javascript.ru',
     admin:  secret.xmpp.admin
