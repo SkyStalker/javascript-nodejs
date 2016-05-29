@@ -1,3 +1,5 @@
+'use strict';
+
 var User = require('users').User;
 var jade = require('lib/serverJade');
 var path = require('path');
