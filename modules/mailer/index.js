@@ -10,6 +10,8 @@ var log = require('log')();
 var Letter = require('./models/letter');
 var AWS = require('aws');
 
+const SuppressedEmail = require('./models/suppressedEmail');
+
 const nodemailer = require('nodemailer');
 const htmlToText = require('nodemailer-html-to-text').htmlToText;
 const stubTransport = require('nodemailer-stub-transport');
@@ -30,6 +32,13 @@ transport.use('compile', htmlToText());
 
 // not middleware, cause can be used in CRON-based runs, from onPaid callback
 // mail can be sent outside of request context
+
+class SuppressedError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'SuppressedError';
+  }
+}
 
 /**
  * create & save a letter object
@@ -73,6 +82,11 @@ function* createLetter(options) {
     throw new Error("No email for recepient, message options:" + JSON.stringify(options));
   }
 
+  let isSuppressed = yield SuppressedEmail.findOne({email: message.to.address});
+
+  if (isSuppressed) {
+    throw new SuppressedError(`На адрес ${message.to.address} отправка невозможна.`);
+  }
 
   message.html = letterHtml;
 
@@ -107,6 +121,7 @@ function* send(options) {
  */
 function* sendLetter(letter) {
 
+
   let result = yield transport.sendMail(letter.message);
 
   letter.transportResponse = result;
@@ -134,6 +149,8 @@ exports.inlineCss = inlineCss;
 exports.send = send;
 exports.createLetter = createLetter;
 exports.sendLetter = sendLetter;
+exports.SuppressedEmail = require('./models/suppressedEmail');
+exports.SuppressedError = SuppressedError;
 exports.StatusService = require('./lib/statusService');
 
 if (process.env.MAILER_DISABLED) {
