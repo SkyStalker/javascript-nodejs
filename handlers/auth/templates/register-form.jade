@@ -31,6 +31,8 @@ include /bem
         +e('label').label(for="register-password") Пароль:
         +b('span').text-input.__input
           +e('input').control#register-password(type="password" name="password" required minlength="4")
+      +e.line
+        +e.recaptcha
       +e.line.__footer
           +b('button').button._action.submit(type="submit")
             +e('span').text Зарегистрироваться

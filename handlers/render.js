@@ -75,7 +75,7 @@ function addStandardHelpers(locals, ctx) {
   locals.domain = config.domain;
   locals.ga = config.ga;
   locals.yandexMetrika = config.yandexMetrika;
-
+  locals.recaptcha = config.recaptcha;
 
   // patterns to use in urls
   // no need to escape /
