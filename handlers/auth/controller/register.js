@@ -9,11 +9,11 @@ var recaptcha = require('recaptcha');
 
 // Регистрация пользователя.
 exports.post = function* (next) {
-
+/*
   let captchaCheck = yield* recaptcha.checkCtx(this);
   if (!captchaCheck) {
     this.throw(403);
-  }
+  }*/
 
   var verifyEmailToken = Math.random().toString(36).slice(2, 10);
   var user = new User({

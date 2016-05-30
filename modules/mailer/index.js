@@ -15,12 +15,21 @@ const SuppressedEmail = require('./models/suppressedEmail');
 const nodemailer = require('nodemailer');
 const htmlToText = require('nodemailer-html-to-text').htmlToText;
 const stubTransport = require('nodemailer-stub-transport');
-const sesTransport = require('nodemailer-ses-transport');
+const SesTransport = require('nodemailer-ses-transport');
+const SMTPTransport = require('nodemailer-smtp-transport');
 
-const transportEngine = (process.env.NODE_ENV == 'test' || process.env.MAILER_DISABLED) ? stubTransport() : sesTransport({
-  ses: new AWS.SES(),
-//  pool: true, not needed for SES?
-  rateLimit: 50
+
+const transportEngine = (process.env.NODE_ENV == 'test' || process.env.MAILER_DISABLED) ? stubTransport() :
+  config.mailer.transport == 'aws' ? new SesTransport({
+    ses: new AWS.SES(),
+    rateLimit: 50
+  }) : new SMTPTransport({
+  service: "Gmail",
+  debug: true,
+  auth: {
+    user: config.gmail.user,
+    pass: config.gmail.password
+  }
 });
 
 const transport = nodemailer.createTransport(transportEngine);

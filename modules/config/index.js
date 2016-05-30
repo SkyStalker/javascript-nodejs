@@ -81,6 +81,11 @@ var config = module.exports = {
     secret: secret.recaptcha.secret
   },
 
+  gmail: {
+    user:     secret.gmail.user,
+    password: secret.gmail.password
+  },
+
   xmpp: {
     server: 'javascript.ru',
     admin:  secret.xmpp.admin
