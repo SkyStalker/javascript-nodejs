@@ -9,10 +9,10 @@ var recaptcha = require('recaptcha');
 
 exports.post = function* (next) {
 
-  let captchaCheck = yield* recaptcha.checkCtx(this);
+/*  let captchaCheck = yield* recaptcha.checkCtx(this);
   if (!captchaCheck) {
     this.throw(403);
-  }
+  }*/
 
   var email = this.request.body.email.toLowerCase();
   var user = yield User.findOne({
