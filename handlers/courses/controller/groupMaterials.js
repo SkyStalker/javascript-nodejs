@@ -69,7 +69,7 @@ exports.get = function*() {
 
     content = content.replace(/\s+/gim, ' ');
 
-    if (content.length > 1000) {
+    if (content.length > 500) {
       this.locals.chatLogs.push({
         title: log,
         link:  `/courses/groups/${group.slug}/logs/${log.replace(/\.html$/, '')}`
