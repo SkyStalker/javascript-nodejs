@@ -82,7 +82,7 @@ if (process.env.NODE_ENV == 'development') {
   handlers.push('qa');
 }
 
-var extraHandlersRoot = path.join(process.cwd(), 'extra/handlers');
+var extraHandlersRoot = path.join(process.cwd(), 'extra', 'handlers');
 
 if (fs.existsSync(extraHandlersRoot)) {
   fs.readdirSync(extraHandlersRoot).forEach(function(extraHandler) {

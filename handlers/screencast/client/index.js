@@ -55,6 +55,8 @@ function initList() {
   var links = document.querySelectorAll('a[data-video-id]');
   for (var i = 0; i < links.length; i++) {
     var link = links[i];
+    link.href = '//www.youtube.com/watch?v=' + link.getAttribute('data-video-id');
+    console.log(link);
     link.onclick = function(e) {
       e.preventDefault();
       var videoId = this.getAttribute('data-video-id');
