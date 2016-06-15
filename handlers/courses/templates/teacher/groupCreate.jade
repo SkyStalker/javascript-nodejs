@@ -1,0 +1,53 @@
+extends /layouts/main
+
+block append variables
+
+  - var layout_header_class = "main__header_center"
+  - var title = 'Создать группу';
+  - var sitetoolbar = true
+  - var siteToolbarCurrentSection = "courses";
+
+block content
+
+    table
+      tr
+        td Курс
+        td
+          select(name="course")
+            each course in courses
+              option(value=course.id)= course.title
+      tr
+        td Дата начала обучения
+        td
+          input(type="date" name="dateStart")
+      tr
+        td Дата конца обучения
+        td
+          input(type="date" name="dateEnd")
+      tr
+        td Дни обучения
+        td
+          | Пн
+          input(type="checkbox" name="weekday-1")
+          | Вт
+          input(type="checkbox" name="weekday-2")
+          | Ср
+          input(type="checkbox" name="weekday-3")
+          | Чт
+          input(type="checkbox" name="weekday-4")
+          | Пт
+          input(type="checkbox" name="weekday-5")
+          | Сб
+          input(type="checkbox" name="weekday-6")
+          | Вс
+          input(type="checkbox" name="weekday-7")
+
+      tr
+        td Время начала обучения
+        td
+          input(type="time" name="timeStart")
+      tr
+        td Время конца обучения
+        td
+          input(type="time" name="timeEnd")
+

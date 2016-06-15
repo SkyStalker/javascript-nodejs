@@ -31,7 +31,7 @@ angular.module('profile').config(($locationProvider, $stateProvider, $urlRouterP
           controller:  'ProfileAboutMeCtrl'
         },
         bottom: {
-          template: `<course-feedback-list ng-if="me.teachesCourses && me.teachesCourses.length"/>`,
+          template: `<course-feedback-list ng-if="me.isTeacher"/>`,
           controller:  'ProfileCourseFeedbackList'
         }
       }

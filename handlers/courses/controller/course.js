@@ -2,6 +2,7 @@ var moment = require('momentWithLocale');
 var User = require('users').User;
 var Course = require('../models/course');
 var CourseGroup = require('../models/courseGroup');
+var CourseTeacher = require('../models/courseTeacher');
 var money = require('money');
 
 exports.get = function*() {
@@ -24,9 +25,11 @@ exports.get = function*() {
     });
   };
 
-  this.locals.teachers = yield User.find({
-    teachesCourses: this.locals.course._id
-  });
+  this.locals.teachers = yield CourseTeacher.find({
+    course: this.locals.course._id
+  }).populate('teacher');
+
+  this.locals.teachers = this.locals.teachers.map(t => t.teacher);
 
   this.locals.groups = yield CourseGroup.find({
     isListed: true,

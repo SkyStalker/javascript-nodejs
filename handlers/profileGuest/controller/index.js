@@ -1,12 +1,19 @@
 var User = require('users').User;
 var QuizResult = require('quiz').QuizResult;
+var CourseTeacher = require('courses').CourseTeacher;
 
 // skips the request if it's the owner
 exports.get = function* (next) {
 
   var user = yield User.findOne({
     profileName: this.params.profileName
-  }).populate('teachesCourses');
+  });
+
+  this.locals.teachesCourses = yield CourseTeacher.find({
+    teacher: user._id
+  }).populate('course');
+
+  this.locals.teachesCourses = this.locals.teachesCourses.map(t => t.course);
 
   if (!user) {
     this.throw(404);
@@ -59,7 +66,6 @@ exports.get = function* (next) {
 
   this.locals.tabs[tabName].active = true;
 
-  debugger;
   // console.log("!!!!!", user, user.profileLabel);
   this.body = this.render(tabName, {
     profileUser: user
