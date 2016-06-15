@@ -11,7 +11,7 @@ class MigrationManager {
 
   *loadState() {
     // current migration date, 0 at start
-    var migrationState = yield MigrationState.findOne({}).exec();
+    var migrationState = yield MigrationState.findOne({});
     if (!migrationState) {
       migrationState = yield MigrationState.create({
         currentMigration: 0
@@ -29,6 +29,8 @@ class MigrationManager {
   findNextMigration(direction) {
 
     var lastMigrationDate = this.state.currentMigration;
+
+    log.debug("look for migration since", lastMigrationDate);
 
     var migrationFiles = glob.sync(path.join(migrationsRoot, '*')).filter(function(migrationFile) {
       return parseInt(path.basename(migrationFile)); // only files like 20150505...

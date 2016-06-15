@@ -50,6 +50,10 @@ var schema = new Schema({
     default: false
   },
 
+  price: {
+    type: Number,
+    required: true
+  },
 
   created: {
     type:    Date,

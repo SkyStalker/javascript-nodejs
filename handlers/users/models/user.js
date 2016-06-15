@@ -203,13 +203,14 @@ var UserSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  /*
   teachesCourses:            {
     type:    [{
       type: Schema.Types.ObjectId,
       ref:  'Course'
     }],
     default: []
-  },
+  },*/
   isTeacherFrontpage: {
     type: Boolean,
     index: true
@@ -228,7 +229,7 @@ var UserSchema = new mongoose.Schema({
     default: false
   },
   readOnly:                  Boolean,  // data is not deleted, just flagged as banned
-  roles:                     { // qaModerator?
+  roles:                     { // admin, teacher, qaModerator?
     type:    [{
       type:      String,
       lowercase: true,
@@ -298,7 +299,7 @@ UserSchema.statics.getInfoFields = function(user) {
     profileTabsEnabled: user.profileTabsEnabled,
     aboutMe:            user.aboutMe,
     teachesCourses:     user.teachesCourses,
-    isTeacher:          user.roles.indexOf('teacher') != -1
+    isTeacher:          user.hasRole('teacher')
   };
 };
 
