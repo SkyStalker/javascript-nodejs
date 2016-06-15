@@ -1,3 +1,5 @@
+'use strict';
+
 var Router = require('koa-router');
 var mustBeAuthenticated = require('auth').mustBeAuthenticated;
 var mustBeParticipantOrTeacher = require('./lib/mustBeParticipantOrTeacher');
@@ -23,13 +25,24 @@ router.get('/:course', require('./controller/course').get);
 router.get('/groups/:groupBySlug/signup', require('./controller/signup').get);
 router.get('/orders/:orderNumber(\\d+)', require('./controller/signup').get);
 
-router.get('/admin/orders/:orderNumber(\\d+)', mustBeAuthenticated, require('./controller/order').get);
-router.post('/admin/orders/:orderNumber(\\d+)', mustBeAuthenticated, require('./controller/order').post);
+router.get('/admin/orders/:orderNumber(\\d+)?', mustBeAdmin, require('./controller/admin/orders').get);
+router.post('/admin/orders/:orderNumber(\\d+)', mustBeAdmin, require('./controller/admin/orders').post);
+router.post('/admin/transactions/:transactionNumber(\\d+)', mustBeAdmin, require('./controller/admin/transactions').post);
+
+router.post('/admin/invites', mustBeAdmin, require('./controller/admin/invites').post);
+router.get('/admin/groups', mustBeAdmin, require('./controller/admin/groups').get);
 
 router.get('/groups/:groupBySlug/info', mustBeParticipantOrTeacher, require('./controller/groupInfo').get);
 router.get('/groups/:groupBySlug/materials', mustBeParticipantOrTeacher, require('./controller/groupMaterials').get);
 router.get('/groups/:groupBySlug/participants-info', mustBeTeacherOrAdmin, require('./controller/participantsInfo').get);
 router.post('/groups/:groupBySlug/materials', mustBeTeacher, require('./controller/groupMaterials').post);
+router.del('/groups/:groupBySlug/materials', mustBeTeacher, require('./controller/groupMaterials').del);
+
+router.get('/groups/:groupBySlug/logs/:logName', mustBeParticipantOrTeacher, require('./controller/groupLogs').get);
+
+router.get('/groups/:groupBySlug/ical', require('./controller/groupIcal').get);
+
+
 
 // not groups/:groupBySlug/* url,
 // because the prefix /course/download must be constant for nginx to proxy *.zip to node

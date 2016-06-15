@@ -1,6 +1,9 @@
+// make sure Promise is wrapped early,
+// to assign mongoose.Promise = global.Promise the wrapped variant any time later
 var path = require('path');
 var fs = require('fs');
 var env = process.env;
+var yaml = require('js-yaml');
 
 // NODE_ENV = development || test || production
 env.NODE_ENV = env.NODE_ENV || 'development';
@@ -13,12 +16,12 @@ var secret = require('./secret');
 var lang = env.NODE_LANG || 'ru';
 
 if (env.DEV_TRACE) {
-  Error.stackTraceLimit = 10000;
+  Error.stackTraceLimit = 100000;
   require('trace');
   require('clarify');
 }
 
-module.exports = {
+var config = module.exports = {
   // production domain, for tutorial imports, descriptions, etc
   // for the places where in-dev we must use a real domain
   domain: {
@@ -28,9 +31,16 @@ module.exports = {
 
   server: {
     port:       env.PORT || 3000,
-    host:       env.HOST || '0.0.0.0',
+    host:       env.HOST || '127.0.0.1',
     siteHost:   env.SITE_HOST || '',
     staticHost: env.STATIC_HOST || ''
+  },
+
+
+  aws: {
+    region:          secret.aws.region,
+    accessKeyId:     secret.aws.AWSAccessKeyId,
+    secretAccessKey: secret.aws.AWSSecretKey
   },
 
   ga: {
@@ -39,6 +49,14 @@ module.exports = {
 
   yandexMetrika: {
     id: lang == 'ru' ? 17649010 : 32184394
+  },
+
+  slack: {
+    token: secret.slack.token,
+    org:   secret.slack.org,
+    email: 'mk@javascript.ru',
+    host:  '127.0.0.1',
+    port:  3001
   },
 
   test: {
@@ -56,6 +74,16 @@ module.exports = {
     url:    'https://www.cloudflare.com/api_json.html',
     apiKey: secret.cloudflare.apiKey,
     email:  secret.cloudflare.email
+  },
+
+  recaptcha: {
+    id:     secret.recaptcha.id,
+    secret: secret.recaptcha.secret
+  },
+
+  gmail: {
+    user:     secret.gmail.user,
+    password: secret.gmail.password
   },
 
   xmpp: {
@@ -94,6 +122,7 @@ module.exports = {
   },
   payments: require('./payments'),
 
+  iprotect: secret.iprotect,
   imgur:    secret.imgur,
   adminKey: secret.adminKey,
 
@@ -108,7 +137,12 @@ module.exports = {
     appId: secret.openexchangerates.appId
   },
 
-  jb:      secret.jb,
+  gotowebinar: secret.gotowebinar,
+
+  jb: {
+    email: env.NODE_ENV == 'production' ? secret.jb.email : 'iliakan@gmail.com'
+  },
+
   lang:    lang,
   elastic: {
     host: 'http://localhost:9200'
@@ -129,7 +163,7 @@ module.exports = {
     hash: {
       length:     128,
       // may be slow(!): iterations = 12000 take ~60ms to generate strong password
-      iterations: env.NODE_ENV == 'production' ? 12000 : 1
+      iterations: env.NODE_ENV == 'test' ? 1 : 12000
     }
   },
 
@@ -148,26 +182,40 @@ module.exports = {
     address:   'http://ondemand.saucelabs.com:80/wd/hub'
   },
 
-  renderedCacheEnabled:  env.NODE_ENV == 'production',
   projectRoot:           process.cwd(),
   // public files, served by nginx
   publicRoot:            path.join(process.cwd(), 'public'),
   // private files, for expiring links, not directly accessible
   downloadRoot:          path.join(process.cwd(), 'download'),
-  courseRoot:            path.join(process.cwd(), 'course'),
+  jabberLogsRoot:        path.join(process.cwd(), 'jabber-logs'),
+  archiveRoot:           path.join(process.cwd(), 'archive'),
   tmpRoot:               path.join(process.cwd(), 'tmp'),
   localesRoot:           path.join(process.cwd(), 'locales'),
-  // extra handlers from outside of the main repo
-  extraHandlersRoot:     path.join(process.cwd(), 'extra/handlers'),
   // js/css build versions
   manifestRoot:          path.join(process.cwd(), 'manifest'),
   migrationsRoot:        path.join(process.cwd(), 'migrations'),
-  tutorialGithubBaseUrl: 'https://github.com/iliakan/javascript-tutorial/blob/' + lang
+  tutorialGithubBaseUrl: 'https://github.com/iliakan/javascript-tutorial/blob/' + lang,
 
+  handlers: require('./handlers')
 };
+
+require.extensions['.yml'] = function(module, filename) {
+  module.exports = yaml.safeLoad(fs.readFileSync(filename, 'utf-8'));
+};
+
 
 // webpack config uses general config
 // we have a loop dep here
-module.exports.webpack = require('./webpack');
-require('./i18n');
+config.webpack = require('./webpack')(config);
 
+const t = require('i18n');
+t.requirePhrase('site', require(path.join(config.localesRoot, 'site', config.lang + '.yml')));
+
+if (process.env.NODE_ENV == 'test') {
+  require('money').rates = {
+    USD: 1,
+    EUR: 1,
+    UAH: 1,
+    RUB: 1
+  };
+}

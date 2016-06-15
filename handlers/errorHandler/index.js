@@ -106,6 +106,9 @@ exports.init = function(app) {
     try {
       yield* next;
     } catch (err) {
+      if (typeof err == 'string') { // fx error
+        err = new Error(err);
+      }
       // this middleware is not like others, it is not endpoint
       // so wrapHmvcMiddleware is of little use
       try {
@@ -126,7 +129,6 @@ exports.init = function(app) {
     try {
       yield next;
     } catch (err) {
-
       if (err.name == 'CastError') {
         // malformed or absent mongoose params
         if (process.env.NODE_ENV == 'production') { // do not rewrite in dev/test env

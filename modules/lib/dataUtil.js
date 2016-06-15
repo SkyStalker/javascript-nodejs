@@ -14,7 +14,9 @@ function *createEmptyDb() {
       return mongoose.connection.db;
     }
 
-    yield thunk(mongoose.connection.on)('open');
+    yield function(callback) {
+      mongoose.connection.on('open', callback);
+    };
 
     return mongoose.connection.db;
   }
@@ -41,7 +43,9 @@ function *createEmptyDb() {
 
     yield collectionNames.map(function(name) {
       log.debug("drop ", name);
-      return thunk(db.dropCollection)(name);
+      return function(callback) {
+        db.dropCollection(name, callback);
+      };
     });
 
   }

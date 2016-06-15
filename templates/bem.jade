@@ -2,7 +2,8 @@
 //- MIT Licensed
 
 //- Some global variables
-- var bem_chain = [];
+-
+  if (!bem_chain) bem_chain = [];
 
 //- Block
 mixin b(tag, isElement, noBlockClass)

@@ -45,12 +45,22 @@ var schema = new Schema({
       oauthToken: String, // for Ya.Money processPayments
       requestId: String, //  for Ya.Money processPayments,
 
+      aviso: {}, // for YaKassa aviso info (invoiceId: internal number, used for refunds and other)
+
       // for invoices
       companyName: String,
       agreementRequired: Boolean,
       contractHead: String,
       companyAddress: String,
-      bankDetails: String
+
+      companyMail: String, // deprecated
+      companyMailIndex: String,
+      companyMailWho: String,
+      companyMailAddress: String,
+
+      companyMailSent: Boolean,  // true iff paper letter sent
+      bankDetails: String,
+      hasDocuments: Boolean
     },
     default: {}
   },

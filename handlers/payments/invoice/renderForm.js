@@ -1,5 +1,4 @@
 const jade = require('lib/serverJade');
-const config = require('config');
 const path = require('path');
 
 module.exports = function* (transaction, order) {

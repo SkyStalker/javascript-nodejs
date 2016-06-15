@@ -1,0 +1,36 @@
+extends /layouts/main
+
+block append variables
+
+  - var layout_header_class = "main__header_center"
+  - var title = 'Группы';
+  - var sitetoolbar = true
+  - var siteToolbarCurrentSection = "courses";
+
+block content
+
+    table
+      tr
+        th slug
+        th teacher
+        th dates
+        th success
+        th pending filtered/all
+        th amount
+      each group in groups
+        tr
+          td= group.slug
+          td= group.teacher.displayName
+          td
+            = moment(group.dateStart).format('DD.MM.YYYY')
+            br
+            = moment(group.dateEnd).format('DD.MM.YYYY')
+          td= orderCounts[group.id].success
+          td
+            = orderCounts[group.id].pendingFiltered
+            if orderCounts[group.id].pendingFiltered != orderCounts[group.id].pending
+              | (#{orderCounts[group.id].pending})
+          td
+            = amounts[group.id].amount
+            br
+            != amounts[group.id].missing.join('<br>')

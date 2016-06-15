@@ -30,7 +30,7 @@ meta(name="twitter:creator", content="@iliakan")
 meta(name="twitter:image", content=(schema.titleImage || "https://" + domain.main + "/img/logo_square.png"))
 
 
-!=css("head")
+!=css("styles")
 
 if prev
   link(rel="prev" href=prev.url)
@@ -40,8 +40,9 @@ if next
 
 //- Counters only on production
 if analyticsEnabled
-  script var GA_ID = "#{ga.id}";
-  script var YANDEX_METRIKA_ID = #{yandexMetrika.id};
+  script window.GA_ID = "#{ga.id}";
+  script window.YANDEX_METRIKA_ID = #{yandexMetrika.id};
+  script window.STATUS_CODE = #{context.status}
   include ../blocks/ga
   //- let page specify more data to send w/ pageview
   block ga
@@ -49,6 +50,9 @@ if analyticsEnabled
 
   include ../blocks/metrika
 
+if livereloadEnabled
+  script.
+    document.write('<script src="//' + location.host.split(':')[0] + ':35729/livereload.js"></' + 'script>')
 
 else
   //- so that other scripts using ga() for stats won't die
@@ -56,6 +60,9 @@ else
     //- hitCallback will never work, but that must be worked around by gaHitCallback wrapper
     window.ga = function() {};
   script window.metrika = { reachGoal: function() {} };
+
+
+script window.RECAPTCHA_ID = "#{recaptcha.id}";
 
 !=js("head")
 

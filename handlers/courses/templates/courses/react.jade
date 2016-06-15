@@ -14,7 +14,7 @@ block append head
 
 block content
 
-  p Этот курс посвящён профессиональной разработке веб-приложений с помощью React.JS.
+  p Этот онлайн-курс посвящён профессиональной разработке веб-приложений с помощью React.JS.
 
   include ../blocks/react/programAndSignup
 
@@ -23,7 +23,22 @@ block content
     | Более подробная информация о программе курса
 
   include ../blocks/react/programDetails
+  include ../blocks/react/how
   include ../blocks/react/result
+
+  +b.courses-mix
+    +e('h2').title Требования к участникам
+
+    +e.body
+      p.
+        Для этого курса нужно знание JavaScript и знакомство с CSS/HTML.
+
+      P.
+        Желательно понимание английского языка.
+        По ходу курса будут предлагаться для дополнительного ознакомления материалы на английском,
+        всё самое важное мы пройдём на занятиях, но желательно, чтобы вы могли их понять.
+
+
   include ../blocks/react/systemRequirements
 
   +b.fixed-tab.phone-only.courses-tab

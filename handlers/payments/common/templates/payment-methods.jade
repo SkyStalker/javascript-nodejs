@@ -18,8 +18,10 @@
             if paymentMethod.hasIcon
               +e('img').logo(src="/pay-methods/pay-" + paymentMethod.name + '.svg' alt=paymentMethod.name[0].toUpperCase() + paymentMethod.name.slice(1))
         if paymentMethod.name == "paypal"
-          include paypal-settings
-        if paymentMethod.name == "interkassa"
+          input(type="hidden", name="paypalCurrency", value="RUB")
+        else if paymentMethod.name == "interkassa"
           include interkassa-settings
-        if paymentMethod.name == "invoice"
+        else if paymentMethod.name == "invoice"
           include invoice-settings
+        else if paymentMethodShowDefaultCurrency && paymentMethod.currency
+          +b.payment-setting.__default-currency Оплата будет проводиться в #{paymentMethod.currency}

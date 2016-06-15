@@ -48,6 +48,10 @@ CsrfChecker.prototype.middleware = function() {
 exports.init = function(app) {
   koaCsrf(app);
 
+  app.csrfChecker = new CsrfChecker();
+
+  app.use(app.csrfChecker.middleware());
+
   app.use(function*(next) {
 
     try {
@@ -62,9 +66,6 @@ exports.init = function(app) {
 
   });
 
-  app.csrfChecker = new CsrfChecker();
-
-  app.use(app.csrfChecker.middleware());
 };
 
 

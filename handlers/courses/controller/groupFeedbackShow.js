@@ -4,7 +4,6 @@ const CourseFeedback = require('../models/courseFeedback');
 const CourseParticipant = require('../models/courseParticipant');
 const CourseGroup = require('../models/courseGroup');
 const User = require('users').User;
-const _ = require('lodash');
 const renderFeedback = require('../lib/renderFeedback');
 
 exports.get = function*() {
@@ -21,7 +20,7 @@ exports.get = function*() {
 
   var authorOrAdminOrTeacher = false;
   if (this.user) {
-    if (this.user.isAdmin || this.user._id.equals(courseFeedback.userCache || ~this.user.teachesCourses.indexOf(courseFeedback.group._id))) {
+    if (this.user.hasRole('admin') || this.user._id.equals(courseFeedback.userCache || ~this.user.teachesCourses.indexOf(courseFeedback.group._id))) {
       authorOrAdminOrTeacher = true;
     }
   }

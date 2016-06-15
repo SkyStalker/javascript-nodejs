@@ -1,0 +1,41 @@
+
+extends /layouts/main
+
+block append variables
+  - var sitetoolbar = true
+  - var layout_main_class = "main_width-limit-wide"
+  - var layout_header_class = "main__header_center"
+
+block append head
+  !=js("newsletterAdmin", {defer: true})
+  !=css("newsletterAdmin")
+
+
+block content
+
+  +b.newsletter-releases
+    if !newsletterReleases.length
+      p Рассылок нет
+    else
+
+      +e('table')
+        tr
+          th Тема
+          th Кому
+          th Создана
+          th Отправлена
+        each newsletterRelease, i in newsletterReleases
+          tr
+            td
+              +e('a')(href="/newsletter/admin/newsletter-releases/edit/" + newsletterRelease.id)= newsletterRelease.title
+            td
+              each toItem,i in newsletterRelease.to
+                if i > 0
+                  = ' '
+                  b= (toItem.exclude ? '–' : '+')
+                = toItem.getTitle()
+
+            td= moment(newsletterRelease.created).format('DD.MM.YYYY HH:mm')
+            td= newsletterRelease.sendFinished ? 'да' : 'нет'
+
+    +e("a")(href="/newsletter/admin/newsletter-releases/add") Создать новую рассылку

@@ -1,0 +1,96 @@
+// DEPRECATED NOT USED
+
+extends /layouts/main
+
+block append variables
+  -
+    var sitetoolbar = true
+    var layout_main_class = "main_width-limit"
+    var layout_header_class = "main__header_center"
+    var breadcrumbs = [
+      { title: 'Учебник', url: '/' }, { title: 'Рассылки', url: '/newsletter/admin/newsletter-releases' }
+    ]
+
+block append head
+  !=js("newsletterAdmin", {defer: true})
+  !=css("newsletterAdmin")
+
+
+block content
+
+  +b.newsletter-send
+
+    +e('table').table
+      tr
+        td Тема
+        td= newsletterRelease.title
+      tr
+        td Кому
+        td
+          each toItem,i in newsletterRelease.to
+            if i > 0
+              = ' '
+              b= (toItem.exclude ? '–' : '+')
+            = toItem.getTitle()
+      tr
+        td Сообщение
+        td!= markit(newsletterRelease.content)
+
+    +e("form")(
+      method="POST"
+      action=""
+      data-newsletter-action="send"
+    )
+      input(type="hidden", name="_csrf", value=csrf())
+      input(type="hidden", name="id", value=newsletterRelease.id)
+
+      +e.line
+        +e('h2').title
+          +e("span").text
+            if !newsletterRelease.firstSentAt
+              | Разослать
+            else
+              | Дослать
+
+        p Оставьте поле пустым, если нужно разослать прямо сейчас.
+        +b.text-input._small.__control(style="width:200px")
+          +e('input').control(type="text", name="sendScheduledAt" value=moment().format('YYYY-MM-DD HH:mm Z'))
+        +b("button").button._action(
+          type="submit"
+          name="action"
+          value="send"
+        ) Запланировать рассылку
+
+    if newsletterRelease.inSendQueue
+      +e("form")(
+        method="POST"
+        action=""
+      )
+        input(type="hidden", name="_csrf", value=csrf())
+        input(type="hidden", name="id", value=newsletterRelease.id)
+
+        +e.line
+          +e('h2').title
+            +e("span").text Отменить рассылку
+
+          +b("button").button._action(type="submit" name="action" value="cancelSend")
+            +e("span").text Отменить
+
+    +e("form")(method="POST" action="" onsubmit="return confirm('Отослать на адрес '+this.sendOneMail.value+'?')")
+      input(type="hidden", name="_csrf", value=csrf())
+      input(type="hidden", name="id", value=newsletterRelease.id)
+
+
+      +e.line
+        +e('h2').title
+          +e("span").text Тестовое письмо
+        +b.text-input._small.__control
+          +e('input').control(type="text", name="sendOneMail" value=user.email)
+        +b("button").button._action(
+          type="submit"
+          name="action"
+          value="sendOne"
+        )
+          +e("span").text Отослать
+
+

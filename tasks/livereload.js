@@ -1,7 +1,8 @@
 var livereload = require('gulp-livereload');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var _ = require('lodash');
+var throttle = require('lodash/throttle');
+var chokidar = require('chokidar');
 
 // options.watch must NOT be www/**, because that breaks (why?!?) supervisor reloading
 // www/**/*.* is fine
@@ -13,14 +14,19 @@ module.exports = function(options) {
     livereload.listen();
 
     // reload once after all scripts are rebuit
-    livereload.changedSoon = _.throttle(livereload.changed, 1000, {leading: false});
+    livereload.changedSoon = throttle(livereload.changed, 1000, {leading: false});
     //livereload.changedVerySoon = _.throttle(livereload.changed, 100, {leading: false});
 
     setTimeout(function() {
       gutil.log("livereload: listen on change " + options.watch);
 
-      gulp.watch(options.watch).on('change', function(changed) {
-        if (changed.path.match(/\.(js|map)/)) {
+      chokidar.watch(options.watch, {
+        awaitWriteFinish: {
+          stabilityThreshold: 300,
+          pollInterval: 100
+        }
+      }).on('change', function(changed) {
+        if (changed.match(/\.(js|map)/)) {
           // full page reload
           livereload.changedSoon(changed);
         } else {

@@ -2,7 +2,7 @@ const payments = require('payments');
 
 var paymentMethods = {};
 
-var methodsEnabled = ['webmoney', 'yandexmoney', 'paypal', 'payanyway', 'interkassa'];
+var methodsEnabled = ['yakassa', 'interkassa', 'webmoney', 'yandexmoney', 'payanyway', 'paypal'];
 
 methodsEnabled.forEach(function(key) {
   paymentMethods[key] = payments.methods[key].info;

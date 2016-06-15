@@ -1,5 +1,6 @@
+'use strict';
 
-var mountHandlerMiddleware = require('lib/mountHandlerMiddleware');
+let mountHandlerMiddleware = require('lib/mountHandlerMiddleware');
 
 exports.init = function(app) {
   app.use(mountHandlerMiddleware('/profile', __dirname));

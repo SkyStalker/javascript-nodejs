@@ -15,8 +15,11 @@ describe('Subscribe', function() {
 
   var server;
   before(function*() {
-    yield* db.loadModels(fixtures, {reset: true});
     server = app.listen();
+  });
+
+  beforeEach(function*() {
+    yield* db.loadModels(fixtures, {reset: true});
   });
 
   after(function() {
@@ -46,7 +49,7 @@ describe('Subscribe', function() {
         }).exec();
 
         subscription.newsletters.map(String).should.be.eql(
-          _(fixtures.Newsletter).where({slug: 'js'}).pluck('_id').value()
+          fixtures.Newsletter.filter(n => n.slug == 'js').map(n => n._id)
         );
 
       });
@@ -71,10 +74,9 @@ describe('Subscribe', function() {
         }).exec();
 
         subscription.newsletters.map(String).should.be.eql(
-          _(fixtures.Newsletter)
+          fixtures.Newsletter
             .filter(function(n) { return n.slug == 'js' || n.slug == 'nodejs'; } )
-            .pluck('_id')
-            .value()
+            .map(n => n._id)
         );
       });
 
@@ -99,10 +101,9 @@ describe('Subscribe', function() {
         }).exec();
 
         subscription.newsletters.map(String).sort().should.be.eql(
-          _(fixtures.Newsletter)
+          fixtures.Newsletter
             .filter(function(n) { return n.slug == 'nodejs' || n.slug == 'advanced'; } )
-            .pluck('_id')
-            .value()
+            .map(n => n._id)
             .sort()
         );
       });

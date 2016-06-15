@@ -31,6 +31,7 @@ server {
 
   root         <%=root%>/public;
 
+  # js.cx
   add_header X-Frame-Options SAMEORIGIN;
   add_header X-Content-Type-Options nosniff;
 
@@ -99,18 +100,12 @@ server {
     alias   /js/play/$1;
   }
 
-  # nodejs-screencast for download (big, so moved out of project)
-  location ~ ^/nodejs-screencast/(.*)$ {
-    alias   /js/nodejs-screencast/$1;
+  # screencast for download (big, so moved out of project)
+  location ~ ^/screencast/(.*\.(mp4|zip))$ {
+    alias   /js/screencast/$1;
   }
-
-  location ~ ^/webpack-screencast/(.*)$ {
-    alias   /js/webpack-screencast/$1;
-  }
-
 
   include "partial/javascript-static";
-
 
 }
 

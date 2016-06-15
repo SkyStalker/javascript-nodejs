@@ -1,0 +1,20 @@
+extends /layouts/main
+
+block append variables
+
+  - var layout_header_class = "main__header_center"
+  - var title = 'Админ заказов'
+  - var sitetoolbar = true
+  - var siteToolbarCurrentSection = "courses";
+
+block content
+
+  form(method="GET" action="")
+    input(name="orderNumber" type="number" placeholder="Номер заказа")
+    input(type="submit" value="Найти")
+
+
+  form(method="GET" action="")
+    input(name="transactionNumber" type="number" placeholder="Номер счёта")
+    input(type="submit" value="Найти")
+

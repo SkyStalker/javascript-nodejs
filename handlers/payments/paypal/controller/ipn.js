@@ -1,3 +1,5 @@
+'use strict';
+
 const config = require('config')
 const paypalConfig = config.payments.modules.paypal;
 const Order = require('../../models/order');
@@ -10,27 +12,28 @@ const request = require('co-request');
 // https://developer.paypal.com/webapps/developer/docs/classic/ipn/integration-guide/IPNIntro/
 
 /* jshint -W106 */
-exports.post = function* (next) {
+exports.post = function*(next) {
 
   yield* this.loadTransaction('invoice', {skipOwnerCheck: true});
 
 
   yield this.transaction.logRequest('ipn: request received', this.request);
 
-
-  var qs = {
-    'cmd': '_notify-validate'
-  };
+  let qs = [
+    'cmd=_notify-validate'
+  ];
 
   for (var field in this.request.body) {
-    qs[field] = this.request.body[field];
+    qs.push(`${field}=${this.request.body[field]}`);
   }
 
+  qs = qs.join('&');
+
   // request oauth token
-  var options = {
-    method: 'GET',
-    qs:     qs,
-    url:    'https://www.paypal.com/cgi-bin/webscr',
+  const options = {
+    method:  'POST',
+    body:    qs,
+    url:     'https://www.paypal.com/cgi-bin/webscr',
     headers: {
       'User-Agent': 'request'
     }
@@ -41,7 +44,7 @@ exports.post = function* (next) {
   var response;
   try {
     response = yield request(options);
-  } catch(e) {
+  } catch (e) {
     yield this.transaction.log('ipn: request verify failed', e.message);
     this.throw(403, "Couldn't verify ipn");
   }
@@ -49,6 +52,8 @@ exports.post = function* (next) {
   if (response.body != "VERIFIED") {
     yield this.transaction.log('ipn: invalid IPN', response.body);
     this.throw(403, "Invalid IPN");
+  } else {
+    yield this.transaction.log('ipn: verified IPN', response.body);
   }
 
   // ipn is verified now! But we check if it's data matches the transaction (as recommended in docs)
@@ -66,7 +71,7 @@ exports.post = function* (next) {
   // if there just was an IPN about the same transaction, and it's state is the same
   //   => then the current one is a duplicate
   var previousIpn = yield TransactionLog.findOne({
-    event: "ipn: VALIDATED_IN_PROCESS",
+    event:       "ipn: VALIDATED_IN_PROCESS",
     transaction: this.transaction._id
   }).sort({created: -1}).exec();
 
@@ -90,7 +95,7 @@ exports.post = function* (next) {
     return;
   }
 
-  switch(this.request.body.payment_status) {
+  switch (this.request.body.payment_status) {
   case 'Failed':
   case 'Voided':
     yield this.transaction.persist({
@@ -100,7 +105,7 @@ exports.post = function* (next) {
     return;
   case 'Pending':
     yield this.transaction.persist({
-      status: Transaction.STATUS_PENDING,
+      status:        Transaction.STATUS_PENDING,
       statusMessage: this.request.body.pending_reason
     });
     this.body = '';
@@ -109,7 +114,7 @@ exports.post = function* (next) {
 
     // Now let's see if the transaction was already processed by PDT or another IPN
     var refreshedTransaction = yield Transaction.findOne({
-      _id:                        this.transaction._id
+      _id: this.transaction._id
     }).exec();
 
     if (refreshedTransaction.status == Transaction.STATUS_SUCCESS) {
@@ -132,7 +137,6 @@ exports.post = function* (next) {
     this.body = '';
     return;
   }
-
 
 
 };

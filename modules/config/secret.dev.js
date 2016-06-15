@@ -9,12 +9,15 @@ module.exports = {
   yandexmoney: {},
   paypal:      {},
   payanyway:   {},
+  yakassa:   {},
   banksimple:  {},
   banksimpleua:  {},
   interkassa:  {},
 
   cloudflare: {},
 
+  slack: {},
+  aws: {},
   xmpp: {
     admin: {
       login: 'a',

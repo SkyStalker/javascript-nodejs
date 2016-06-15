@@ -19,6 +19,8 @@ include /bem
         +b('span').text-input.__input
           +e('input').control#forgot-email(name="email" type="email" autofocus)
       +e.line
+        +e.recaptcha
+      +e.line
         +b('button').button._action.__submit(type="submit")
           +e('span').text Восстановить пароль
       +e.line.__footer

@@ -1,3 +1,5 @@
+'use strict';
+
 const Course = require('../models/course');
 const CourseInvite = require('../models/courseInvite');
 const config = require('config');
@@ -5,7 +7,7 @@ const CourseGroup = require('../models/courseGroup');
 const registerParticipants = require('../lib/registerParticipants');
 const User = require('users').User;
 const VideoKey = require('videoKey').VideoKey;
-const _ = require('lodash');
+const pick = require('lodash/pick');
 const countries = require('countries');
 const LOGIN_SUCCESSFUL = 1;
 const LOGGED_IN_ALREADY = 2;
@@ -13,7 +15,6 @@ const NO_SUCH_USER = 3;
 const CourseParticipant = require('../models/courseParticipant');
 const ImgurImage = require('imgur').ImgurImage;
 const log = require('log')();
-
 
 exports.all = function*() {
 
@@ -68,6 +69,7 @@ exports.all = function*() {
     return;
   }
 
+
   yield CourseGroup.populate(invite.group, 'course');
 
   var userByEmail = yield User.findOne({
@@ -101,6 +103,9 @@ exports.all = function*() {
     }
   }
 
+  // invite may be outdated, email changed in order settings
+  // 1 order may have many invites, many of them are invalid
+  // so let's check if the invite is still actual
   // invalid invite, person not in list
   if (!~invite.order.data.emails.indexOf(invite.email)) {
     this.body = this.render('invite/deny', {
@@ -147,13 +152,12 @@ function* askParticipantDetails(invite) {
   this.locals.countries = selectCountries;
 
   if (this.method == 'POST') {
-    var participantData = _.pick(this.request.body,
+    var participantData = pick(this.request.body,
       'photoId firstName surname country city aboutLink occupation purpose wishes'.split(' ')
     );
-    participantData.user = this.user._id;
+    participantData.user = this.user;
     participantData.group = invite.group._id;
-
-    participantData.invite = invite;
+    participantData.invite = invite._id;
 
     if (participantData.photoId) {
       var photo = yield ImgurImage.findOne({imgurId: this.request.body.photoId}).exec();
@@ -174,6 +178,12 @@ function* askParticipantDetails(invite) {
       yield participant.persist();
 
     } catch (e) {
+      this.log.debug("Participant persist error", e);
+      if (e.errors.group) {
+        log.error(`group error (not unique?) for (${participant.group}, ${participant.user._id})`);
+        throw e;
+      }
+
       var errors = {};
       for (var key in e.errors) {
         errors[key] = e.errors[key].message;
@@ -191,7 +201,7 @@ function* askParticipantDetails(invite) {
 
     // make the new picture user avatar
     if (participant.photo && !this.user.photo) {
-      yield this.user.persist({
+      yield participant.user.persist({
         photo: participant.photo
       });
     }
@@ -214,12 +224,12 @@ function* askParticipantDetails(invite) {
 
 }
 
-function* acceptParticipant(invite) {
+function* acceptParticipant(invite, participant) {
 
-  this.user.profileTabsEnabled.addToSet('courses');
-  yield this.user.persist();
+  participant.user.profileTabsEnabled.addToSet('courses');
+  yield participant.user.persist();
 
-  yield invite.accept();
+  yield invite.accept(participant);
 
   invite.group.decreaseParticipantsLimit();
 

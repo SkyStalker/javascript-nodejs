@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const session = require('koa-generic-session');
 const mongooseStore = require('koa-session-mongoose');
 const config = require('config');
-const _ = require('lodash');
 
 exports.init = function(app) {
 
@@ -14,7 +13,7 @@ exports.init = function(app) {
     })
   };
 
-  app.use(session(_.extend(options, config.auth.session)));
+  app.use(session(Object.assign(options, config.auth.session)));
 
   app.keys = config.appKeys;  // needed for cookie-signing
 

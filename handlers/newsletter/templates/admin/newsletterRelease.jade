@@ -1,0 +1,52 @@
+include ../blocks/newsletter-failed/index
+include ../blocks/newsletter-release-edit/index
+include ../blocks/newsletter-release-form/index
+include ../blocks/newsletter-test/index
+include ../blocks/newsletter-status/index
+include /blocks/mdeditor
+
+extends /layouts/main
+
+block append variables
+  -
+    var sitetoolbar = true
+    var layout_main_class = "main_width-limit"
+    var layout_header_class = "main__header_center"
+    var header = false
+    var breadcrumbs = [
+      { title: 'Учебник', url: '/' }, { title: 'Рассылки', url: '/newsletter/admin/newsletter-releases' }
+    ]
+
+block append head
+  !=js("newsletterAdmin", {defer: true})
+  !=css("newsletterAdmin")
+
+block content
+
+  if error
+    +b.notification._message._error
+      +e.content!= error
+      +e('button').close(title="Закрыть")
+
+
+  +b("form").newsletter-release-form(method="POST" action="/newsletter/admin/newsletter-releases")
+    +e.section
+      +newsletter-release-edit(form)
+
+    +e.section
+      +newsletter-test()
+
+    +e.section
+      +newsletter-status({form: form, letterSentCount: letterSentCount})
+
+  if Object.keys(failedReasons).length
+
+    +e.section
+
+      h2 Не доставлено
+
+      table
+        each reason, email in failedReasons
+          tr
+            td= email
+            td= reason

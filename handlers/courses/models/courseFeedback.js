@@ -1,14 +1,24 @@
+var ucWordStart = require('textUtil/ucWordStart');
 var mongoose = require('mongoose');
 var autoIncrement = require('mongoose-auto-increment');
 var Schema = mongoose.Schema;
 var countries = require('countries');
+var CourseGroup = require('./courseGroup');
 
 var schema = new Schema({
 
   group: {
     type: Schema.Types.ObjectId,
     ref:  'CourseGroup',
-    required: true
+    required: true,
+    index: true
+  },
+
+  courseCache: {
+    type: Schema.Types.ObjectId,
+    ref:  'Course',
+//    required: true, autoassigned by hook
+    index: true
   },
 
   stars: {
@@ -20,29 +30,34 @@ var schema = new Schema({
 
   content: {
     type: String,
+    trim: true,
     required: "Отсутствует текст отзыва."
   },
 
   teacherComment: {
-    type: String
+    type: String,
+    trim: true
   },
 
   participant: {
     type: Schema.Types.ObjectId,
     ref:  'CourseParticipant',
-    required: true
+    required: true,
+    index: true
   },
 
   teacherCache: {
     type: Schema.Types.ObjectId,
     ref:  'User',
-    required: true
+    required: true,
+    index: true
   },
 
   userCache: {
     type: Schema.Types.ObjectId,
     ref:  'User',
-    required: true
+    required: true,
+    index: true
   },
 
   // todo (not used now)
@@ -64,7 +79,8 @@ var schema = new Schema({
   },
 
   city: {
-    type: String
+    type: String,
+    trim: true
   },
 
   isPublic: {
@@ -78,11 +94,13 @@ var schema = new Schema({
   },
 
   aboutLink: {
-    type: String
+    type: String,
+    trim: true
   },
 
   occupation: {
-    type: String
+    type: String,
+    trim: true
   },
 
   created: {
@@ -90,6 +108,35 @@ var schema = new Schema({
     default: Date.now
   }
 });
+
+
+
+schema.pre('save', function(next) {
+  var self = this;
+
+  if (this.group.course) {
+    if (this.group.course._id) {
+      this.courseCache = this.group.course._id;
+    } else {
+      this.courseCache = this.group.course;
+    }
+    next();
+  } else {
+    CourseGroup.findOne({_id: this.group}, function(err, group) {
+      if (err) return next(err);
+      self.courseCache = group.course;
+      next();
+    });
+  }
+});
+
+schema.pre('save', function(next) {
+  if (this.city) {
+    this.city = ucWordStart(this.city);
+  }
+  next();
+});
+
 
 schema.plugin(autoIncrement.plugin, {model: 'CourseFeedback', field: 'number', startAt: 1});
 

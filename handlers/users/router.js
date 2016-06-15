@@ -54,7 +54,7 @@ function* loadUserById(next) {
 
   // modification allowed to admin or user himself
   if (this.req.user) {
-    if (String(this.req.user._id) == String(user._id) || this.req.user.isAdmin) {
+    if (String(this.req.user._id) == String(user._id) || this.req.user.hasRole('admin')) {
       allowed = true;
     }
   }

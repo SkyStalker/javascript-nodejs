@@ -1,0 +1,22 @@
+
+extends /layouts/main
+
+block append variables
+
+  - var layout_main_class = "main_width-limit"
+  - var sitetoolbar = true
+
+block content
+
+  each result, slug in results
+    h2= slug
+
+    p Not in slack:
+    each email in result.notInSlack
+      div= email
+
+    p In slack:
+
+    each email in result.inSlack
+      div= email
+

@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const Article = require('../models/article');
 const Task = require('../models/task');
@@ -11,6 +13,7 @@ exports.get = function *get(next) {
   this.locals.sitetoolbar = true;
   this.locals.siteToolbarCurrentSection = "tutorial";
   this.locals.title = "Современный учебник JavaScript";
+
 
   var tutorial = yield CacheEntry.getOrGenerate({
     key:  'tutorial:frontpage',

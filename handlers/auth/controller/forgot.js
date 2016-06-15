@@ -1,14 +1,23 @@
+'use strict';
+
 var User = require('users').User;
 var jade = require('lib/serverJade');
 var path = require('path');
 var config = require('config');
 var sendMail = require('mailer').send;
+var recaptcha = require('recaptcha');
 
 exports.post = function* (next) {
 
+/*  let captchaCheck = yield* recaptcha.checkCtx(this);
+  if (!captchaCheck) {
+    this.throw(403);
+  }*/
+
+  var email = this.request.body.email.toLowerCase();
   var user = yield User.findOne({
-    email: this.request.body.email
-  }).exec();
+    email
+  });
 
   if (!user) {
     this.status = 404;

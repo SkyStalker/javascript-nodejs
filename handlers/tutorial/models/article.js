@@ -1,10 +1,11 @@
+'use strict';
+
 const mongoose = require('mongoose');
-const troop = require('mongoose-troop');
+const mongooseTimestamp = require('lib/mongooseTimestamp');
 const ObjectId = mongoose.Schema.Types.ObjectId;
 const Schema = mongoose.Schema;
 const config = require('config');
 const path = require('path');
-const Reference = require('./reference');
 const Task = require('./task');
 const html2search = require('elastic').html2search;
 
@@ -18,12 +19,29 @@ const schema = new Schema({
     type:     String,
     unique:   true,
     required: true,
-    index:    true
+    lowercase: true,
+    trim: true
   },
+
+
+  libs: [String],
+
+  headJs:   String,
+  headCss:  String,
+  headHtml: String,
 
   content: {
     type:     String,
-    required: true
+    trim: true,
+    validate: [
+      {
+        // allow empty content on folders
+        validator: function(value) {
+          return this.isFolder ? true : Boolean(value);
+        },
+        msg:       'Content is required'
+      }
+    ]
   },
 
   parent: {
@@ -44,7 +62,7 @@ const schema = new Schema({
   search: String,
 
   githubLink: {
-    type: String,
+    type:     String,
     required: true
   },
 
@@ -86,7 +104,7 @@ schema.methods.getUrl = function() {
 schema.methods.findParents = function*() {
   var parents = [];
   var article = this;
-  while(true) {
+  while (true) {
     article = yield Article.findById(article.parent).select('slug parent title').exec();
     if (!article) break;
     parents.push(article);
@@ -205,10 +223,6 @@ schema.statics.findTree = function* (options) {
 };
 
 schema.pre('remove', function(next) {
-  Reference.remove({article: this._id}, next);
-});
-
-schema.pre('remove', function(next) {
   Task.remove({parent: this._id}, next);
 });
 
@@ -220,7 +234,7 @@ schema.pre('save', function(next) {
 });
 
 
-schema.plugin(troop.timestamp);
+schema.plugin(mongooseTimestamp);
 
 var Article = module.exports = mongoose.model('Article', schema);
 

@@ -1,17 +1,23 @@
+'use strict';
+
 var User = require('users').User;
 var jade = require('lib/serverJade');
 var path = require('path');
 var config = require('config');
 var sendMail = require('mailer').send;
+var recaptcha = require('recaptcha');
 
 // Регистрация пользователя.
 exports.post = function* (next) {
-
-//  yield function(callback) {};
+/*
+  let captchaCheck = yield* recaptcha.checkCtx(this);
+  if (!captchaCheck) {
+    this.throw(403);
+  }*/
 
   var verifyEmailToken = Math.random().toString(36).slice(2, 10);
   var user = new User({
-    email: this.request.body.email,
+    email: this.request.body.email.toLowerCase(),
     displayName: this.request.body.displayName,
     password: this.request.body.password,
     verifiedEmail: false,
@@ -39,7 +45,7 @@ exports.post = function* (next) {
 
 
   // We're here if no errors happened
-  
+
   try {
 
     yield sendMail({

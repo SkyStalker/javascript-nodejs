@@ -1,3 +1,5 @@
+'use strict';
+
 var TutorialImporter = require('../tutorialImporter');
 var FiguresImporter = require('../figuresImporter');
 var co = require('co');
@@ -6,6 +8,7 @@ var path = require('path');
 var livereload = require('gulp-livereload');
 var log = require('log')();
 var chokidar = require('chokidar');
+var os = require('os');
 
 module.exports = function(options) {
 
@@ -50,7 +53,9 @@ function watchTutorial(root) {
     return path.join(root, dir);
   });
 
-  var tutorialWatcher = chokidar.watch(subRoots, {ignoreInitial: true});
+  // under linux usePolling: true,
+  // to handle the case when linux VM uses shared folder from Windows
+  var tutorialWatcher = chokidar.watch(subRoots, {ignoreInitial: true, usePolling: os.platform() != 'darwin'});
 
   tutorialWatcher.on('add', onTutorialModify.bind(null, false));
   tutorialWatcher.on('change', onTutorialModify.bind(null, false));

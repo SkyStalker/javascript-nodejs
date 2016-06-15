@@ -26,11 +26,12 @@ block content
 
       +e(p).description= orderTemplate.description
 
-      +b.text-input
-        +e('input').control._big(name="amount", required, type="number")
-      
+      +b.text-input.__amount
+        +e('input').control._big(name="amount", required, type="number", min="1", step="1")
+
       +b('select').input-select._big(name="currency" data-order-currency)
        option(value="RUB") RUB
+       option(value="UAH") UAH
        option(value="USD") USD
        option(value="EUR") EUR
 
@@ -38,9 +39,13 @@ block content
         +e('h2').alternate-title Ваш email
         +b.text-input.__email
           +e('input').control._big(placeholder="my@email.com", name="email", required, type="email")
-        +e(p).description Мы пришлем вам подтверждение и запишим вас в исторический список поддержавших проект
 
-      +e('h2').alternate-title Выберете метод оплаты
+      +e('h2').alternate-title Ваше имя
+        +b.text-input.__name
+          +e('input').control._big(placeholder="Джон Смит", name="name" type="text")
+        +e(p).description Если хотите, чтобы мы знали.
+
+      +e('h2').alternate-title Способ перевода
       +e.body
         +b.extract._small.__extract
           include ../../payments/common/templates/payment-methods

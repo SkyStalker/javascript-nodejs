@@ -41,11 +41,11 @@ exports.post = function*() {
       this.throw(404, "Email не указан.");
     }
     subscription = yield Subscription.findOne({
-      email: this.request.body.email
+      email: this.request.body.email.toLowerCase()
     });
   }
 
-  var email = subscription ? subscription.email : this.request.body.email;
+  var email = subscription ? subscription.email : this.request.body.email.toLowerCase();
 
 
   // may be empty (e.g. for remove request)
@@ -58,7 +58,7 @@ exports.post = function*() {
 
 
   // full access if user for himself OR accessKey is given
-  var isFullAccess = this.user && this.user.email == this.request.body.email ||
+  var isFullAccess = this.user && this.request.body.email && this.user.email == this.request.body.email.toLowerCase() ||
     subscription && subscription.accessKey == this.request.body.accessKey;
 
   function respond(message) {
@@ -106,7 +106,7 @@ exports.post = function*() {
 
     if (subscription) {
       if (action == ACTION_ADD) {
-        respond(`Вы будете получать уведомления на эту тему на адрес ${email}.`);
+        respond(`Готово! Вы будете получать уведомления на эту тему на адрес ${email}.`);
       }
 
       if (action == ACTION_REPLACE) {
@@ -128,7 +128,16 @@ exports.post = function*() {
           action: 'remove',
           email:  email
         });
-        yield notify(subscriptionAction);
+        try {
+          yield* notify(subscriptionAction);
+        } catch (e) {
+          if (e.name == 'SuppressedError') {
+            respond(e.message);
+            return;
+          } else {
+            throw e;
+          }
+        }
       }
       respond(`На адрес ${email}, если он был подписан, направлен запрос подтверждения.`);
       return;
@@ -140,7 +149,16 @@ exports.post = function*() {
       email:       email
     });
 
-    yield notify(subscriptionAction);
+    try {
+      yield* notify(subscriptionAction);
+    } catch (e) {
+      if (e.name == 'SuppressedError') {
+        respond(e.message);
+        return;
+      } else {
+        throw e;
+      }
+    }
 
     respond(`На адрес ${email} направлен запрос подтверждения.`);
 
@@ -166,7 +184,7 @@ function* readNewsletterIds() {
     }
   }).exec();
 
-  const newsletterIds = _.pluck(newsletters, '_id');
+  const newsletterIds = newsletters.map(n => n._id);
 
   return newsletterIds;
 }

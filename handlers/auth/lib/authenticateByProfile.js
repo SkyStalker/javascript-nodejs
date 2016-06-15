@@ -1,7 +1,6 @@
 const User = require('users').User;
 const config = require('config');
 const co = require('co');
-const _ = require('lodash');
 const request = require('co-request');
 const transload = require('imgur').transload;
 const log = require('log')();
@@ -65,7 +64,7 @@ module.exports = function(req, profile, done) {
   var userToConnect = req.user;
 
   co(function*() {
-    var providerNameId = makeProviderId(profile);
+    var providerNameId = makeProviderId(profile);   // "facebook:123456"
 
     var user;
 
@@ -76,7 +75,7 @@ module.exports = function(req, profile, done) {
       var alreadyConnectedUser = yield User.findOne({
         "providers.nameId": providerNameId,
         _id:                {$ne: userToConnect._id}
-      }).exec();
+      });
 
       if (alreadyConnectedUser) {
         // if old user is in read-only,
@@ -100,11 +99,11 @@ module.exports = function(req, profile, done) {
       user = userToConnect;
 
     } else {
-      user = yield User.findOne({"providers.nameId": providerNameId}).exec();
+      user = yield User.findOne({"providers.nameId": providerNameId});
 
       if (!user) {
         // if we have user with same email, assume it's exactly the same person as the new man
-        user = yield User.findOne({email: profile.emails[0].value}).exec();
+        user = yield User.findOne({email: profile.emails[0].value});
 
         if (!user) {
           // auto-register

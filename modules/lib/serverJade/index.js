@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const config = require('config');
 const jade = require('jade');
-const _ = require('lodash');
 
 /**
  * extension for require('file.jade'),
@@ -12,7 +11,7 @@ require.extensions['.jade'] = function(module, filename) {
 
   var compiled = jade.compile(
     fs.readFileSync(filename, 'utf-8'),
-    _.assign({}, config.jade, {
+    Object.assign({}, config.jade, {
       pretty:        false,
       compileDebug:  false,
       filename:      filename
@@ -30,7 +29,7 @@ require.extensions['.jade'] = function(module, filename) {
 
 };
 
-require('./filterSimpledown');
+require('./filterMarkit');
 
 require('./filterUglify');
 

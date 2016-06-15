@@ -1,4 +1,4 @@
-var promptSquarePhoto = require('photoCut').promptSquarePhoto;
+var photoCut = require('photoCut');
 var notification = require('client/notification');
 var xhr = require('client/xhr');
 var Spinner = require('client/spinner');
@@ -10,7 +10,7 @@ function PhotoLoadWidget({elem, onSuccess, onLoadStart, onLoadEnd}) {
 
   link.onclick = function(e) {
     e.preventDefault();
-    promptSquarePhoto({
+    photoCut({
       minSize:   160,
       onSuccess: uploadPhoto
     });
@@ -42,10 +42,6 @@ function PhotoLoadWidget({elem, onSuccess, onLoadStart, onLoadEnd}) {
     request.addEventListener('loadend',   function() {
       spinner.stop();
       onLoadEnd();
-    });
-
-    request.addEventListener('fail', (event) => {
-      new notification.Error("Ошибка загрузки: " + event.reason);
     });
 
     request.addEventListener('success', (event) => {

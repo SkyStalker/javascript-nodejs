@@ -21,6 +21,7 @@ mocha.setup('bdd');
 !function() { 
   function onload() { 
     if (!document.getElementById('mocha')) document.body.id = 'mocha'; 
+    mocha.setup({ timeout: 600*1e3 });
     mocha.run(function() { 
       var errors = document.querySelectorAll('#mocha .error'); 
       for(var i=0; i<errors.length; i++) { 

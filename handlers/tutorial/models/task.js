@@ -1,37 +1,50 @@
+'use strict';
+
 var mongoose = require('mongoose');
-var troop = require('mongoose-troop');
+var mongooseTimestamp = require('lib/mongooseTimestamp');
 var ObjectId = mongoose.Schema.Types.ObjectId;
 var Schema = mongoose.Schema;
 const config = require('config');
 const path = require('path');
 const html2search = require('elastic').html2search;
+const validate = require('validate');
 
 var schema = new Schema({
   title: {
     type:     String,
-    required: true
+    required: true,
+    trim: true
   },
 
   importance: {
     type: Number
   },
 
+  libs: [String],
+
+  headJs: String,
+  headCss: String,
+  headHtml: String,
+
   slug: {
     type:     String,
     unique:   true,
     required: true,
-    index:    true
+    lowercase: true,
+    trim: true
   },
 
   content: {
     type:     String,
-    required: true
+    required: true,
+    trim: true
   },
 
   solution: {
     // can be empty (assuming there is a solution.view which will be autolinked)
     type:     String,
-    default: ""
+    trim: true,
+    default: ''
   },
 
   rendered: {
@@ -49,7 +62,9 @@ var schema = new Schema({
 
   githubLink: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
+    validate: validate.patterns.webpageUrl
   },
 
   parent: {
@@ -103,7 +118,7 @@ schema.pre('save', function(next) {
   next();
 });
 
-schema.plugin(troop.timestamp);
+schema.plugin(mongooseTimestamp);
 
 module.exports = mongoose.model('Task', schema);
 

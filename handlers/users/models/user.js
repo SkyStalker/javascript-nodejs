@@ -1,10 +1,12 @@
 var transliterate = require('textUtil/transliterate');
+var validate = require('validate');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var hash = require('../lib/hash');
-var troop = require('mongoose-troop');
+var mongooseTimestamp = require('lib/mongooseTimestamp');
 var _ = require('lodash');
 var co = require('co');
+var ucWordStart = require('textUtil/ucWordStart');
 
 var ProviderSchema = new mongoose.Schema({
   name:    String,
@@ -18,6 +20,7 @@ var ProviderSchema = new mongoose.Schema({
 var UserSchema = new mongoose.Schema({
   displayName:   {
     type:     String,
+    trim:     true,
     default:  "", // need a value for validator to run
     validate: [
       {
@@ -36,11 +39,16 @@ var UserSchema = new mongoose.Schema({
       }
     ]
   },
+
+  gotowebinar: { },
+
   email:         {
-    type:     String,
-    default:  "", // need a value for validator to run
+    type:      String,
+    lowercase: true,
+    trim:      true,
+    default:   "", // need a value for validator to run
     // если посетитель удалён, то у него нет email!
-    validate: [
+    validate:  [
       {
         validator: function checkNonEmpty(value) {
           return this.deleted ? true : (value.length > 0);
@@ -49,7 +57,7 @@ var UserSchema = new mongoose.Schema({
       },
       {
         validator: function checkEmail(value) {
-          return this.deleted ? true : /^[-.\w]+@([\w-]+\.)+[\w-]{2,12}$/.test(value);
+          return this.deleted ? true : validate.patterns.email.test(value);
         },
         msg:       'Укажите, пожалуйста, корректный email.'
       }
@@ -76,6 +84,9 @@ var UserSchema = new mongoose.Schema({
       values:  ['male', 'female'],
       message: "Неизвестное значение для пола."
     }
+  },
+  profileLabel: { // label in profileGuest below the avatar
+    type: String
   },
   profileName:   {
     type:     String,
@@ -109,11 +120,17 @@ var UserSchema = new mongoose.Schema({
       errorMessage: "Такое имя профиля уже используется."
     }
   },
-  realName:      String,
+  realName:      {
+    type: String,
+    trim: true
+  },
   // not Date, because Date requires time zone,
   // so if I enter 18.04.1982 00:00:00 in GMT+3 zone, it will be 17.04.1982 21:00 actually (prbably wrong)
   // string is like a "date w/o time zone"
-  birthday:      String,
+  birthday:      {
+    type: String,
+    trim: true
+  },
   verifiedEmail: {
     type:    Boolean,
     default: false
@@ -150,24 +167,78 @@ var UserSchema = new mongoose.Schema({
   passwordResetTokenExpires: Date, // valid until this date
   passwordResetRedirect:     String, // where to redirect after password recovery
   photo:                     String, // imgur photo link
-  country:                   String,
-  town:                      String,
-  publicEmail:               String,
-  interests:                 String,
-  teachesCourses:            [{
-    type: Schema.Types.ObjectId,
-    ref:  'Course'
-  }],
+  country:                   {
+    type: String
+  },
+  town:                      {
+    type: String
+  },
+  teacherEmail:              {
+    type:      String,
+    lowercase: true,
+    trim:      true,
+    validate:  [
+      {
+        validator: function checkEmail(value) {
+          return !value ? true : validate.patterns.email.test(value);
+        },
+        msg:       'Укажите, пожалуйста, корректный email.'
+      }
+    ]
+  },
+  publicEmail:               {
+    type:      String,
+    lowercase: true,
+    trim:      true,
+    validate:  [
+      {
+        validator: function checkEmail(value) {
+          return !value ? true : validate.patterns.email.test(value);
+        },
+        msg:       'Укажите, пожалуйста, корректный email.'
+      }
+    ]
+  },
+  interests:                 {
+    type: String,
+    trim: true
+  },
+  teachesCourses:            {
+    type:    [{
+      type: Schema.Types.ObjectId,
+      ref:  'Course'
+    }],
+    default: []
+  },
+  isTeacherFrontpage: {
+    type: Boolean,
+    index: true
+  },
+  slackId: {
+    type: String
+  },
+
   aboutMe:                   {
     type:      String,
-    maxlength: 600
+    maxlength: 600,
+    trim:      true
   },
   deleted:                   { // private & login data is deleted
     type:    Boolean,
     default: false
   },
   readOnly:                  Boolean,  // data is not deleted, just flagged as banned
-  isAdmin:                   Boolean,
+  roles:                     { // qaModerator?
+    type:    [{
+      type:      String,
+      lowercase: true,
+      trim:      true
+    }],
+    index:   true,
+    default: []
+  },
+  emailSignature:            String, // for teachers, normally a user cannot send an email
+  isAdmin:                   Boolean, // deprecated in favor of roles['Admin']
   lastActivity:              Date
   /* created, modified from plugin */
 });
@@ -213,6 +284,8 @@ UserSchema.statics.getInfoFields = function(user) {
     birthday:           user.birthday,
     country:            user.country,
     town:               user.town,
+    teacherEmail:       user.teacherEmail,
+    emailSignature:     user.emailSignature,
     publicEmail:        user.publicEmail,
     interests:          user.interests,
     email:              user.email,
@@ -220,12 +293,12 @@ UserSchema.statics.getInfoFields = function(user) {
     photo:              user.photo,
     deleted:            user.deleted,
     readOnly:           user.readOnly,
-    isAdmin:            user.isAdmin,
     created:            user.created,
     lastActivity:       user.lastActivity,
     profileTabsEnabled: user.profileTabsEnabled,
     aboutMe:            user.aboutMe,
-    teachesCourses:     user.teachesCourses
+    teachesCourses:     user.teachesCourses,
+    isTeacher:          user.roles.indexOf('teacher') != -1
   };
 };
 
@@ -234,6 +307,9 @@ UserSchema.methods.getProfileUrl = function() {
   return '/profile/' + this.profileName;
 };
 
+UserSchema.methods.hasRole = function(role) {
+  return this.roles.indexOf(role) != -1;
+};
 
 UserSchema.methods.checkPassword = function(password) {
   if (!password) return false; // empty password means no login by password
@@ -243,9 +319,11 @@ UserSchema.methods.checkPassword = function(password) {
 };
 
 
-UserSchema.methods.softDelete = function(callback) {
+UserSchema.methods.softDelete = function*() {
   // delete this.email does not work
   // need to assign to undefined to $unset
+  this.aboutMe = undefined;
+  this.slackId = undefined;
   this.email = undefined;
   this.realName = undefined;
   this.displayName = 'Аккаунт удалён';
@@ -261,16 +339,17 @@ UserSchema.methods.softDelete = function(callback) {
   this.passwordResetRedirect = undefined;
   this.providers = [];
   this.password = undefined;
-
+  this.verifiedEmailsHistory = [];
+  this.verifiedEmail = false;
+  this.teachesCourses = undefined;
+  this.teacherEmail = undefined;
   this.photo = undefined;
   // keep verifiedEmail status as it was, maybe for some displays?
   //  user.verifiedEmail = false;
 
   this.deleted = true;
 
-  this.save(function(err, user, numberAffected) {
-    callback(err, user);
-  });
+  yield this.persist();
 };
 
 UserSchema.statics.photoDefault = "//i.imgur.com/zSGftLc.png";
@@ -295,6 +374,7 @@ UserSchema.methods.getPhotoUrl = function(width, height) {
 
 UserSchema.methods.generateProfileName = function*() {
   var profileName = this.displayName.trim()
+    .toLowerCase()
     .replace(/<\/?[a-z].*?>/gim, '')  // strip tags, leave /<DIGIT/ like: "IE<123"
     .replace(/[ \t\n!"#$%&'()*+,\-.\/:;<=>?@[\\\]^_`{|}~]/g, '-') // пунктуация, пробелы -> дефис
     .replace(/[^a-zа-яё0-9-]/gi, '') // убрать любые символы, кроме [слов цифр дефиса])
@@ -302,7 +382,8 @@ UserSchema.methods.generateProfileName = function*() {
     .replace(/^-|-$/g, ''); // убрать дефисы с концов
 
   profileName = transliterate(profileName);
-  profileName = profileName.toLowerCase();
+
+  while (profileName.length < 2) profileName += '-';
 
   var existingUser;
   while (true) {
@@ -312,6 +393,7 @@ UserSchema.methods.generateProfileName = function*() {
     // add one more random digit and retry the search
     profileName += Math.random() * 10 ^ 0;
   }
+
 
   this.profileName = profileName;
 };
@@ -324,13 +406,31 @@ UserSchema.pre('save', function(next) {
   }.bind(this)).then(next, next);
 });
 
+
 UserSchema.pre('save', function(next) {
-  if (this.aboutMe) this.aboutMe = this.aboutMe.slice(0, 600);
+  if (this.deleted) return next();
+
+  if (this.hasRole('teacher') && !this.teacherEmail) {
+    this.invalidate('teacherEmail', 'Не указан адрес teacherEmail.');
+  }
   next();
 });
 
 
-UserSchema.plugin(troop.timestamp, {useVirtual: false});
+UserSchema.pre('save', function(next) {
+  if (this.aboutMe) this.aboutMe = this.aboutMe.slice(0, 600);
+
+  if (this.city) {
+    this.city = ucWordStart(this.city);
+  }
+  if (this.country) {
+    this.country = ucWordStart(this.country);
+  }
+  next();
+});
+
+
+UserSchema.plugin(mongooseTimestamp);
 
 // all references using mongoose.model for safe recreation
 // when I recreate model (for tests) => I can reload it from mongoose.model (single source of truth)

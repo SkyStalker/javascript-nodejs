@@ -21,6 +21,11 @@ var schema = new Schema({
     enum:    ['USD', 'EUR', 'RUB', 'UAH']
   },
 
+  // amount in stable currency, for sorting by amount
+  usdAmount: {
+    type: Number
+  },
+
   module:      { // module so that transaction handler knows where to go back e.g. 'ebook'
     type:     String,
     required: true
@@ -28,11 +33,13 @@ var schema = new Schema({
 
   title:       {
     type:     String,
-    required: true
+    required: true,
+    trim: true
   },
 
   description: {
-    type: String
+    type: String,
+    trim: true
   },
 
   status:      {
@@ -44,6 +51,8 @@ var schema = new Schema({
   // order can be bound to either an email or a user
   email: {
     type:  String,
+    lowercase: true,
+    trim: true,
     index: true
   },
 
@@ -69,8 +78,18 @@ var schema = new Schema({
 
 });
 
+schema.index({ 'data.emails': 1 });
+
 schema.pre('save', function(next) {
   this.modified = new Date();
+
+  if (this.isModified('amount')) {
+    try {
+      this.usdAmount = money.convert(this.amount, {from: this.currency, to: 'USD'});
+    } catch (e) {
+      return next(typeof e == 'string' ? new Error(e) : e);
+    }
+  }
   next();
 });
 

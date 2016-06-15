@@ -4,7 +4,9 @@
 
 А это исходный код для движка сайта [https://learn.javascript.ru](https://learn.javascript.ru) на платформе Node.JS.
 
+<!--
 [![Build Status](https://travis-ci.org/iliakan/javascript-nodejs.svg?branch=master)](https://travis-ci.org/iliakan/javascript-nodejs)
+-->
 
 ## Что делаем?
 
@@ -26,7 +28,7 @@
 <li>Элементы e-магазина, включая приём оплаты Paypal/Webmoney/PayAnyWay, через Я.Деньги и другими способами.</li>
 <li>Отправка почты через Mandrill API с обработкой webhook со статусом.</li>
 <li>Транслоадинг и не использующая память/диск (через потоки) загрузка картинок на сервис http://imgur.com.</li>
-<li>Логгер вместе с CLS для получения контекста в не-middleware.</li>
+<li>Логгер.</li>
 <li>Шаблонизация с Jade + BEM.</li>
 <li>Система сборки на Webpack.</li>
 <li>...</li>
@@ -35,7 +37,7 @@
 Многие модули из него можно взять и выделить в отдельные проекты, было бы желание.
 
 Также в опен-сорсе &ndash; текст учебника JavaScript. 
-Правда, он в другом репозитарии [https://github.com/iliakan/javascript-tutorial](https://github.com/iliakan/javascript-tutorial), здесь только код.
+Правда, он в другом репозитории [https://github.com/iliakan/javascript-tutorial](https://github.com/iliakan/javascript-tutorial), здесь только код.
 
 Для установки dev-среды см. [INSTALL.md](https://github.com/iliakan/javascript-nodejs/blob/master/Install.md).
 

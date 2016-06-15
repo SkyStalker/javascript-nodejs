@@ -1,24 +1,20 @@
-// plain login
-var User = require('users').User;
-var jade = require('lib/serverJade');
-var path = require('path');
-var config = require('config');
-var sendMail = require('mailer').send;
+'use strict';
 
+const User = require('users').User;
 
 exports.get = function* () {
 
-  if (this.user) {
-    this.logout();
+  if (!(this.user && this.user.hasRole('admin')) && process.env.NODE_ENV != 'development') {
+    this.throw(403);
   }
 
-  var user = yield User.findOne({
+  let user = yield User.findOne({
     profileName: this.params.profileNameOrEmailOrId
   }).exec();
 
   if (!user) {
     user = yield User.findOne({
-      email: this.params.profileNameOrEmailOrId
+      email: this.params.profileNameOrEmailOrId.replace('--', '.')
     }).exec();
   }
 
@@ -27,8 +23,6 @@ exports.get = function* () {
       user = yield User.findById(this.params.profileNameOrEmailOrId).exec();
     } catch(e) {}
   }
-
-  console.log(user);
 
   if (!user) this.throw(404);
 

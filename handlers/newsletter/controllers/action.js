@@ -15,7 +15,7 @@ exports.get = function*() {
   }
 
   if (subscriptionAction.applied) {
-    this.throw(403, "Подтверждение уже было обработано ранее.");
+    this.throw(403, {info: "Подтверждение уже было обработано ранее." });
   }
 
   var subscription = yield subscriptionAction.apply();

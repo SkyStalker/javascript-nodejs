@@ -5,7 +5,7 @@ const Modal = require('client/head/modal');
 const modalTemplate = require('./templates/modal.jade');
 const clientRender = require('client/clientRender');
 
-const PhotoCut = exports.PhotoCut = require('./photoCut');
+const PhotoSelector = require('./photoSelector');
 require('blueimp-canvas-to-blob/js/canvas-to-blob');
 
 module.exports = function(img, onSuccess) {
@@ -22,7 +22,7 @@ module.exports = function(img, onSuccess) {
     selectionCanvasElems[i].height = selectionCanvasElems[i].offsetHeight;
   }
 
-  var photoCut = new PhotoCut(canvas, { maxImageSize: 300 });
+  var photoCut = new PhotoSelector(canvas, {maxImageSize: 300});
   photoCut.setImage(img);
 
   canvas.addEventListener("selection", function(event) {
@@ -43,11 +43,10 @@ module.exports = function(img, onSuccess) {
   });
 
 
-
   photoCut.setSelection({
-    x: canvas.width * 0.1,
+    x:    canvas.width * 0.1,
     size: Math.min(photoCut.width, photoCut.height) * 0.8,
-    y: canvas.height * 0.1
+    y:    canvas.height * 0.1
   });
 
   modal.elem.querySelector('[data-action="rotate-right"]').addEventListener('click', () => photoCut.rotate(1));
@@ -73,11 +72,23 @@ module.exports = function(img, onSuccess) {
     finalCanvas.width = selection.size;
     finalCanvas.height = selection.size;
 
+    var context = finalCanvas.getContext('2d');
+
     // draw the selected piece on the canvas to make Blob of it
-    finalCanvas.getContext('2d').drawImage(
+    context.drawImage(
       selection.source, selection.x, selection.y, selection.size, selection.size,
       0, 0, selection.size, selection.size
     );
+
+    // draw white behind current content to turn transparency into white color
+    //set to draw behind current content
+    context.globalCompositeOperation = "destination-over";
+
+    //set background color to white
+    context.fillStyle = "rgb(255,255,255)";
+
+    //draw background / rect on entire canvas
+    context.fillRect(0,0,finalCanvas.width,finalCanvas.height);
 
     modal.remove();
 
@@ -85,7 +96,8 @@ module.exports = function(img, onSuccess) {
       function(blob) {
         onSuccess(blob);
       },
-      'image/jpeg'
+      // somewhy doesn't keep transparency so I draw white bg above
+      img.src.startsWith("data:image/png") ? 'image/png' : 'image/jpeg'
     );
 
 

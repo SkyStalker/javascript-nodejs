@@ -11,10 +11,11 @@ var ImgurImage = require('imgur').ImgurImage;
 
 exports.get = function*(next) {
 
-  var fields = 'id created displayName realName birthday email gender country town interests aboutMe profileName publicEmail'.split(' ');
+  var fields = 'id created displayName realName birthday email gender country town interests aboutMe profileName publicEmail emailSignature'.split(' ');
 
   this.body = {
-    teachesCourses: this.params.user.teachesCourses.map(String)
+    teachesCourses: this.params.user.teachesCourses.map(String),
+    isTeacher: this.params.user.hasRole('teacher')
   };
 
   fields.forEach( function(field) {
@@ -33,16 +34,13 @@ exports.get = function*(next) {
     };
   });
 
-
 };
 
 /* Deleting a user */
-exports.del = function*(next) {
+exports.del = function*() {
   var user = this.params.user;
 
-  yield function(callback) {
-    user.softDelete(callback);
-  };
+  yield* user.softDelete();
 
   this.logout();
 
@@ -53,13 +51,13 @@ exports.del = function*(next) {
 };
 
 /* Partial update */
-exports.patch = function*(next) {
+exports.patch = function*() {
 
   var user = this.params.user;
 
   var fields = this.request.body;
 
-  'displayName realName birthday gender country town interests aboutMe profileName publicEmail'.split(' ').forEach(function(field) {
+  'displayName realName birthday gender country town interests aboutMe profileName teacherEmail publicEmail emailSignature'.split(' ').forEach(function(field) {
     if (field in fields) {
       user[field] = fields[field];
     }

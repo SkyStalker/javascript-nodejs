@@ -10,8 +10,8 @@ exports.createTransaction = function*(order) {
 
   var transaction = new Transaction({
     order:         order._id,
-    currency: 'RUB',
-    amount: order.convertAmount('RUB'),
+    currency:      'RUB',
+    amount:        order.convertAmount('RUB'),
     status:        Transaction.STATUS_PENDING,
     paymentMethod: path.basename(__dirname)
   });
@@ -25,8 +25,9 @@ exports.createTransaction = function*(order) {
 exports.info = {
   title:    "Payanyway",
   name:     path.basename(__dirname),
-  subtitle: "и много других методов",
+  subtitle: "банковские карты, резервный метод",
   cards:    ['visa-mastercard'],
-  hasIcon:  false
+  hasIcon:  false,
+  currency: 'RUB'
 };
 

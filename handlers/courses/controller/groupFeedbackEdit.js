@@ -6,8 +6,8 @@ const User = require('users').User;
 const CourseFeedback = require('../models/courseFeedback');
 const CourseGroup = require('../models/courseGroup');
 const CourseParticipant = require('../models/courseParticipant');
-const _ = require('lodash');
 const assert = require('assert');
+const pick = require('lodash/pick');
 
 exports.all = function*() {
 
@@ -27,7 +27,7 @@ exports.all = function*() {
     });
 
     if (!participant) {
-      this.throw(403, "Оставлять отзыв могут только участники группы");
+      this.throw(403, {info: "Оставлять отзыв могут только участники группы."});
     }
 
     courseFeedback = yield CourseFeedback.findOne({
@@ -40,7 +40,8 @@ exports.all = function*() {
       return;
     }
 
-    teacher = yield User.findById(group.teacher);
+    teacher = group.teacher;
+
     courseFeedback = new CourseFeedback({
       group: group._id,
       participant:  participant._id,
@@ -71,7 +72,7 @@ exports.all = function*() {
     group = yield CourseGroup.findById(courseFeedback.group);
     teacher = yield User.findById(group.teacher);
 
-    if (!this.user._id.equals(participant._id) &&
+    if (!this.user._id.equals(participant.user) &&
       !this.user._id.equals(teacher._id) &&
       !this.isAdmin
     ) {
@@ -95,7 +96,7 @@ exports.all = function*() {
   this.locals.countries = countries.all;
 
   if (this.method == 'POST') {
-    let feedbackData = _.pick(this.request.body,
+    let feedbackData = pick(this.request.body,
       'stars content country city isPublic recommend aboutLink occupation'.split(' ')
     );
 
@@ -104,7 +105,7 @@ exports.all = function*() {
 
     //console.log(this.request.body.photoId, feedbackData.photo, '!!!');
 
-    _.assign(courseFeedback, feedbackData);
+    Object.assign(courseFeedback, feedbackData);
 
     if (this.request.body.photoId) {
       var photo = yield ImgurImage.findOne({imgurId: this.request.body.photoId}).exec();
