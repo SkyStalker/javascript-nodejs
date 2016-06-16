@@ -70,7 +70,7 @@ const schema = new Schema({
     // required: true
   },
 
-  /*
+
   duration: { // duration in minutes
     type: Number
   },
@@ -87,7 +87,7 @@ const schema = new Schema({
       enum:      ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
     }]
   },
-  */
+  
 
   // like "nodejs-0402", for urls
   slug: {
