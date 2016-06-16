@@ -46,6 +46,7 @@ const schema = new Schema({
       },
       message: 'Некорректное время начала'
     },
+    // for old groups
     // required: true
   },
 
@@ -67,6 +68,7 @@ const schema = new Schema({
       },
       message: 'Некорректное время конца'
     },
+    // for old groups
     // required: true
   },
 

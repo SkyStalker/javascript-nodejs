@@ -12,12 +12,7 @@ const moment = require('momentWithLocale');
 const stripTags = require('textUtil/stripTags');
 const webinarAdd = require('../../lib/webinarAdd');
 
-// Group info for a participant, with user instructions on how to login
 exports.get = function*() {
-
-  if (!this.user || !this.user.hasRole('teacher')) {
-    this.throw(403);
-  }
 
   let courseTeachers = yield CourseTeacher.find({
     teacher: this.user
@@ -29,10 +24,6 @@ exports.get = function*() {
 };
 
 exports.post = function*() {
-
-  if (!this.user || !this.user.hasRole('teacher')) {
-    this.throw(403);
-  }
 
   let course = yield Course.findById(this.request.body.course);
 
@@ -66,7 +57,7 @@ exports.post = function*() {
     timeEnd:           this.request.body.timeEnd,
     timeDesc:          this.request.body.weekday.map(n => dayNames[n]).join('/') + ' ' +
                        this.request.body.timeStart + ' – ' + this.request.body.timeEnd + ' GMT+3',
-    title:             course.title + '(' + moment(dateStart).format('DD.MM') + ', ' + this.request.body.timeStart + ')',
+    title:             course.title + ' (' + moment(dateStart).format('DD.MM') + ', ' + this.request.body.timeStart + ')',
     isOpenForSignup:   true,
     isListed:          true,
     materials:         [],
