@@ -46,7 +46,7 @@ const schema = new Schema({
       },
       message: 'Некорректное время начала'
     },
-    required: true
+    // required: true
   },
 
   teacherNotificationState: {
@@ -67,7 +67,7 @@ const schema = new Schema({
       },
       message: 'Некорректное время конца'
     },
-    required: true
+    // required: true
   },
 
   /*
