@@ -1,31 +1,80 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var config = require('config');
-var fs = require('mz/fs');
-var path = require('path');
-var log = require('log')();
-var validate = require('validate');
-var CourseMaterial = require('./courseMaterial');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const config = require('config');
+const fs = require('mz/fs');
+const path = require('path');
+const log = require('log')();
+const validate = require('validate');
+const CourseMaterial = require('./courseMaterial');
+const timeReg = require('validate').patterns.time;
+const moment = require('momentWithLocale');
+
 require('./course'); // ensure Course exists
 require('users'); // ensure User exists
 
-var schema = new Schema({
+const schema = new Schema({
   // 01.01.2015
   dateStart: {
     type:     Date,
     required: true
   },
+
   // 05.05.2015
   dateEnd:   {
     type:     Date,
     required: true
   },
 
+  datesSkip: {
+    type: [Date],
+    default: []
+  },
+
+  // [1, 4] for mon, thu
+  weekDays: {
+    type: [Number],
+    default: []
+  },
+
+  timeStart: {
+    type:     String,
+    validate: {
+      validator(value) {
+        return timeReg.test(value);
+      },
+      message: 'Некорректное время начала'
+    },
+    required: true
+  },
+
+  teacherNotificationState: {
+    type: {
+      weekBeforeSent: Boolean,
+      rightBeforeSent: Boolean,
+      afterSent: Boolean,
+      skip: Boolean
+    },
+    default: {}
+  },
+
+  timeEnd: {
+    type:     String,
+    validate: {
+      validator(value) {
+        return timeReg.test(value);
+      },
+      message: 'Некорректное время конца'
+    },
+    required: true
+  },
+
+  /*
   duration: { // duration in minutes
     type: Number
   },
+
   rrule:    {
     freq:  {
       type:      String,
@@ -38,6 +87,7 @@ var schema = new Schema({
       enum:      ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
     }]
   },
+  */
 
   // like "nodejs-0402", for urls
   slug: {
@@ -160,6 +210,36 @@ schema.methods.getMaterialFileSize = function* (material) {
   } catch (e) {
     return 0;
   }
+};
+
+schema.methods.getAllDates = function() {
+
+  let dates = [];
+  let datesSkipStrings = this.datesSkip.map(date => date.getFullYear() + date.getMonth() + date.getDate());
+
+  let date = this.dateStart;
+
+  while(true) {
+
+    if (!datesSkipStrings.includes(date.getFullYear() + date.getMonth() + date.getDate())) {
+      dates.push(new Date(date));
+    }
+
+    // get next weekday
+    while(true) {
+      date.setDate(date.getDate() + 1);
+      let weekDay = date.getDay();
+      if (weekDay === 0) weekDay = 7;
+      if (this.weekDays.includes(weekDay)) break;
+    }
+
+    // out of range? then break
+    if (moment(date).format('YYYYMMDD') > moment(this.dateEnd).format('YYYYMMDD')) {
+      break;
+    }
+  }
+
+  return dates;
 };
 
 schema.methods.decreaseParticipantsLimit = function(count) {

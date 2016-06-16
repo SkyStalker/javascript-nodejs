@@ -81,6 +81,7 @@ exports.Course = [
     titleShort:       "JavaScript/DOM/интерфейсы",
     shortDescription: "Desc",
     isListed:         true,
+    price:            1000,
     weight:           1
   }
 ];

@@ -16,7 +16,7 @@ module.exports = function* (order) {
 
   yield Order.populate(order, {path: 'user'});
 
-  var group = yield CourseGroup.findById(order.data.group).exec();
+  var group = yield CourseGroup.findById(order.data.group);
 
   var emails = order.data.emails;
 
