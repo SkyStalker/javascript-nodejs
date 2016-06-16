@@ -55,7 +55,7 @@ function* getOrderInfo(order) {
     }
 
 
-    console.log(transaction && transaction.toObject(), descriptionProfile, '!!!!!');
+    // console.log(transaction && transaction.toObject(), descriptionProfile, '!!!!!');
     // it is possible that there is no transaction at all
     // (if order status is set manually)
     return {
