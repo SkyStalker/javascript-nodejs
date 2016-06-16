@@ -8,7 +8,7 @@ exports.get = function*() {
 
   var courses = yield Course.find({
     isListed: true
-  }).sort({weight: 1}).exec();
+  }).sort({weight: 1});
 
   this.locals.coursesInfo = [];
   for (var i = 0; i < courses.length; i++) {
@@ -31,6 +31,7 @@ exports.get = function*() {
     });
   };
 
+  console.log(teachers);
   this.body = this.render('frontpage', {
     teachers
   });
