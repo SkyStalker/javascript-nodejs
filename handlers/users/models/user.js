@@ -203,14 +203,15 @@ var UserSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  /*
+  
+  // DEPRECATED
   teachesCourses:            {
     type:    [{
       type: Schema.Types.ObjectId,
       ref:  'Course'
     }],
     default: []
-  },*/
+  },
   isTeacherFrontpage: {
     type: Boolean,
     index: true
