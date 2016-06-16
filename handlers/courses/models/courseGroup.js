@@ -46,7 +46,7 @@ const schema = new Schema({
       },
       message: 'Некорректное время начала'
     },
-    required: true
+    // required: true
   },
 
   teacherNotificationState: {
@@ -67,10 +67,10 @@ const schema = new Schema({
       },
       message: 'Некорректное время конца'
     },
-    required: true
+    // required: true
   },
 
-  /*
+
   duration: { // duration in minutes
     type: Number
   },
@@ -87,7 +87,7 @@ const schema = new Schema({
       enum:      ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
     }]
   },
-  */
+  
 
   // like "nodejs-0402", for urls
   slug: {
