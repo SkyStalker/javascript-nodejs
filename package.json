@@ -113,6 +113,7 @@
     "passthrough-counter": "*",
     "path-to-regexp": "*",
     "prismjs": "*",
+    "recaptcha": "^1.2.1",
     "request": "*",
     "request-promise": "*",
     "rupture": "^0.6.1",
