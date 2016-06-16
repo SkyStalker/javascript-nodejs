@@ -1,3 +1,5 @@
+"use strict";
+
 const sendMail = require('mailer').send;
 const path = require('path');
 const CourseInvite = require('../models/courseInvite');
