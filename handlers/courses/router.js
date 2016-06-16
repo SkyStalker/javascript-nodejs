@@ -60,6 +60,7 @@ router.patch('/participants', require('./controller/participants').patch);
 router.get('/download/participant/:participantId/certificate.jpg', mustBeAuthenticated, require('./controller/participantCertificateDownload').get);
 
 router.get('/teacher/group-create', require('./controller/teacher/groupCreate').get);
+router.post('/teacher/group-create', require('./controller/teacher/groupCreate').post);
 
 router.all('/invite/:inviteToken?', require('./controller/invite').all);
 

@@ -24,7 +24,7 @@ exports.get = function* () {
     'paymentDetails.processing': {
       $ne: true
     }
-  }).exec();
+  });
 
   for (var i = 0; i < transactions.length; i++) {
     var transaction = transactions[i];

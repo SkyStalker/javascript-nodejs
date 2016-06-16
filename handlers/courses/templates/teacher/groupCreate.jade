@@ -9,45 +9,93 @@ block append variables
 
 block content
 
+  form(method="POST" onsubmit="return checkForm(this)")
+    input(type="hidden", name="_csrf", value=csrf())
     table
       tr
         td Курс
         td
-          select(name="course")
+          select(name="course" required)
             each course in courses
               option(value=course.id)= course.title
       tr
         td Дата начала обучения
         td
-          input(type="date" name="dateStart")
+          input(type="date" name="dateStart" required)
       tr
         td Дата конца обучения
         td
-          input(type="date" name="dateEnd")
+          input(type="date" name="dateEnd" required)
+      tr
+        td Даты между началом и концом, когда встреч не будет (например, праздничные)
+        td
+          a(href="#" onclick="addDateSkip(this); return false") [+]
       tr
         td Дни обучения
         td
-          | Пн
-          input(type="checkbox" name="weekday-1")
-          | Вт
-          input(type="checkbox" name="weekday-2")
-          | Ср
-          input(type="checkbox" name="weekday-3")
-          | Чт
-          input(type="checkbox" name="weekday-4")
-          | Пт
-          input(type="checkbox" name="weekday-5")
-          | Сб
-          input(type="checkbox" name="weekday-6")
-          | Вс
-          input(type="checkbox" name="weekday-7")
+          label Пн
+            input(type="checkbox" name="weekday" value="1" title="Пн")
+          label Вт
+            input(type="checkbox" name="weekday" value="2" title="Вт")
+          label Ср
+            input(type="checkbox" name="weekday" value="3" title="Ср")
+          label Чт
+            input(type="checkbox" name="weekday" value="4" title="Чт")
+          label Пт
+            input(type="checkbox" name="weekday" value="5" title="Пт")
+          label Сб
+            input(type="checkbox" name="weekday" value="6" title="Сб")
+          label Вс
+            input(type="checkbox" name="weekday" value="7" title="Вс")
 
       tr
         td Время начала обучения
         td
-          input(type="time" name="timeStart")
+          input(type="time" name="timeStart" required)
       tr
         td Время конца обучения
         td
-          input(type="time" name="timeEnd")
+          input(type="time" name="timeEnd" required)
+
+      tr
+        td Лимит участников ("мягкий")
+        td
+          input(type="number" name="participantsLimit" required value=30)
+
+
+    button(type="submit") Открыть запись
+
+  script.
+    'use strict';
+    function checkForm(form) {
+      var elems = form.elements;
+      var weekdays = [].map.call(elems.weekday, function(el) { return el.checked && el.title; }).filter(Boolean);
+      if (!weekdays.length) {
+        alert('Вы не выбрали дни недели');
+        return false;
+      }
+
+      var courseTitle = elems.course.querySelector('option[value="' + elems.course.value + '"]').innerHTML;
+
+      var dateSkips = !elems.dateSkip ? [] :
+              elems.dateSkip.length ? [].slice.call(elems.dateSkip) : [elems.dateSkip];
+      dateSkips = dateSkips.map(function(el) { return el.value }).filter(Boolean).join(', ');
+
+      return confirm('Проверьте данные, исправить их после открытия записи будет уже нельзя:\n' +
+              '\nКурс: ' + courseTitle +
+              '\nС ' + elems.dateStart.value + ' по ' + elems.dateEnd.value +
+              (dateSkips ? '\nКроме: ' + dateSkips : '') +
+              '\nДни недели:  ' + weekdays.join(' и ') +
+              '\nВремя: ' + elems.timeStart.value + ' – ' + elems.timeEnd.value +
+              '\nУчастников: ' + elems.participantsLimit.value +
+              '\n\nВсё верно, открыть запись?');
+
+    }
+
+    function addDateSkip(a) {
+      let newInput = document.createElement('input');
+      newInput.type = 'date';
+      newInput.name = 'dateSkip';
+      a.parentNode.insertBefore(newInput, a);
+    }
 
