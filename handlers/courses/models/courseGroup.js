@@ -71,10 +71,12 @@ const schema = new Schema({
   },
 
 
+  // DEPRECATED, for old groups
   duration: { // duration in minutes
     type: Number
   },
 
+  // DEPRECATED, for old groups
   rrule:    {
     freq:  {
       type:      String,
@@ -87,7 +89,7 @@ const schema = new Schema({
       enum:      ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
     }]
   },
-  
+
 
   // like "nodejs-0402", for urls
   slug: {
