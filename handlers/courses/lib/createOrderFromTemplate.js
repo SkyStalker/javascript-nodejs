@@ -1,3 +1,5 @@
+"use strict";
+
 var Order = require('payments').Order;
 var Discount = require('payments').Discount;
 var OrderCreateError = require('payments').OrderCreateError;

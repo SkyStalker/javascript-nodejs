@@ -1,3 +1,5 @@
+"use strict";
+
 var Course = require('../models/course');
 var CourseParticipant = require('../models/courseParticipant');
 

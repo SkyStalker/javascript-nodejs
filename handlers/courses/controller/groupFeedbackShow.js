@@ -1,3 +1,5 @@
+"use strict";
+
 const mongoose = require('mongoose');
 const countries = require('countries');
 const CourseFeedback = require('../models/courseFeedback');

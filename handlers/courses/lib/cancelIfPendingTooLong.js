@@ -1,3 +1,5 @@
+"use strict";
+
 var Order = require('payments').Order;
 var User = require('users').User;
 var CourseGroup = require('../models/courseGroup');

@@ -1,3 +1,5 @@
+"use strict";
+
 var moment = require('momentWithLocale');
 var User = require('users').User;
 var Course = require('../models/course');
