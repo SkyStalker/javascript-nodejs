@@ -31,7 +31,6 @@ exports.get = function*() {
     });
   };
 
-  console.log(teachers);
   this.body = this.render('frontpage', {
     teachers
   });
