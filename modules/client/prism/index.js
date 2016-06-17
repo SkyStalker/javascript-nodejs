@@ -1,3 +1,7 @@
+// prism requires data-manual attribute on the current script NOT to highlightAll automatically
+var script = document.currentScript || [].slice.call(document.getElementsByTagName("script")).pop();
+script.setAttribute('data-manual', 1);
+
 require('prismjs/components/prism-core.js');
 require('prismjs/components/prism-markup.js');
 require('prismjs/components/prism-css.js');

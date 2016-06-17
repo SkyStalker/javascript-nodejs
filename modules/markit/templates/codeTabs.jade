@@ -26,7 +26,7 @@ include /bem
       +e('iframe').result(src=src)
 
     each tab in tabs
-      // Chrome extension jsonview breaks language-json here
+      //- Chrome extension jsonview breaks language-json here
       +e.section
         pre(class=tab.class)
           code= tab.content
