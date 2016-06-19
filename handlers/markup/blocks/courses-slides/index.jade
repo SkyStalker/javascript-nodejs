@@ -7,9 +7,9 @@ mixin courses-slides(slides)
     for slide in slides
       - slide.address = slide.address || {};
       - slide.text = slide.text || '';
-      - isTextTooLong = slide.text.length > 420;
+      - isTextTooLong = slide.text.length > 400;
 
-      - slide.text = isTextTooLong ? slide.text.slice(0, 420) : slide.text;
+      - slide.text = isTextTooLong ? slide.text.slice(0, 400) : slide.text;
 
       +e('li').slide
         +e.slide-inner
@@ -27,14 +27,14 @@ mixin courses-slides(slides)
 
             +e('a').more(href='#') все отзывы о курсе
 
-
           +e.author
             +e.author-inner
-              +e('img').userpic(src=slide.img)
+              +e('a').author-link(href='#')
+                +e('img').userpic(src=slide.img)
 
-              +e('p').name
-                = slide.author
+                +e('p').name
+                  = slide.author
 
               +e.address
-                +e.flag(class='courses-slides__flag_' + slide.address.flag)
+                +e('img').country-flag(src='/img/flags/#{slide.address.country}.svg' width=16 height=12)
                 = slide.address.name
