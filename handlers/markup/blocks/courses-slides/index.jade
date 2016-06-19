@@ -1,0 +1,39 @@
+include /blocks/rating-stars/index
+
+mixin courses-slides(slides)
+  - slides = slides || [];
+
+  +b('ul').courses-slides&attributes(attributes)
+    for slide in slides
+      - slide.address = slide.address || {};
+      - slide.text = slide.text || '';
+      - isTextTooLong = slide.text.length > 420;
+
+      - slide.text = isTextTooLong ? slide.text.slice(0, 420) : slide.text;
+
+      +e('li').slide
+        +e.slide-inner
+          +e.review
+            +e('h3').title
+              = slide.title
+
+            +rating-stars(slide.rating).courses-slides__rating
+
+            +e.text
+              = slide.text
+              if isTextTooLong
+                = ' '
+                a(href='#') ...
+
+            +e('a').more(href='#') все отзывы о курсе
+
+
+          +e.author
+            +e('img').userpic(src=slide.img)
+
+            +e('p').name
+              = slide.author
+
+            +e.address
+              +e.flag(class='courses-slides__flag_' + slide.address.flag)
+              = slide.address.name

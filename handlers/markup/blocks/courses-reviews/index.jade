@@ -1,0 +1,21 @@
+include ../courses-slides/index
+
+mixin courses-reviews(data)
+  - data = data || {};
+  - data.slides = data.slides || [];
+
+  +b.courses-reviews
+    +e('h2').title Что говорят о курсах люди
+
+    +e.slider
+      +e.control._left
+      +e.control._right
+
+      +e.slides-wrapper
+        +courses-slides(data.slides).courses-reviews__slides
+
+      - var page = 0
+      +e('ul').pagination
+        while page < data.slides.length
+          +e('li').page(class=(page === 0) ? 'courses-reviews__page_active' : '')
+          - page++

@@ -1,0 +1,63 @@
+.courses-reviews
+  &__title
+    text-align center
+
+  &__slider
+    position relative
+    text-align center
+
+  &__slides-wrapper
+    overflow hidden
+    margin 0 auto
+    width 85%
+
+  &__control
+    position absolute
+    border-top 19px solid transparent
+    border-bottom 19px solid transparent
+    height 0
+    width 0
+    top -40px
+    bottom 0
+    margin auto
+    cursor pointer
+
+    &_left
+      border-left none
+      border-right 27px solid #ececec
+      left 8px
+
+      &:hover
+        border-right-color light_gray_color
+
+    &_right
+      border-right none
+      border-left 27px solid #ececec
+      right 8px
+
+      &:hover
+        border-left-color light_gray_color
+
+  ul&__pagination
+    padding 0
+    margin 20px auto 0
+
+  ul > li&__page
+    display inline-block
+    vertical-align top
+    margin-right 8px
+    background-color #ececec
+    border-radius 50%
+    width 12px
+    height 12px
+    cursor pointer
+
+    &:last-child
+      margin-right 0
+
+    &:before
+      display none
+
+    &:hover
+    &_active
+      background-color light_gray_color
