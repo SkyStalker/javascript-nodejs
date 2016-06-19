@@ -33,6 +33,20 @@ ul.courses-slides
     width 80%
     padding 21px 33px
     box-sizing border-box
+    position relative
+
+    &:after
+      position absolute
+      content ''
+      margin auto
+      top 0
+      bottom 0
+      right 0
+      height 0
+      width 0
+      border-top 13px solid transparent
+      border-bottom 13px solid transparent
+      border-left 21px solid background_yellow_light
 
   h3&__title
     display inline-block
