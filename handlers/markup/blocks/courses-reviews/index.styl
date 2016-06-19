@@ -1,3 +1,5 @@
+$courses-reviews = '.courses-reviews';
+
 .courses-reviews
   &__title
     text-align center
@@ -13,30 +15,48 @@
 
   &__control
     position absolute
+    width 7.5%
+    top 0
+    bottom 40px
+    cursor pointer
+
+    &_left
+      left 0
+
+      &:hover
+        {$courses-reviews}
+          &__control-button
+            &_left
+              border-right-color light_gray_color
+
+    &_right
+      right 0
+
+      &:hover
+        {$courses-reviews}
+          &__control-button
+            &_right
+              border-left-color light_gray_color
+
+  &__control-button
+    position absolute
     border-top 19px solid transparent
     border-bottom 19px solid transparent
     height 0
     width 0
-    top -40px
+    top 0
     bottom 0
+    left 0
+    right 0
     margin auto
-    cursor pointer
 
     &_left
       border-left none
       border-right 27px solid #ececec
-      left 8px
-
-      &:hover
-        border-right-color light_gray_color
 
     &_right
       border-right none
       border-left 27px solid #ececec
-      right 8px
-
-      &:hover
-        border-left-color light_gray_color
 
   ul&__pagination
     padding 0

@@ -29,11 +29,12 @@ mixin courses-slides(slides)
 
 
           +e.author
-            +e('img').userpic(src=slide.img)
+            +e.author-inner
+              +e('img').userpic(src=slide.img)
 
-            +e('p').name
-              = slide.author
+              +e('p').name
+                = slide.author
 
-            +e.address
-              +e.flag(class='courses-slides__flag_' + slide.address.flag)
-              = slide.address.name
+              +e.address
+                +e.flag(class='courses-slides__flag_' + slide.address.flag)
+                = slide.address.name

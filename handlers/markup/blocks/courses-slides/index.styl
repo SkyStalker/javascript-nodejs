@@ -14,7 +14,7 @@ ul.courses-slides
   &__slide
     background-color background_yellow_dark
     width 100%
-    height 220px
+    min-height 220px
     display inline-block
     vertical-align top
     white-space normal
@@ -27,6 +27,9 @@ ul.courses-slides
     height 100%
     display flex
     justify-content space-between
+
+    @media tablet
+      flex-direction column-reverse
 
   &__review
     background-color background_yellow_light
@@ -41,12 +44,25 @@ ul.courses-slides
       margin auto
       top 0
       bottom 0
-      right 0
+      right -21px
       height 0
       width 0
       border-top 13px solid transparent
       border-bottom 13px solid transparent
       border-left 21px solid background_yellow_light
+
+    @media tablet
+      width 100%
+
+      &:after
+        right 0
+        left 0
+        bottom auto
+        top -21px
+        border-top none
+        border-bottom 21px solid background_yellow_light
+        border-left 13px solid transparent
+        border-right 13px solid transparent
 
   h3&__title
     display inline-block
@@ -55,12 +71,11 @@ ul.courses-slides
     font-size 16px
     line-height 22px
     font-weight bold
-    margin 0
+    margin 0 10px 0 0
 
   ul&__rating
     display inline-block
     vertical-align top
-    margin-left 10px
     margin-top 1px
 
   &__userpic
@@ -78,10 +93,22 @@ ul.courses-slides
 
   &__author
     box-sizing border-box
-    padding 29px 13px
+    padding 29px
     text-align center
+    display flex
+    align-items center
+
+    @media tablet
+      display block
+      padding-top 21px
+      padding-bottom 35px
+
+  &__author-inner
+    display flex
+    flex-direction column
+    align-items center
 
   p&__name
-    margin 0 0 6px 0
+    margin 10px 0 6px
     font-size 14px
     font-weight bold
