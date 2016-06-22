@@ -10,6 +10,8 @@ const CourseGroup = require('../../models/courseGroup');
 // CRONTAB at 12 am every day
 exports.get = function*() {
 
+  this.nocache();
+  
   if (!this.isAdmin) {
     this.throw(403);
   }
