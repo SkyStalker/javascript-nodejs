@@ -10,7 +10,7 @@ module.exports = function*(id, next) {
     this.throw(404);
   }
 
-  var user = yield User.findById(id).exec();
+  var user = yield User.findById(id);
 
   if (!user) {
     this.throw(404);

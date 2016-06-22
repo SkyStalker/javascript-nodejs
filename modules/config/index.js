@@ -54,6 +54,7 @@ var config = module.exports = {
   slack: {
     token: secret.slack.token,
     org:   secret.slack.org,
+    bot:   secret.slack.bot,
     email: 'mk@javascript.ru',
     host:  '127.0.0.1',
     port:  3001

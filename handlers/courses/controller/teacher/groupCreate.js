@@ -11,6 +11,7 @@ const Course = require('../../models/course');
 const moment = require('momentWithLocale');
 const stripTags = require('textUtil/stripTags');
 const webinarAdd = require('../../lib/webinarAdd');
+const slackAdd = require('../../lib/slackAdd');
 
 exports.get = function*() {
 
@@ -66,9 +67,11 @@ exports.post = function*() {
     videoKeyTagCached: course.videoKeyTag
   });
 
-  console.log(group);
+  this.log.debug(group);
 
   yield* webinarAdd(group);
+
+  yield* slackAdd(group);
 
   this.body = 'OK';
 };

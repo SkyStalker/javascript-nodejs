@@ -4,6 +4,9 @@ const CourseInvite = require('../models/courseInvite');
 const CourseParticipant = require('../models/courseParticipant');
 const CourseGroup = require('../models/courseGroup');
 const CourseFeedback = require('../models/courseFeedback');
+const SlackChannelMember = require('slack').SlackChannelMember;
+const SlackUser = require('slack').SlackUser;
+const SlackChannel = require('slack').SlackChannel;
 
 /**
  * The order form is sent to checkout when it's 100% valid (client-side code validated it)
@@ -15,7 +18,7 @@ exports.get = function*(next) {
 
   var user = this.userById;
 
-  if (String(this.user._id) != String(user._id)) {
+  if (!this.user._id.equals(user._id)) {
     this.throw(403);
   }
 
@@ -23,7 +26,7 @@ exports.get = function*(next) {
   var invites = yield CourseInvite.find({
     email:    user.email,
     accepted: false
-  }).populate('group').exec();
+  }).populate('group');
 
   // plus groups where participates
   var userParticipants = yield CourseParticipant.find({
@@ -64,12 +67,14 @@ exports.get = function*(next) {
     let hasFeedback = yield CourseFeedback.findOne({
       group:       group._id,
       participant: participant._id
-    }).exec();
+    });
 
     let groupInfo = formatGroup(group);
     if (!hasFeedback) {
       groupInfo.feedbackLink = `/courses/groups/${group.slug}/feedback`;
     }
+
+    groupInfo.inSlack = yield* checkInSlack.call(this, group, this.user);
 
     groupInfo.joinUrl = participant.joinUrl;
 
@@ -119,6 +124,7 @@ exports.get = function*(next) {
 
     let groupInfo = formatGroup(group);
 
+    groupInfo.inSlack = yield* checkInSlack.call(this, group, this.user);
     groupInfo.isTeacher = true;
 
     groupInfo.links = [{
@@ -133,11 +139,7 @@ exports.get = function*(next) {
     }, {
       url:   `/courses/groups/${group.slug}/participants-info`,
       title: 'Анкеты участников'
-    }, {
-      url: `/slack/sync-group/${group.slug}`,
-      title: 'Скрипт инвайта участников в группу Slack'
     }];
-
 
     groupInfo.status = (groupInfo.dateStart > new Date()) ? 'accepted' :
       (groupInfo.dateEnd > new Date()) ? 'started' : 'ended';
@@ -152,9 +154,33 @@ exports.get = function*(next) {
 
 function formatGroup(group) {
   return {
+    slug:      group.slug,
     title:     group.title,
     dateStart: group.dateStart,
     dateEnd:   group.dateEnd,
     timeDesc:  group.timeDesc
   };
+}
+
+function* checkInSlack(group, user) {
+  const slackUser = yield SlackUser.findOne({
+    email: user.email
+  });
+
+  const slackChannel = yield SlackChannel.findOne({
+    name: group.slug
+  });
+
+  if (!slackChannel) {
+    // strange, no channel?
+    this.log.error("no channel for " + group.slug);
+    return false;
+  }
+
+  const slackChannelMember = yield SlackChannelMember.findOne({
+    userId: slackUser.userId,
+    channelId: slackChannel.channelId
+  });
+
+  return Boolean(slackChannelMember);
 }
