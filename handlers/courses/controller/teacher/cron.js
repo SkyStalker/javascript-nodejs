@@ -10,7 +10,9 @@ const CourseGroup = require('../../models/courseGroup');
 // CRONTAB at 12 am every day
 exports.get = function*() {
 
-  if (!this.isAdmin) return;
+  if (!this.isAdmin) {
+    this.throw(403);
+  }
 
   // groups finished less than 1 month ago
   let groups = yield CourseGroup.find({
