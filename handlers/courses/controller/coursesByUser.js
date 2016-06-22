@@ -167,6 +167,11 @@ function* checkInSlack(group, user) {
     email: user.email
   });
 
+  if (!slackUser) {
+    // no such user in slack
+    return false;
+  }
+
   const slackChannel = yield SlackChannel.findOne({
     name: group.slug
   });
