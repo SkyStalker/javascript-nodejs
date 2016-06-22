@@ -17,16 +17,16 @@
 ## Открытие записи
 
 1. Создание группы
-  1. Зайдите на [эту страницу](/courses/teacher/group-create).
-  2. Введите информацию о группе, всё проверьте, нажмите "Создать".
+    1. Зайдите на [эту страницу](/courses/teacher/group-create).
+    2. Введите информацию о группе, всё проверьте, нажмите "Создать".
 2. Настройка вебинара
-  1. Зайдите в gotowebinar. Вы увидите в списке новый вебинар, раскройте его и выберите Edit.
-  2. Ниже в пункте Share your webinar > Registration Settings нажмите Edit.
-  3. В пункте Approval поставьте [*] Manually Approve
-  4. В пункте Upon Registration поставьте [*] Direct registrants to your own confirmation page, и в поле ввода ниже: "https://learn.javascript.ru/course-webinar-registered".
-  5. Внизу нажмите Save
+    1. Зайдите в gotowebinar. Вы увидите в списке новый вебинар, раскройте его и выберите Edit.
+    2. Ниже в пункте Share your webinar > Registration Settings нажмите Edit.
+    3. В пункте Approval поставьте [*] Manually Approve
+    4. В пункте Upon Registration поставьте [*] Direct registrants to your own confirmation page, и в поле ввода ниже: "https://learn.javascript.ru/course-webinar-registered".
+    5. Внизу нажмите Save
 3. Рассылка по группе 
-  1. Когда вы откроете все группы, обратитесь к Илье Кантору для рассылки информации о ней.
+    1. Когда вы откроете все группы, обратитесь к Илье Кантору для рассылки информации о ней.
 
 ## За 7-10 дней до курса
 
