@@ -51,9 +51,11 @@
       "log_file":           "/var/log/node/services.log",
       "error_file":         "/var/log/node/services-err.log",
       "out_file":           "/var/log/node/services-out.log",
+      "cwd":                "/js/javascript-nodejs",
       "env":                {
         "PM2_GRACEFUL_LISTEN_TIMEOUT": 1000,
         "PM2_GRACEFUL_TIMEOUT":        25000,
+        "NODE_PATH":                   "./handlers:./modules",
         "NODE_ENV":                    "development"
       }
     },

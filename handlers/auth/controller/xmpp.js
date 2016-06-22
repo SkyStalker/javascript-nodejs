@@ -12,7 +12,7 @@ exports.post = function* (next) {
 
   var user = yield User.findOne({
     profileName: this.request.body.user
-  }).exec();
+  });
 
   if (!user) {
     this.log.error("No such user", this.request.body.user);
