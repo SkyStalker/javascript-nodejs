@@ -68,9 +68,12 @@ router.get('/feedback/:feedbackNumber(\\d+)', require('./controller/groupFeedbac
 router.patch('/participants', require('./controller/participants').patch);
 router.get('/download/participant/:participantId/certificate.jpg', mustBeAuthenticated, require('./controller/participantCertificateDownload').get);
 
+router.post('/groups/:groupBySlug/slack-invite', mustBeAuthenticated, require('./controller/groupSlackInvite').post);
+
 router.get('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').get);
 router.post('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').post);
 router.get('/teacher/instructions', hasRoleTeacher, require('./controller/teacher/instructions').get);
+router.get('/teacher/cron', require('./controller/teacher/cron').get);
 
 router.all('/invite/:inviteToken?', require('./controller/invite').all);
 

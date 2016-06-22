@@ -45,8 +45,8 @@ const schema = new Schema({
         return timeReg.test(value);
       },
       message: 'Некорректное время начала'
-    },
-    // for old groups
+    }
+    // not enabling cause of old groups
     // required: true
   },
 

@@ -1,6 +1,6 @@
 var transliterate = require('textUtil/transliterate');
 var validate = require('validate');
-var mongoose = require('mongoose');
+var mongoose = require('lib/mongoose');
 var Schema = mongoose.Schema;
 var hash = require('../lib/hash');
 var mongooseTimestamp = require('lib/mongooseTimestamp');
@@ -203,7 +203,7 @@ var UserSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  
+
   // DEPRECATED
   teachesCourses:            {
     type:    [{
@@ -215,9 +215,6 @@ var UserSchema = new mongoose.Schema({
   isTeacherFrontpage: {
     type: Boolean,
     index: true
-  },
-  slackId: {
-    type: String
   },
 
   aboutMe:                   {
@@ -325,7 +322,6 @@ UserSchema.methods.softDelete = function*() {
   // delete this.email does not work
   // need to assign to undefined to $unset
   this.aboutMe = undefined;
-  this.slackId = undefined;
   this.email = undefined;
   this.realName = undefined;
   this.displayName = 'Аккаунт удалён';

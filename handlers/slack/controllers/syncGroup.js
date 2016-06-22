@@ -3,7 +3,7 @@
 const syncUsers = require('../lib/syncUsers');
 const syncGroups = require('../lib/syncGroups');
 const CourseGroup = require('courses').CourseGroup;
-const webClient = require('../lib/client');
+const webClient = require('../lib/client')();
 const CourseParticipant = require('courses').CourseParticipant;
 const config = require('config');
 
