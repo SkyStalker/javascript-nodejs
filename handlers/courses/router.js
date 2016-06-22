@@ -73,6 +73,7 @@ router.post('/groups/:groupBySlug/slack-invite', mustBeAuthenticated, require('.
 router.get('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').get);
 router.post('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').post);
 router.get('/teacher/instructions', hasRoleTeacher, require('./controller/teacher/instructions').get);
+
 router.get('/teacher/cron', require('./controller/teacher/cron').get);
 
 router.all('/invite/:inviteToken?', require('./controller/invite').all);

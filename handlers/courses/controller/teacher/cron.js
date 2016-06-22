@@ -11,7 +11,7 @@ const CourseGroup = require('../../models/courseGroup');
 exports.get = function*() {
 
   this.nocache();
-  
+
   if (!this.isAdmin) {
     this.throw(403);
   }
@@ -32,12 +32,14 @@ exports.get = function*() {
     let dayBeforeDate = new Date(group.dateStart);
     dayBeforeDate.setDate(dayBeforeDate.getDate() - 2);
 
-    if (group.dateStart < new Date(2016, 5, 20)) {
-      // old groups
-      return;
-    }
     if (!group.teacherNotificationState) {
       group.teacherNotificationState = {};
+    }
+
+
+    if (group.dateStart < new Date(2016, 5, 20) || group.teacherNotificationState.skip) {
+      // old groups
+      continue;
     }
 
     if (new Date() > group.dateEnd + 2 * 86400 * 1000) { // 2 days after group end
@@ -51,6 +53,7 @@ exports.get = function*() {
         });
 
         group.teacherNotificationState.afterSent = true;
+        group.markModified('teacherNotificationState');
 
         yield group.persist();
       }
@@ -68,6 +71,7 @@ exports.get = function*() {
 
         group.teacherNotificationState.rightBeforeSent = true;
 
+        group.markModified('teacherNotificationState');
         yield group.persist();
       }
     } else if (new Date() > weekBeforeDate) {
@@ -81,6 +85,7 @@ exports.get = function*() {
 
         group.teacherNotificationState.weekBeforeSent = true;
 
+        group.markModified('teacherNotificationState');
         yield group.persist();
       }
 
