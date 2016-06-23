@@ -61,6 +61,9 @@ module.exports = class {
 
   *onTeamJoin({user}) {
     yield* this.updateUsers([user]);
+
+    
+
   }
 
   *onChannelJoined({channel}) {
