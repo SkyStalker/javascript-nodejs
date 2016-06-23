@@ -1,0 +1,8 @@
+mixin rating-stars(rating)
+  - var i = 1
+
+  +b('ul').rating-stars&attributes(attributes)
+    while i <= 5
+      +e('li').star(class=(i <= rating) ? 'rating-stars__star_active' : '')
+      - i++
+
