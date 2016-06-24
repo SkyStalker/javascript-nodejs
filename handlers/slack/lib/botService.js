@@ -10,13 +10,14 @@ const RtmClient = require('@slack/client').RtmClient;
 const SlackUser = require('../models/slackUser');
 const SlackChannel = require('../models/slackChannel');
 const SlackChannelMember = require('../models/slackChannelMember');
-const webClient = require('./client')();
+
+const botWebClient = require('./client')(config.slack.bot.token);
 
 const rtmClient = new RtmClient(config.slack.bot.token, {
   logLevel: process.env.NODE_ENV == 'development' ? 'debug' : 'info'
 });
 
-module.exports = class {
+module.exports = class BotService {
 
   *start() {
     this.state = 'running';
@@ -24,6 +25,7 @@ module.exports = class {
     rtmClient.start();
 
     let self = this;
+
     function coHandler(handler) {
       return function(...args) {
         co(handler.apply(self, args)).catch(err => log.error(err));
@@ -46,12 +48,12 @@ module.exports = class {
     rtmClient.on('message', coHandler(this.onMessage));
 
     /*
-    let emit = rtmClient.emit;
+     let emit = rtmClient.emit;
 
-    rtmClient.emit = function() {
-      console.log(arguments);
-      return emit.apply(this, arguments);
-    };*/
+     rtmClient.emit = function() {
+     console.log(arguments);
+     return emit.apply(this, arguments);
+     };*/
 
     yield new Promise(resolve => {
       this._stop = resolve;
@@ -62,8 +64,19 @@ module.exports = class {
   *onTeamJoin({user}) {
     yield* this.updateUsers([user]);
 
-    
-
+    /*
+     let channel = yield botWebClient.im.open({
+     user: user.id
+     });
+     */
+    /*
+     yield botWebClient.chat.postMessage({
+     channel: '@' + user.name,
+     as_user: false,
+     parse: 'full',
+     text: "Привет, привет!\n\nУ нас есть каналы:\n    - #general для общих вопросов по JavaScript.\n    - #angular, #react - для вопросов по фреймворкам.\n    - #nodejs - для вопросов по Node.JS.\n    - #jobs - для поиска работы и вакансий.\n\nЕсли вы в Slack впервые, то рекомендую посмотреть чего-как на странице https://learn.javascript.ru/slack/about."
+     });
+     */
   }
 
   *onChannelJoined({channel}) {
@@ -76,30 +89,30 @@ module.exports = class {
 
   *onMessage(message) {
 
-      if ((message.subtype == 'channel_join' || message.subtype == 'group_join') && message.user != config.slack.bot.id) {
-        let channel = yield SlackChannel.findOne({
-          channelId: message.channel
-        });
+    if ((message.subtype == 'channel_join' || message.subtype == 'group_join') && message.user != config.slack.bot.id) {
+      let channel = yield SlackChannel.findOne({
+        channelId: message.channel
+      });
 
-        if (!channel) {
-          throw new Error("No channel " + message.channel);
-        }
-
-        yield SlackChannelMember.create({
-          channelId: message.channel,
-          userId: message.user
-        });
-
-        return;
+      if (!channel) {
+        throw new Error("No channel " + message.channel);
       }
-      if ((message.subtype == 'channel_leave' || message.subtype == 'group_leave') && message.user != config.slack.bot.id) {
-        yield SlackChannelMember.remove({
-          channelId: message.channel,
-          userId: message.user
-        });
 
-        return;
-      }
+      yield SlackChannelMember.create({
+        channelId: message.channel,
+        userId:    message.user
+      });
+
+      return;
+    }
+    if ((message.subtype == 'channel_leave' || message.subtype == 'group_leave') && message.user != config.slack.bot.id) {
+      yield SlackChannelMember.remove({
+        channelId: message.channel,
+        userId:    message.user
+      });
+
+      return;
+    }
 
   }
 
@@ -124,20 +137,28 @@ module.exports = class {
 
 
   *onAuthenticated(response) {
-      let users = response.users;
+    let users = response.users;
 
-      yield* this.updateUsers(users);
+    yield* this.updateUsers(users);
 
-      let channels = response.channels.concat(response.groups);
+    let channels = response.channels.concat(response.groups);
 
-      for (let i = 0; i < channels.length; i++) {
-        let channel = channels[i];
+    for (let i = 0; i < channels.length; i++) {
+      let channel = channels[i];
 
-        if (channel.is_member === false) continue;
+      if (channel.is_member === false) continue;
 
-        yield* this.insertChannel(channel);
+      yield* this.insertChannel(channel);
 
+    }
+
+    yield botWebClient.chat.postMessage(
+      '@test0',
+      "Привет, привет!\n\nУ нас есть каналы:\n    - #general для общих вопросов по JavaScript.\n    - #angular, #react - для вопросов по фреймворкам.\n    - #nodejs - для вопросов по Node.JS.\n    - #jobs - для поиска работы и вакансий.\n\nЕсли вы в Slack впервые, то рекомендую посмотреть чего-как на странице https://learn.javascript.ru/welcome-to-slack.", {
+        as_user: false,
+        parse: 'full'
       }
+    );
   }
 
   *updateUsers(users) {

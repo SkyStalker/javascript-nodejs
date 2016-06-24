@@ -6,6 +6,8 @@ const config = require('config');
 const request = require('request-promise');
 const CourseGroup = require('../models/courseGroup');
 
+// http://localhost/courses/groups/dropbox-link?slug=js-20160602-2130
+// -> http://localhost/courses/groups/js-20160602-2130/dropbox-share
 
 // use ?slug= to pass group, because the same url is used for oauth-redirect
 exports.get = function*() {
@@ -56,13 +58,20 @@ exports.get = function*() {
     this.throw(500, {info: response.error_summary});
   }
 
-  let account = new DropboxAccount({
-    state: this.query.state,
-    code: this.query.code,
-    accessToken: response.access_token,
+
+  let account = yield DropboxAccount.findOne({
     accountId: response.account_id
   });
 
+  if (!account) {
+    account = new DropboxAccount({
+      accountId: response.account_id
+    });
+  }
+
+  account.state = this.query.state;
+  account.code = this.query.code;
+  account.accessToken = response.access_token;
 
   yield* account.fetchCurrentAccount();
 
@@ -72,7 +81,7 @@ exports.get = function*() {
     dropboxAccount: account._id
   });
 
-  this.body = "Dropbox-аккаунт " + account.email + " прилинкован к группе " + group.slug;
+  this.body = "Dropbox-аккаунт " + account.email + " прилинкован к группе " + group.slug + '. Посетителям будет расшариваться директория ' + group.teacher.profileName;
 
 };
 

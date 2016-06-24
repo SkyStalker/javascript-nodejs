@@ -8,7 +8,7 @@ if (process.env.NODE_ENV == 'development') {
   options.logLevel = 'debug';
 }
 
-module.exports = function() {
-  return new WebClient(config.slack.token, options);
+module.exports = function(token = config.slack.token) {
+  return new WebClient(token, options);
 };
 

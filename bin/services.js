@@ -17,6 +17,16 @@ let services = [
   new SlackBotService()
 ];
 
+// NODE_PATH=./handlers:./modules ./bin/services.js BotService
+if (process.argv[2]) {
+  services = services.filter(s => s.constructor.name == process.argv[2]);
+  if (!services.length) {
+    console.log("No such service: " + process.argv[2]);
+    process.exit(1);
+  }
+  console.log("Running ONLY " + services[0].constructor.name);
+}
+
 co(function*()  {
   log.info("Starting services");
   yield services.map(service => service.start());
