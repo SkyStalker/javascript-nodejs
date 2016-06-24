@@ -60,6 +60,8 @@ var config = module.exports = {
     port:  3001
   },
 
+  dropbox: secret.dropbox,
+
   test: {
     e2e: {
       sshHost:  secret.test.e2e.sshHost, // remote host for testing e2e callbacks
