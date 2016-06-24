@@ -60,6 +60,11 @@ const schema = new Schema({
     default: {}
   },
 
+  dropboxAccount: {
+    type: Schema.Types.ObjectId,
+    ref: 'DropboxAccount'
+  },
+
   timeEnd: {
     type:     String,
     validate: {
@@ -67,7 +72,7 @@ const schema = new Schema({
         return timeReg.test(value);
       },
       message: 'Некорректное время конца'
-    },
+    }
     // for old groups
     // required: true
   },

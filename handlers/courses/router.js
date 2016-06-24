@@ -70,6 +70,11 @@ router.get('/download/participant/:participantId/certificate.jpg', mustBeAuthent
 
 router.post('/groups/:groupBySlug/slack-invite', mustBeAuthenticated, require('./controller/groupSlackInvite').post);
 
+router.get('/groups/dropbox-link', mustBeAuthenticated, require('./controller/groupDropboxLink').get);
+
+router.get('/groups/:groupBySlug/dropbox-share', mustBeParticipant, require('./controller/groupDropboxShare').get);
+router.post('/groups/:groupBySlug/dropbox-share', mustBeParticipant, require('./controller/groupDropboxShare').post);
+
 router.get('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').get);
 router.post('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').post);
 router.get('/teacher/instructions', hasRoleTeacher, require('./controller/teacher/instructions').get);
