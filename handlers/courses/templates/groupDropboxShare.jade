@@ -11,9 +11,11 @@ block content
 
   p Введите ниже email, с которым вы зарегистрированы на Dropbox. Вам придёт инвайт.
 
+  p "По умолчанию" в поле введён ваш email на этом сайте, но, если вы уже используете Dropbox с другим email, то можете его поменять.
+
   form(method="POST")
     input(type="hidden", name="_csrf", value=csrf())
-    input(type="email" name="email" placeholder="me@dropbox.com")
+    input(type="email" name="email" value=user.email)
     div
       input(type="submit" value="Запросить доступ к каталогу")
 

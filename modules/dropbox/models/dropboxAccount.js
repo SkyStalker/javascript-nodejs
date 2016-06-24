@@ -69,8 +69,9 @@ schema.methods.request = function* (endpoint, body) {
 
 
   log.debug("dropbox response", result);
-
-  if (result.error) {
+  
+  /* There may be no response at all (result = null), e.g. for sharing/add_folder_member */
+  if (result && result.error) {
     throw new DropboxError(result);
   }
 
