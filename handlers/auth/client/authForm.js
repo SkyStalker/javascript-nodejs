@@ -2,12 +2,15 @@ var xhr = require('client/xhr');
 
 var delegate = require('client/delegate');
 var Spinner = require('client/spinner');
+// var recaptcha = require('client/recaptcha');
 
 var loginForm = require('../templates/login-form.jade');
 var registerForm = require('../templates/register-form.jade');
 var forgotForm = require('../templates/forgot-form.jade');
 
 var clientRender = require('client/clientRender');
+
+var notification = require('client/notification');
 
 /**
  * Options:
@@ -109,6 +112,7 @@ class AuthForm {
     this.delegate('[data-switch="register-form"]', 'click', function(e) {
       e.preventDefault();
       this.elem.innerHTML = clientRender(registerForm, this.options);
+      // recaptcha.render(this.elem.querySelector('.login-form__recaptcha'));
     });
 
     this.delegate('[data-switch="login-form"]', 'click', function(e) {
@@ -122,6 +126,7 @@ class AuthForm {
       // move currently entered email into forgotForm
       var oldEmailInput = this.elem.querySelector('[type="email"]');
       this.elem.innerHTML = clientRender(forgotForm, this.options);
+      // recaptcha.render(this.elem.querySelector('.login-form__recaptcha'));
       var newEmailInput = this.elem.querySelector('[type="email"]');
       newEmailInput.value = oldEmailInput.value;
     });
@@ -182,7 +187,12 @@ class AuthForm {
   }
 
   submitRegisterForm(form) {
-
+    /*
+    if (!form.elements['g-recaptcha-response'].value) {
+      new notification.Error("Подтвердите, пожалуйста, что вы не робот (капча).");
+      return;
+    }
+    */
     this.clearFormMessages();
 
     var hasErrors = false;
@@ -240,6 +250,13 @@ class AuthForm {
 
 
   submitForgotForm(form) {
+
+    /*
+    if (!form.elements['g-recaptcha-response'].value) {
+      new notification.Error("Подтвердите, пожалуйста, что вы не робот (капча).");
+      return;
+    }
+    */
 
     this.clearFormMessages();
 

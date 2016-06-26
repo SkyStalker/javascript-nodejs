@@ -1,6 +1,6 @@
 'use strict';
 
-let webClient = require('./client');
+let webClient = require('./client')();
 let User = require('users').User;
 const log = require('log')();
 

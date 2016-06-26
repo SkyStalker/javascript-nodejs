@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const countries = require('countries');
 const CourseFeedback = require('../models/courseFeedback');
 const CourseGroup = require('../models/courseGroup');
+const CourseTeacher = require('../models/courseTeacher');
 const Course = require('../models/course');
 const User = require('users').User;
 const groupBy = require('lodash/groupBy');
@@ -27,9 +28,11 @@ exports.get = function*() {
     tags: ['courses:feedback']
   }, getFeedbackStats.bind(this, this.locals.course));
 
-  let teachers = yield User.find({
-    teachesCourses: {$exists: true, $not: {$size: 0}}
-  });
+  let teachers = yield CourseTeacher.find({
+    course: this.locals.course._id
+  }).populate('teacher');
+
+  teachers = teachers.map(t => t.teacher);
 
   this.body = this.render('feedback/list', {
     stats: feedbackStats,

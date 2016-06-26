@@ -1,6 +1,7 @@
 var secret = require('./secret');
 
 module.exports = {
+  transport: 'aws', // 'gmail', 
   senders:  {
     // transactional emails, register/forgot pass etc
     default:  {

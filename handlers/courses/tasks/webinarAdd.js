@@ -27,11 +27,11 @@ module.exports = function() {
         throw new Error("No group:" + argv.group);
       }
 
-      let auth = config.gotowebinar.auth[group.teacher.profileName];
-      if (!auth) {
-        throw new Error("No auth config for user:" + group.teacher.profileName);
-      }
 
+      let gotowebinar = group.teacher.gotowebinar;
+      if (!gotowebinar) {
+        throw new Error("No gotowebinar config for user:" + group.teacher.profileName);
+      }
 
       if (!group.webinarId) {
         console.log("Creating the webinar");
@@ -39,10 +39,10 @@ module.exports = function() {
         end.setMinutes(end.getMinutes() + group.duration);
 
         let options = {
-          url:     `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars`,
+          url:     `https://api.citrixonline.com/G2W/rest/organizers/${gotowebinar.organizer_key}/webinars`,
           json:    true,
           headers: {
-            'Authorization': auth.accessToken,
+            'Authorization': gotowebinar.access_token,
             'content-type':  'application/json; charset=utf-8'
           },
           body:    {
@@ -64,10 +64,10 @@ module.exports = function() {
         group.webinarKey = response.webinarKey;
 
         let webinars = yield request({
-          url:     `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars/`,
+          url:     `https://api.citrixonline.com/G2W/rest/organizers/${gotowebinar.organizer_key}/webinars/`,
           json:    true,
           headers: {
-            'Authorization': auth.accessToken
+            'Authorization': gotowebinar.access_token
           }
         });
 
@@ -86,10 +86,10 @@ module.exports = function() {
 
         let responsePut = yield request({
           method: 'PUT',
-          url:     `https://api.citrixonline.com/G2W/rest/organizers/${auth.organizerKey}/webinars/${group.webinarKey}`,
+          url:     `https://api.citrixonline.com/G2W/rest/organizers/${gotowebinar.organizer_key}/webinars/${group.webinarKey}`,
           json:    true,
           headers: {
-            'Authorization': auth.accessToken,
+            'Authorization': gotowebinar.access_token,
             'content-type':  'application/json; charset=utf-8'
           },
           body:    {

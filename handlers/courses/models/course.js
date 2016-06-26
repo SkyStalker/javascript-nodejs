@@ -50,6 +50,10 @@ var schema = new Schema({
     default: false
   },
 
+  price: {
+    type: Number,
+    required: true
+  },
 
   created: {
     type:    Date,
@@ -64,6 +68,9 @@ schema.methods.getUrl = function() {
 
 schema.methods.hasOpenGroups = function*() {
   var anyGroup = yield CourseGroup.findOne({
+    dateStart: {
+      $gt: new Date()
+    },
     isOpenForSignup: true,
     isListed: true,
     course: this._id

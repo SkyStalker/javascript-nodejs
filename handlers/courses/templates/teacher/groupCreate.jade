@@ -1,0 +1,115 @@
+extends /layouts/main
+
+block append variables
+
+  - var layout_header_class = "main__header_center"
+  - var title = 'Создать группу';
+  - var sitetoolbar = true
+  - var siteToolbarCurrentSection = "courses";
+
+block content
+
+  form(method="POST" onsubmit="return checkForm(this)")
+    input(type="hidden", name="_csrf", value=csrf())
+    table
+      tr
+        td Курс
+        td
+          select(name="course" required)
+            each course in courses
+              option(value=course.id)= course.title
+      tr
+        td Дата начала обучения
+        td
+          input(type="date" name="dateStart" required)
+      tr
+        td Дата конца обучения
+        td
+          input(type="date" name="dateEnd" required)
+      tr
+        td Даты между началом и концом, когда встреч не будет (например, праздничные)
+        td
+          a(href="#" onclick="addDateSkip(this); return false") [+]
+      tr
+        td Дни обучения
+        td
+          label Пн
+            input(type="checkbox" name="weekday" value="1" title="Пн")
+            = ' '
+          label Вт
+            input(type="checkbox" name="weekday" value="2" title="Вт")
+            = ' '
+          label Ср
+            input(type="checkbox" name="weekday" value="3" title="Ср")
+            = ' '
+          label Чт
+            input(type="checkbox" name="weekday" value="4" title="Чт")
+            = ' '
+          label Пт
+            input(type="checkbox" name="weekday" value="5" title="Пт")
+            = ' '
+          label Сб
+            input(type="checkbox" name="weekday" value="6" title="Сб")
+            = ' '
+          label Вс
+            input(type="checkbox" name="weekday" value="7" title="Вс")
+
+      tr
+        td Время начала обучения
+        td
+          input(type="time" name="timeStart" required)
+          = ' '
+          | GMT+3
+      tr
+        td Время конца обучения
+        td
+          input(type="time" name="timeEnd" required)
+          = ' '
+          | GMT+3
+      tr
+        td Лимит участников ("мягкий"*)
+        td
+          input(type="number" name="participantsLimit" required value=30)
+
+
+    button(type="submit") Открыть запись
+
+    p.
+      * - "Мягкий" лимит означает, что участников может быть больше.
+      Количество свободных мест отслеживается по оплатам, а не по записям, иначе кто-то мог бы оформить запись на весь лимит и заблокировать регистрацию.
+      Поэтому, например, при лимите 10 могут записаться 15 человек, а затем – 12 из них оплатят, а 3 - нет, так что группа получится из 12 человек. Рекомендуется ставить лимит на 10-15% меньше, чем желаемое количество участников.
+
+  script.
+    'use strict';
+    function checkForm(form) {
+      var elems = form.elements;
+      var weekdays = [].map.call(elems.weekday, function(el) { return el.checked && el.title; }).filter(Boolean);
+      if (!weekdays.length) {
+        alert('Вы не выбрали дни недели');
+        return false;
+      }
+
+      var courseTitle = elems.course.querySelector('option[value="' + elems.course.value + '"]').innerHTML;
+
+      var dateSkips = !elems.dateSkip ? [] :
+              elems.dateSkip.length ? [].slice.call(elems.dateSkip) : [elems.dateSkip];
+      dateSkips = dateSkips.map(function(el) { return el.value }).filter(Boolean).join(', ');
+
+      return confirm('Проверьте данные, исправить их после открытия записи будет уже нельзя:\n' +
+              '\nКурс: ' + courseTitle +
+              '\nС ' + elems.dateStart.value + ' по ' + elems.dateEnd.value +
+              (dateSkips ? '\nКроме: ' + dateSkips : '') +
+              '\nДни недели:  ' + weekdays.join(' и ') +
+              '\nВремя: ' + elems.timeStart.value + ' – ' + elems.timeEnd.value +
+              '\nУчастников: ' + elems.participantsLimit.value +
+              '\n\nВсё верно, открыть запись?');
+
+    }
+
+    function addDateSkip(a) {
+      let newInput = document.createElement('input');
+      newInput.type = 'date';
+      newInput.name = 'dateSkip';
+      a.parentNode.insertBefore(newInput, a);
+    }
+

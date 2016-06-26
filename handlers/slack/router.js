@@ -17,5 +17,6 @@ function* canSync(next) {
 
 }
 
-router.get('/sync-users', canSync, syncUsers.get);
-router.get('/sync-group/:groupId?', canSync, syncGroup.get);
+// router.get('/sync-users', canSync, syncUsers.get);
+// router.get('/sync-group/:groupId?', canSync, syncGroup.get);
+

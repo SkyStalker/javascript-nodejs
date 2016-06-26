@@ -99,7 +99,7 @@ function addProviderRoute(providerName) {
 
       ctx.body = ctx.render('popup-failure', { reason: reason });
 
-    }).call(this, next);
+    }).call(this, next);  // FIXME: we need it?
 
     yield* next;
   });

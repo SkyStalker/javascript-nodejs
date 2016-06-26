@@ -12,6 +12,7 @@ exports.init = function(app) {
 exports.Course = require('./models/course');
 exports.CourseGroup = require('./models/courseGroup');
 exports.CourseParticipant = require('./models/courseParticipant');
+exports.CourseTeacher = require('./models/courseTeacher');
 exports.CourseInvite = require('./models/courseInvite');
 exports.CourseFeedback = require('./models/courseFeedback');
 

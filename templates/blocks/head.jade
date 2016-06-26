@@ -50,6 +50,9 @@ if analyticsEnabled
 
   include ../blocks/metrika
 
+if livereloadEnabled
+  script.
+    document.write('<script src="//' + location.host.split(':')[0] + ':35729/livereload.js"></' + 'script>')
 
 else
   //- so that other scripts using ga() for stats won't die
@@ -57,6 +60,9 @@ else
     //- hitCallback will never work, but that must be worked around by gaHitCallback wrapper
     window.ga = function() {};
   script window.metrika = { reachGoal: function() {} };
+
+
+script window.RECAPTCHA_ID = "#{recaptcha.id}";
 
 !=js("head")
 

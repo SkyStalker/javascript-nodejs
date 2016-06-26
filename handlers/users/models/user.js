@@ -1,6 +1,6 @@
 var transliterate = require('textUtil/transliterate');
 var validate = require('validate');
-var mongoose = require('mongoose');
+var mongoose = require('lib/mongoose');
 var Schema = mongoose.Schema;
 var hash = require('../lib/hash');
 var mongooseTimestamp = require('lib/mongooseTimestamp');
@@ -39,6 +39,9 @@ var UserSchema = new mongoose.Schema({
       }
     ]
   },
+
+  gotowebinar: { },
+
   email:         {
     type:      String,
     lowercase: true,
@@ -81,6 +84,9 @@ var UserSchema = new mongoose.Schema({
       values:  ['male', 'female'],
       message: "Неизвестное значение для пола."
     }
+  },
+  profileLabel: { // label in profileGuest below the avatar
+    type: String
   },
   profileName:   {
     type:     String,
@@ -197,6 +203,8 @@ var UserSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+
+  // DEPRECATED
   teachesCourses:            {
     type:    [{
       type: Schema.Types.ObjectId,
@@ -204,8 +212,9 @@ var UserSchema = new mongoose.Schema({
     }],
     default: []
   },
-  slackId: {
-    type: String
+  isTeacherFrontpage: {
+    type: Boolean,
+    index: true
   },
 
   aboutMe:                   {
@@ -218,7 +227,7 @@ var UserSchema = new mongoose.Schema({
     default: false
   },
   readOnly:                  Boolean,  // data is not deleted, just flagged as banned
-  roles:                     { // qaModerator?
+  roles:                     { // admin, teacher, qaModerator?
     type:    [{
       type:      String,
       lowercase: true,
@@ -288,7 +297,7 @@ UserSchema.statics.getInfoFields = function(user) {
     profileTabsEnabled: user.profileTabsEnabled,
     aboutMe:            user.aboutMe,
     teachesCourses:     user.teachesCourses,
-    isTeacher:          user.roles.indexOf('teacher') != -1
+    isTeacher:          user.hasRole('teacher')
   };
 };
 
@@ -313,7 +322,6 @@ UserSchema.methods.softDelete = function*() {
   // delete this.email does not work
   // need to assign to undefined to $unset
   this.aboutMe = undefined;
-  this.slackId = undefined;
   this.email = undefined;
   this.realName = undefined;
   this.displayName = 'Аккаунт удалён';
@@ -373,6 +381,8 @@ UserSchema.methods.generateProfileName = function*() {
 
   profileName = transliterate(profileName);
 
+  while (profileName.length < 2) profileName += '-';
+
   var existingUser;
   while (true) {
     existingUser = yield User.findOne({profileName: profileName}).exec();
@@ -381,6 +391,7 @@ UserSchema.methods.generateProfileName = function*() {
     // add one more random digit and retry the search
     profileName += Math.random() * 10 ^ 0;
   }
+
 
   this.profileName = profileName;
 };

@@ -54,10 +54,13 @@ var config = module.exports = {
   slack: {
     token: secret.slack.token,
     org:   secret.slack.org,
+    bot:   secret.slack.bot,
     email: 'mk@javascript.ru',
     host:  '127.0.0.1',
     port:  3001
   },
+
+  dropbox: secret.dropbox,
 
   test: {
     e2e: {
@@ -74,6 +77,16 @@ var config = module.exports = {
     url:    'https://www.cloudflare.com/api_json.html',
     apiKey: secret.cloudflare.apiKey,
     email:  secret.cloudflare.email
+  },
+
+  recaptcha: {
+    id:     secret.recaptcha.id,
+    secret: secret.recaptcha.secret
+  },
+
+  gmail: {
+    user:     secret.gmail.user,
+    password: secret.gmail.password
   },
 
   xmpp: {

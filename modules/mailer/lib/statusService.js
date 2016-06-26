@@ -8,6 +8,7 @@ const AWS = require('aws');
 const crypto = require('crypto');
 const Letter = require('../models/letter');
 const SQSNotification = require('../models/sqsNotification');
+const SuppressedEmail = require('../models/suppressedEmail');
 const sqs = new AWS.SQS();
 const log = require('log')();
 
@@ -51,7 +52,7 @@ module.exports = class StatusService {
       let messageInfo = JSON.parse(JSON.parse(message.Body).Message);
 
       log.debug(messageInfo);
-      yield SQSNotification.create({
+      let notification = yield SQSNotification.create({
         payload: message,
         message: messageInfo
       });
@@ -66,6 +67,22 @@ module.exports = class StatusService {
       yield letter.persist({
         lastSqsNotification: messageInfo
       });
+
+      if (message.bounce && message.bounce.bounceType == 'Permanent') {
+        let recipients = message.bounce.bouncedRecipients;
+
+        for (let i = 0; i < recipients.length; i++) {
+          let email = recipients[i].emailAddress;
+          let processed = yield SuppressedEmail.findOne({email: email});
+          if (!processed) {
+            yield SuppressedEmail.create({
+              email,
+              notification: notification._id
+            })
+          }
+        }
+
+      }
 
       let receiptHandle = message.ReceiptHandle;
 

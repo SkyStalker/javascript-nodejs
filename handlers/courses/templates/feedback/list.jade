@@ -12,7 +12,7 @@ block append variables
 
 block append head
   !=js("coursesFeedbackList", {defer: true})
-  if user && (user.hasRole('admin') || user.teachesCourses.length)
+  if user && (user.hasRole('admin') || user.hasRole('teacher'))
     !=js("coursesFeedbackShow", {defer: true})
 
 
@@ -72,8 +72,8 @@ block content
       +e.popup
         +e('ul').list
           li Показываются все опубликованные отзывы, даже если оценка нам "не нравится".
-          li Отзывы показываются "как есть", не модерируются, исключение может быть сделано при нарушении правил сайта и курса (нецензурная лексика и др).
-          li Отзыв может оставить только реальный участник, после прохождения курса.
+          li Отзывы показываются "как есть", не модерируются, если без нарушения правил сайта и курса (нецензурная лексика и др).
+          li Отзыв может оставить только участник курса, после прохождения.
 
   +b('section').course-feedbacks._loading
     +e('form')(data-feedback-form).head

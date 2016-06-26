@@ -15,7 +15,7 @@ exports.get = function*() {
   var filter = {};
 
   // for non-admin user filter isPublic
-  if (!this.isAdmin) {
+  if (!this.user || !this.user.hasRole('admin')) {
     filter.$or = [{
       isPublic: true
     }];
@@ -52,7 +52,7 @@ exports.get = function*() {
     filter.stars = +this.query.stars;
   }
 
-  let feedbacks = yield CourseFeedback.find(filter).sort({created: 1}).skip(skip).limit(limit);
+  let feedbacks = yield CourseFeedback.find(filter).sort({created: -1}).skip(skip).limit(limit);
 
 
   let feedbacksRendered = [];
