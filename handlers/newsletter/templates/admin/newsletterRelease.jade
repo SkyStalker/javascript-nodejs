@@ -17,6 +17,9 @@ block append variables
       { title: 'Учебник', url: '/' }, { title: 'Рассылки', url: '/newsletter/admin/newsletter-releases' }
     ]
 
+block sidebar
+  include /blocks/sidebar
+
 block append head
   !=js("newsletterAdmin", {defer: true})
   !=css("newsletterAdmin")
