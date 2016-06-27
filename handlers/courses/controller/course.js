@@ -47,6 +47,7 @@ exports.get = function*() {
     created: 1
   }).populate('teacher');
 
+  /*
   let feedbacks = yield CourseFeedback.find({
     number: {
       $in: [84, 78,16, 9, 7]
@@ -62,8 +63,6 @@ exports.get = function*() {
     feedbacksRendered.push(yield* renderFeedback(feedback));
   }
 
-
-
   this.locals.countries = countries.all;
 
 
@@ -77,6 +76,7 @@ exports.get = function*() {
     country: f.country,
     city: f.city
   }));
+   */
 
   this.body = this.render('courses/' + this.locals.course.slug);
 };

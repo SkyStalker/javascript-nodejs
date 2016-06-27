@@ -1,0 +1,33 @@
+extends /layouts/main
+
+block append head
+  !=js("coursesFrontpage", {defer: true})
+
+block append variables
+
+  - var layout_header_class = "main__header_center"
+  - var title = 'Курсы Javascript'
+  - var sitetoolbar = true
+  - var content_class = '_center'
+  - var comments = true
+  - var layout_main_class = "main_width-limit-wide"
+  - var siteToolbarCurrentSection = "courses";
+
+block content
+  p Здесь находятся «правильные» курсы по профессиональному Javascript, цель которых — научить думать на Javascript, писать просто, быстро и красиво.
+
+  +b.flex-column
+    include blocks/frontpage/phone-toggler
+    include blocks/frontpage/features
+    include blocks/frontpage/coursesList
+    include blocks/frontpage/master
+    //include blocks/reviews
+    //include blocks/frontpage/testimonials
+    include blocks/frontpage/tabbedPane
+    include blocks/frontpage/guarantee
+    include blocks/frontpage/participants-logos
+    include blocks/frontpage/professionals
+    include blocks/frontpage/faq
+    +b.fixed-tab.phone-only.courses-tab
+      a.courses-tab__link(href="#courses") Перейти к списку открытых курсов
+
