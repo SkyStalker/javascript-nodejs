@@ -1,0 +1,12 @@
+extends /layouts/main
+
+block append variables
+  - var layout_main_class = "main_width-limit"
+  - var title = 'Админское';
+  - var sitetoolbar = true
+
+block sidebar
+  include /blocks/sidebar
+
+block content
+  p Добро пожаловать! Выберите пункт слева.

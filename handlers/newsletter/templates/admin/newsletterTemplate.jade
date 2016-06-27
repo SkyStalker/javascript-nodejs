@@ -15,6 +15,9 @@ block append variables
       { title: 'Шаблоны рассылок', url: '/newsletter/admin/newsletter-templates' }
     ]
 
+block sidebar
+  include /blocks/sidebar
+
 block append head
   !=js("newsletterAdmin", {defer: true})
   !=css("newsletterAdmin")
