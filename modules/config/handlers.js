@@ -71,11 +71,12 @@ var handlers = [
   ru && 'imgur',
   ru && 'profileGuest',
   ru && 'quiz',
-  'currencyRate',
+  ru && 'currencyRate',
   ru && 'payments',
   ru && 'downloadByLink',
   ru && 'newsletter',
-  ru && 'courses'
+  ru && 'courses',
+  ru && 'admin'
 ];
 
 if (process.env.NODE_ENV == 'development') {

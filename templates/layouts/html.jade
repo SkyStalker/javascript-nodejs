@@ -4,7 +4,8 @@ extends ./base
 block html
   head
     script window.currentUser = !{escapeJSON(user ? user.getInfoFields() : null)};
-    script window.rateUsdRub = #{rateUsdRub};
+    if lang == 'ru'
+      script window.rateUsdRub = #{rateUsdRub};
     block variables
     include ../blocks/head
     block head

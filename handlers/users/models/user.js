@@ -173,6 +173,8 @@ var UserSchema = new mongoose.Schema({
   town:                      {
     type: String
   },
+  // Email for teacher communication
+  // NOT hidden unlike `email`
   teacherEmail:              {
     type:      String,
     lowercase: true,

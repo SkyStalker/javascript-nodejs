@@ -12,6 +12,7 @@ const moment = require('momentWithLocale');
 const formatLetter = require('../../lib/formatLetter');
 const formatTestLetter = require('../../lib/formatTestLetter');
 const findRecipients = require('../../lib/findRecipients');
+const admin = require('admin');
 
 require('mdeditor');
 
@@ -112,6 +113,8 @@ exports.getList = function*() {
     .sort({created: -1})
     .populate('to.courseGroup to.newsletter to.mailList');
 
+  this.locals.sidebar = yield* admin.getUserSidebar(this.user);
+
   this.body = this.render('admin/newsletterReleases');
 
 };
@@ -161,6 +164,9 @@ function* renderForm(newsletterRelease) {
     sendFinished:    newsletterRelease.sendFinished,
     sendingPid:      newsletterRelease.sendingPid
   };
+
+
+  this.locals.sidebar = yield* admin.getUserSidebar(this.user);
 
   this.body = this.render('admin/newsletterRelease');
 }

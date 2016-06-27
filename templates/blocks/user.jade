@@ -17,5 +17,8 @@
         each tab in user.profileTabsEnabled
           +e('li').dropdown-item
             +e('a').secondary-link.__dropdown-link(href=user.getProfileUrl() + "/" + tab)= profileTabNames[tab]
+        if user.hasRole('teacher') || user.hasRole('admin')
+          +e('li').dropdown-item
+            +e('a').secondary-link.__dropdown-link(href="/admin") Админ
         +e('li').dropdown-item
           +e('a').secondary-link.__dropdown-link(href="#" data-action-user-logout) Выйти

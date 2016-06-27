@@ -1,17 +1,17 @@
-ul.courses-slides
+ul.courses-feedback-slides
   margin 0
   padding 0
 
-.courses-slides
+.courses-feedback-slides
   white-space nowrap
   transform translate3d(0,0,0)
   will-change transform
   transition transform .5s ease
 
-  ul > li&__slide
+  ul > li&__feedback
     margin 0
 
-  &__slide
+  &__feedback
     background-color background_yellow_dark
     width 100%
     display inline-block
@@ -22,7 +22,7 @@ ul.courses-slides
     &:before
       display none
 
-  &__slide-inner
+  &__feedback-inner
     height 220px
     display flex
     justify-content space-between
@@ -82,7 +82,7 @@ ul.courses-slides
     height 86px
     border-radius 50%
 
-  &__text
+  &__content
     margin-top 10px
     line-height 19px
 
