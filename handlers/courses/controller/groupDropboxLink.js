@@ -55,6 +55,7 @@ exports.get = function*() {
   this.log.debug(response);
 
   if (response.error) {
+    this.log.error(response);
     this.throw(500, {info: response.error_summary});
   }
 
