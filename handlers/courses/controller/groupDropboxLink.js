@@ -40,7 +40,8 @@ exports.get = function*() {
     grant_type: 'authorization_code',
     client_id: config.dropbox.key,
     client_secret: config.dropbox.secret,
-    redirect_uri: this.protocol + '://' + this.host + this.originalUrl.split('?')[0]
+    // can't use this.protocol, cause cloudflare proxies https->http
+    redirect_uri: (this.host == 'localhost' ? 'http://' : 'https://') + this.host + this.originalUrl.split('?')[0]
   };
 
   this.log.debug('Dropbox oauth2/token', formData);
