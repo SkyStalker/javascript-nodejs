@@ -69,6 +69,7 @@
       "log_file":           "/var/log/node/slackin.log",
       "error_file":         "/var/log/node/slackin-err.log",
       "out_file":           "/var/log/node/slackin-out.log",
+      "cwd":                "/js/javascript-nodejs",
       "env":                {
         "PM2_GRACEFUL_LISTEN_TIMEOUT": 1000,
         "PM2_GRACEFUL_TIMEOUT":        5000,
