@@ -46,7 +46,7 @@ exports.post = function*() {
   if (!slackUser) {
     this.status = 403;
     this.body = {
-      error: 'Этот пользователь не зарегистрирован в Slack. Сначала зарегистрируйтесь это на <a href="https://slack.javascript.ru">https://slack.javascript.ru</a>.'
+      error: 'Этот пользователь не зарегистрирован в Slack. Сначала зарегистрируйтесь на <a href="https://slack.javascript.ru">https://slack.javascript.ru</a> с email ' + inviteEmail + '.'
     };
     return;
   }
