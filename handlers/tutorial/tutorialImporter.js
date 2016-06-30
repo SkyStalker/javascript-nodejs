@@ -310,7 +310,7 @@ TutorialImporter.prototype.syncTask = function*(taskPath, parent) {
 
   data.githubLink = config.tutorialGithubBaseUrl + taskPath.slice(this.root.length);
 
-  console.log("DESTROY", data);
+  // console.log("DESTROY", data);
   yield Task.destroy({slug: data.slug});
 
   const options = {
