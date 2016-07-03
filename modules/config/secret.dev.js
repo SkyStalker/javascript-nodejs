@@ -16,7 +16,9 @@ module.exports = {
 
   cloudflare: {},
 
-  slack: {},
+  slack: {
+    bot: {}
+  },
   aws: {},
   xmpp: {
     admin: {
@@ -25,6 +27,8 @@ module.exports = {
     }
   },
 
+  gmail: {},
+  recaptcha: {},
   // dev credentials
   imgur: {
     url:          'https://api.imgur.com/3/',

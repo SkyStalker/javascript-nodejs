@@ -30,6 +30,8 @@ module.exports = function(md) {
               prefix += '/JavaScript/Reference/Global_Objects/';
             } else if (parts[0] == 'api') {
               prefix += '/API/';
+            } else {
+              prefix += '/';
             }
 
             parts.shift();
