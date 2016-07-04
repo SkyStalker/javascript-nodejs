@@ -1,5 +1,7 @@
 extends /layouts/main
 
+include feedback/_inline
+
 block append head
   !=js("coursesFrontpage", {defer: true})
 
@@ -21,7 +23,7 @@ block content
     include blocks/frontpage/features
     include blocks/frontpage/coursesList
     include blocks/frontpage/master
-    //include blocks/reviews
+    //+courses-feedback-inline({ feedbacks: feedbacks })
     //include blocks/frontpage/testimonials
     include blocks/frontpage/tabbedPane
     include blocks/frontpage/guarantee
