@@ -1,34 +1,34 @@
 "use strict";
 
-var Order = require('payments').Order;
-var Discount = require('payments').Discount;
-var OrderCreateError = require('payments').OrderCreateError;
-var CourseGroup = require('../models/courseGroup');
-var pluralize = require('textUtil/pluralize');
-var _ = require('lodash');
-var log = require('log')();
+const Order = require('payments').Order;
+const OrderCreateError = require('payments').OrderCreateError;
+const CourseGroup = require('../models/courseGroup');
+const getDiscounts = require('../lib/getDiscounts');
+const Discount = require('payments').Discount;
+const pluralize = require('textUtil/pluralize');
+const _ = require('lodash');
+const log = require('log')();
 
 // middleware
 // create order from template,
 // use the incoming data if needed
 module.exports = function*(orderTemplate, user, requestBody) {
 
-  var group = yield CourseGroup.findOne({slug: requestBody.slug}).exec();
+  var group = yield CourseGroup.findOne({slug: requestBody.slug}).populate('course');
 
   var orderData = {
     group: group._id
   };
   orderData.count = +requestBody.count;
 
-  var discount;
-  if (requestBody.discountCode) {
-    discount = yield* Discount.findByCodeAndModule(requestBody.discountCode, 'courses');
-    if (discount && !discount.data.slug.test(group.slug)) {
-      discount = null;
-    }
-  }
+  var discounts = yield* getDiscounts({
+    user,
+    group,
+    discountCode: requestBody.discountCode
+  });
 
-  if (!discount) {
+  // discount not by code
+  if (!discounts.find(d => d.code = requestBody.discountCode)) {
     if (!group.isOpenForSignup) {
       throw new OrderCreateError("Запись в эту группу завершена, извините.");
     }
@@ -61,12 +61,7 @@ module.exports = function*(orderTemplate, user, requestBody) {
   }
 
 
-  var price = group.price;
-  if (discount) {
-    price = discount.adjustAmount(price);
-  }
-
-
+  var price = Discount.adjustAmountAll(group.price, discounts);
 
   var order = new Order({
     title:  group.title,

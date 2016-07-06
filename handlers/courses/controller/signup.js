@@ -1,34 +1,31 @@
 'use strict';
 
 const payments = require('payments');
-var getOrderInfo = payments.getOrderInfo;
-var Course = require('../models/course');
-var CourseGroup = require('../models/courseGroup');
-var CourseParticipant = require('../models/courseParticipant');
-var CourseInvite = require('../models/courseInvite');
-var config = require('config');
-var moment = require('momentWithLocale');
-var money = require('money');
-var pluralize = require('textUtil/pluralize');
-
+const getOrderInfo = payments.getOrderInfo;
+const Course = require('../models/course');
+const CourseGroup = require('../models/courseGroup');
+const CourseParticipant = require('../models/courseParticipant');
+const CourseInvite = require('../models/courseInvite');
+const Discount = require('payments').Discount;
+const config = require('config');
+const moment = require('momentWithLocale');
+const money = require('money');
+const pluralize = require('textUtil/pluralize');
+const getDiscounts = require('../lib/getDiscounts');
 
 exports.get = function*() {
   this.nocache();
 
   this.locals.sitetoolbar = true;
 
-  var group;
+  let group;
 
   if (!this.isAuthenticated()) {
     this.authAndRedirect(this.originalUrl);
     return;
   }
 
-  var discount;
-
-  if (this.query.code) {
-    discount = yield* payments.Discount.findByCodeAndModule(this.query.code, 'courses');
-  }
+  let discounts;
 
 
   if (this.params.orderNumber) {
@@ -47,8 +44,14 @@ exports.get = function*() {
       this.throw(404, "Нет такой группы.");
     }
 
+    discounts = yield* getDiscounts({
+      user: this.user,
+      group: group,
+      discountCode: this.query.code
+    });
+
     if (this.order.status == payments.Order.STATUS_SUCCESS) {
-      var invite = yield CourseInvite.findOne({email: this.user.email, accepted: false}).exec();
+      let invite = yield CourseInvite.findOne({email: this.user.email, accepted: false}).exec();
       if (invite) this.locals.hasInvite = true;
 
       if (this.order.data.count > 1 || this.order.data.emails[0] != this.user.email) {
@@ -60,9 +63,15 @@ exports.get = function*() {
 
     group = this.locals.group = this.groupBySlug;
 
+    discounts = yield* getDiscounts({
+      user: this.user,
+      group: group,
+      discountCode: this.query.code
+    });
+
     // a visitor can't reach this page through UI, only by direct link
     // if the group is full
-    if (!group.isOpenForSignup && (!discount || !discount.data.slug.test(group.slug))) {
+    if (!group.isOpenForSignup && !discounts.find(d => d.code == this.query.code)) {
       this.statusCode = 403;
       this.body = this.render('/notification', {
         title:   'Запись в эту группу завершена',
@@ -143,11 +152,12 @@ exports.get = function*() {
     });
   };
 
-  var price = group.price;
+  let participantsMax = group.participantsLimit;
 
-  var participantsMax = group.participantsLimit;
-  if (discount && discount.data.slug.test(group.slug)) {
-    price = discount.adjustAmount(price);
+  let price = Discount.adjustAmountAll(group.price, discounts);
+
+  // allow to register more than possible for code discounts
+  if (discounts.find(d => d.code = this.query.code)) {
     if (!participantsMax) participantsMax = 10;
   }
 

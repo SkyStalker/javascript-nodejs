@@ -7,9 +7,11 @@ initNewsletterForm();
 
 initSignupButton();
 
-new FeedbackSlider({
-  elem: document.querySelector('.courses-feedback-inline')
-});
+if (document.querySelector('.courses-feedback-inline')) {
+  new FeedbackSlider({
+    elem: document.querySelector('.courses-feedback-inline')
+  });
+}
 
 function initNewsletterForm() {
 
