@@ -1,8 +1,11 @@
 'use strict';
 
-var Course = require('../models/course');
-var User = require('users').User;
-var moment = require('momentWithLocale');
+const Course = require('../models/course');
+const User = require('users').User;
+const moment = require('momentWithLocale');
+const renderFeedback = require('../lib/renderFeedback');
+const countries = require('countries');
+const CourseFeedback = require('../models/courseFeedback');
 
 exports.get = function*() {
 
@@ -33,55 +36,39 @@ exports.get = function*() {
     });
   };
 
-  this.locals.reviews = {
-    slides: [{
-      title: 'Курс JavaScript/DOM/Интерфейсы',
-      rating: 3,
-      allReviewsHref: './js',
-      text: 'Очень доволен данным курсом.Я сам из Республики Беларусь.Практический все, с кем я общался по js, хоть раз да заходили на ваш сайт. Если кто-то решится из РБ пройти этот курс, рекомендую. Понравилось: подача материала, расставленные приоритеты в изучении, только актуальные данные , а не устаревшая информация. Мне не хватило пару занятий по организации проекта на js и про шаблоны. Хотел пройти курс у человека, который Очень доволен данным курсом.Я сам из Республики Беларусь.Практический все, с кем я общался по js, хоть раз да заходили на ваш сайт. Если кто-то решится из РБ пройти этот курс, рекомендую. Понравилось: подача материала, расставленные приоритеты в изучении, только актуальные данные , а не устаревшая информация. Мне не хватило пару занятий по организации проекта на js и про шаблоны. Хотел пройти курс у человека, который',
-      author: 'Александр Луговой',
-      img: 'http://cryazone.com/uploads/posts/2011-08/quentin-tarantino-photo-by-nicolas-guerin.jpg',
-      address: {
-        country: 'ru',
-        name: 'Россия, Москва'
-      }
-    }, {
-      title: 'Курс JavaScript/DOM/Интерфейсы',
-      rating: 5,
-      allReviewsHref: './js1',
-      text: '222',
-      author: 'Александр Луговой',
-      img: 'http://cryazone.com/uploads/posts/2011-08/adrien-brody-photo-by-nicolas-guerin.jpg',
-      address: {
-        country: 'usa',
-        name: 'США, Нью-Йорк'
-      }
-    }, {
-      img: 'http://cryazone.com/uploads/posts/2011-08/takeshi-kitano-photo-by-nicolas-guerin.jpg'
-    }, {
-      title: 'Курс JavaScript/DOM/Интерфейсы Курс JavaScript/DOM/Интерфейсы',
-      rating: 5,
-      allReviewsHref: './js2',
-      text: '222',
-      author: 'Александр Луговой Александр Луговой',
-      img: 'http://cryazone.com/uploads/posts/2011-08/adrien-brody-photo-by-nicolas-guerin.jpg',
-      address: {
-        country: 'usa',
-        name: 'США, Нью-Йорк'
-      }
-    }, {
-      title: 'Курс JavaScript/DOM/Интерфейсы',
-      rating: 5,
-      allReviewsHref: './js3',
-      text: '222',
-      author: 'Александр Луговой',
-      img: 'http://cryazone.com/uploads/posts/2011-08/adrien-brody-photo-by-nicolas-guerin.jpg',
-      address: {
-        country: 'usa',
-        name: 'США, Нью-Йорк'
-      }
-    }]
-  };
+  let feedbacks = yield CourseFeedback.find({
+    number: {
+      $in: [84, 78,16, 9, 7]
+    }
+  }).populate('participant');
+
+  this.locals.countries = countries.all;
+
+  /*
+  let feedbacksRendered = [];
+
+  for (var i = 0; i < feedbacks.length; i++) {
+    var feedback = feedbacks[i];
+
+    feedbacksRendered.push(yield* renderFeedback(feedback));
+  }
+
+
+  this.locals.feedbacks = feedbacksRendered.map(f => ({
+    course: f.course,
+    stars: f.stars,
+    allReviewsHref: f.course.link + '/feedbacks',
+    content: f.content,
+    author: f.author,
+    photo: f.photo,
+    country: f.country,
+    city: f.city
+  }));
+
+  console.log(JSON.stringify(this.locals.feedbacks));
+*/
+
+  this.locals.feedbacks = [{"course":{"link":"/courses/js","titleShort":"JavaScript/DOM/интерфейсы","title":"Курс JavaScript/DOM/интерфейсы"},"stars":5,"allReviewsHref":"/courses/js/feedbacks","content":"<p>Самый емкий курс из всех, что я проходил. Отличный стиль донесения материала.</p>\n","author":{"userId":"554ba3fc3f2ee62f61a54bf9","link":"/profile/dadubinin","name":"Денис Дубинин"},"photo":"http://i.imgur.com/Gg8bCZZ.jpg","country":"ua","city":"Kyiv"},{"course":{"link":"/courses/js","titleShort":"JavaScript/DOM/интерфейсы","title":"Курс JavaScript/DOM/интерфейсы"},"stars":5,"allReviewsHref":"/courses/js/feedbacks","content":"<p>Прекрасное начало для желающих овладеть современным Javascript. Курс открывает все грани Javascript разработки от нативного кода до сопутствующих дисциплин: систем сборки, тестирования, JS-фреймворков. Причем, программа курса постоянно обновляется, предлагая студентам самые актуальные на момент обучения знания. Структура занятий позволяет легко усваивать теоретический материал и сразу же применять знания на практике, разбираясь с неизбежно возникающими вопросами при помощи преподавателя. Илья не только высококлассный программист с богатым опытом, которым он щедро делится, но и талантливый учитель, способный просто преподать сложные вещи. На мой взгляд, это лучший русскоязычный онлайн курс Javascript на сегодня.</p>\n","author":{"userId":"555066b1a7a9d03806fac74c","link":"/profile/alexei-zhuravski","name":"Алексей Журавский"},"photo":"http://i.imgur.com/GkNmrPb.jpg","country":"de","city":"Мюнхен"},{"course":{"link":"/courses/js","titleShort":"JavaScript/DOM/интерфейсы","title":"Курс JavaScript/DOM/интерфейсы"},"stars":5,"allReviewsHref":"/courses/js/feedbacks","content":"<p>Благодарю Михаила и Илью за организацию достойного курса о языке Javascript.</p>\n<p>Курсом очень доволен. Уверен что потраченные усилия на курс в скором времени окупятся.</p>\n<p>На курсе Михаил Гринько четким и внятным голосом объяснил и показал работу с Javascript на профессиональном уровне, использовал новые технологии и сервисы, за что огромное спасибо! Ответил на все мои вопросы. И сделал записи своих уроков, которые я еще обязательно буду просматривать и изучать в будущем.</p>\n<p>Большое Спасибо за курс!</p>\n","author":{"userId":"55bbfaf6bedbd73806df9577","link":"/profile/denis-efremov","name":"Денис Ефремов"},"photo":"http://i.imgur.com/g5vI4Tb.jpg","country":"ru","city":"Новосибирск"},{"course":{"link":"/courses/js","titleShort":"JavaScript/DOM/интерфейсы","title":"Курс JavaScript/DOM/интерфейсы"},"stars":5,"allReviewsHref":"/courses/js/feedbacks","content":"<p>Михаил показал себя прекрасным преподавателем, который знает о чем он говорит (до мельчайших подробностей). На занятиях никогда не было скучно, занятия проходили динамично, с обсуждениями, ответами на вопросы и конечно же кодом.  От студентов нужно только желание учиться, а Михаил создаст благоприятные условия для этого :)\nКак итог: современные знания (на завершающих этапах писали приложение на es6); примеры кода, который применим в реальной работе; ну и товарищеские наставления на последнем занятии.\nВсе на высоте, однозначно стоит потраченыx денег и времени!</p>\n","author":{"userId":"56753cffe26c021904c5a346","link":"/profile/andrey-gnilitskiy","name":"Андрей Гнилицкий"},"photo":"http://i.imgur.com/Av9VnDB.jpg","country":"ua","city":"Киев"},{"course":{"link":"/courses/js","titleShort":"JavaScript/DOM/интерфейсы","title":"Курс JavaScript/DOM/интерфейсы"},"stars":5,"allReviewsHref":"/courses/js/feedbacks","content":"<p>Курс очень понравился! Михаил Гринько – отличный преподаватель. Мне кажется, ни один вопрос ни остался без ответа. Объяснения были доступными, Михаил стремился, чтоб поняли все, повторял по нескольку раз. Очень к месту были и его советы как работающего специалиста, о том на что стоит обратить внимание при написании кода.\nКонечно чтоб был толк от курса – требуется много работать самостоятельно: читать учебник, смотреть видео уроки, решать задачи, а также делать более обширные дополнительные задания.\nИз небольших замечаний: было бы неплохо обновить видео уроки с учетом ухода в небытие IE8 и новых браузерных возможностей.\nА в целом, я считаю курс однозначно стоит вложенных денег и времени.</p>\n","author":{"userId":"569b9a224a2fc72204ae7ffe","link":"/profile/igor-mitropan","name":"Игорь Митропан"},"photo":"http://i.imgur.com/CKoOeKC.jpg","country":"ua","city":"Харьков"}];
 
   this.body = this.render('frontpage');
 };

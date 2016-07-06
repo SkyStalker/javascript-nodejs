@@ -33,7 +33,7 @@ module.exports = function() {
 
       gutil.log("Order number:" + transaction.order.number);
 
-      if (transaction.status != Transaction.STATUS_SUCCESS) {
+      if (transaction.status != Transaction.STATUS_SUCCESS && !args.force) {
         throw new Error("TX is not successful");
       }
 
