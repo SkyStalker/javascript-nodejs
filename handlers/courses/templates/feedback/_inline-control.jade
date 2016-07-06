@@ -1,0 +1,8 @@
+mixin courses-feedback-control(mods)
+  - var classes = ''
+
+  for mod in mods
+    - classes = classes + ' courses-feedback-control_' + mod;
+
+  +b.courses-feedback-control(class=classes)
+    +e.button

@@ -1,29 +1,28 @@
 include /blocks/rating-stars/index
+include _inline-control
 
 mixin courses-feedback-slides(feedbacks)
 
   +b('ul').courses-feedback-slides&attributes(attributes)
     for feedback in feedbacks
-      - var isLong = feedback.content.length > 400;
-      - var content = isLong ? feedback.content.slice(0, 400) : feedback.content;
-
       +e('li').feedback
         +e.feedback-inner
           +e.review
             +e('h3').title
               = feedback.course.title
 
-            +rating-stars(feedback.stars).courses-feedback-slides.__rating
+            +rating-stars(feedback.stars).courses-feedback-slides__rating
+            +e('a').more(href=feedback.allReviewsHref) все отзывы о&nbsp;курсе
 
             +e.content
-              != content
-              if isLong
-                = ' '
-                a(href='#') ...
-
-            +e('a').more(href=feedback.allReviewsHref) все отзывы о курсе
+              != feedback.content
+              if feedback.isCut
+                +e('a').open-feedback(href='#') весь отзыв
 
           +e.author
+            +courses-feedback-control(['left', 'only-tablet'])
+            +courses-feedback-control(['right', 'only-tablet'])
+
             +e.author-inner
               +e('a').author-link(href=feedback.author.link)
                 +e('img').userpic(src=thumb(feedback.photo, 86, 86))
@@ -32,9 +31,9 @@ mixin courses-feedback-slides(feedbacks)
                   = feedback.author.name
 
               +e.address
-                +e('img').country-flag(src='/img/flags/#{feedback.country}.svg' width=16 height=12)
-                = countries[feedback.country].na
+                +e('span').address-line
+                  = countries[feedback.country].na
                 if feedback.city
-                  | ,&nbsp;
-                  = feedback.city
+                  +e('span').address-line
+                    = feedback.city
 
