@@ -32,6 +32,7 @@ const blockTagsPlugin = require('./plugins/blockTags/plugin');
 const iframePlugin = require('./plugins/blockTags/iframe');
 const editPlugin = require('./plugins/blockTags/edit');
 const cutPlugin = require('./plugins/blockTags/cut');
+const todoPlugin = require('./plugins/blockTags/todo');
 const codeTabsPlugin = require('./plugins/blockTags/codetabs');
 const demoPlugin = require('./plugins/blockTags/demo');
 const charTypographyPlugin = require('./plugins/charTypography');
@@ -71,6 +72,7 @@ module.exports = class ServerParser {
     iframePlugin(this.md);
     editPlugin(this.md);
     cutPlugin(this.md);
+    todoPlugin(this.md);
     codeTabsPlugin(this.md);
     demoPlugin(this.md);
     summaryPlugin(this.md);
