@@ -1,10 +1,15 @@
 +b.courses-recruitment
   +e('a').anchor#signup
+
   +e('ul').list
 
     each group, index in groups
       +e('li').course
         +e.info
+          //if group.discount
+          //  p У вас на эту группу скидка #{group.discount.format()}.
+
+
           +e('h4').title #{formatGroupDate(group.dateStart)} — #{formatGroupDate(group.dateEnd)}
           +e('p').text!= group.timeDesc
           +e.teacher
