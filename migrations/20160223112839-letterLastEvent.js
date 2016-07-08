@@ -4,6 +4,9 @@ let Letter = require('mailer/models/letter');
 let MandrillEvent = require('mailer/models/mandrillEvent');
 
 exports.up = function*() {
+  // not actual
+  return;
+
   let letters = yield Letter.find({}, {transportResponse: 1});
   for (let i = 0; i < letters.length; i++) {
     let letter = letters[i];
