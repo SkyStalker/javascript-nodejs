@@ -9,7 +9,7 @@ module.exports = function* (transaction) {
 
   return jade.renderFile(path.join(__dirname, 'templates/form.jade'), {
     clientId:          config.payments.modules.yandexmoney.clientId,
-    redirectUri:       config.payments.modules.yandexmoney.redirectUri + '/' + transaction.number,
+    redirectUri:       config.payments.modules.yandexmoney.redirectUri,
     purse:             config.payments.modules.yandexmoney.purse,
     transactionNumber: transaction.number,
     amount:            transaction.amount
