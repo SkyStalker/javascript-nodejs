@@ -11,8 +11,10 @@ block content
 
   p= order.title
 
+  p #{order.data.contactName} #{order.data.contactPhone}
+
   form(method="POST" action="")
-    input(type="hidden", name="_csrf", value=csrf())
+    input(type="hidden" name="_csrf" value=csrf())
     div
       label
        | Стоимость:
@@ -25,35 +27,6 @@ block content
          option(value='UAH' selected=(order.currency=='UAH')) UAH
     div
       | Статус: <b>#{order.status}</b>
-
-
-    h2 Транзакция
-    table
-      tr
-        th number
-        th modified
-        th created
-        th paymentMethod
-        th amount
-        th currency
-        th status
-        th statusMessage
-      each transaction in transactions
-        tr
-          td= transaction.number
-          td= moment(transaction.modified).format('DD.MM.YYYY HH:mm:ss')
-          td= moment(transaction.created).format('DD.MM.YYYY HH:mm:ss')
-          td= transaction.paymentMethod
-          td= transaction.amount
-          td= transaction.currency
-          td= transaction.status
-          td= transaction.statusMessage
-        if transaction.paymentMethod == 'invoice'
-          tr
-            td(colspan=8)
-              | Скачать <a href="/payments/invoice/#{transaction.number}/invoice.docx">счёт</a>
-              if transaction.paymentDetails.agreementRequired
-                | &nbsp;и <a href="/payments/invoice/#{transaction.number}/agreement.docx">договор с актом</a>.
 
     h3 Действия:
 
@@ -90,6 +63,57 @@ block content
             +e('span').text Отменить и отчислить участников
 
 
+  h2 Транзакции
+  table
+    tr
+      th number
+      th modified
+      th created
+      th paymentMethod
+      th amount
+      th currency
+      th status
+      th statusMessage
+    each transaction in transactions
+      tr
+        td= transaction.number
+        td= moment(transaction.modified).format('DD.MM.YYYY HH:mm:ss')
+        td= moment(transaction.created).format('DD.MM.YYYY HH:mm:ss')
+        td= transaction.paymentMethod
+        td= transaction.amount
+        td= transaction.currency
+        td= transaction.status
+        td= transaction.statusMessage
+      if transaction.paymentMethod == 'invoice'
+        tr
+          td(colspan=8)
+            | Скачать <a href="/payments/invoice/invoice-#{transaction.number}.docx">счёт</a>
+            if transaction.paymentDetails.agreementRequired
+              | &nbsp;и <a href="/payments/invoice/agreement-#{transaction.number}.docx">договор с актом</a>.
+        tr
+          td(colspan=8)
+            if transaction.paymentDetails.hasDocuments
+              a(href="/payments/invoice/documents-#{transaction.number}.zip") Скачать документы
+            form(action="/courses/admin/transactions/"+transaction.number+"?_csrf=" + csrf() enctype="multipart/form-data" method="POST")
+              label
+                | Загрузить документы&nbsp;
+                +e('input')(name="documents" type="file" multiple)
+              label
+                | Уведомлять
+                +e('input')(type="checkbox" name="notify" checked)
+              +e('input')(type="submit" value="Загрузить")
+      if transaction.companyMail
+        tr
+          td(colspan=8)= transaction.companyMail
+      if transaction.companyMailIndex
+        tr
+          td(colspan=8)
+            = transaction.companyMailIndex
+            = ' '
+            = transaction.companyMailWho
+            = ' '
+            = transaction.companyMailAddress
+
   h2 Инвайты
 
   table
@@ -107,7 +131,8 @@ block content
             if invite.participant
               | #{invite.participant.firstName} #{invite.participant.surname}
             else
-              | '—'
+              | НЕТ
+
           td= invite.group.title
           td
             div

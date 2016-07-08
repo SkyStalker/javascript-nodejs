@@ -70,7 +70,7 @@ TaskRenderer.prototype.render = function*(task, options) {
 TaskRenderer.prototype.renderWithCache = function*(task, options) {
   options = options || {};
 
-  var useCache = !options.refreshCache && config.renderedCacheEnabled;
+  var useCache = !options.refreshCache && !process.env.TUTORIAL_EDIT;
 
   if (task.rendered && useCache) return task.rendered;
 

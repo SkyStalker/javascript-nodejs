@@ -1,29 +1,45 @@
-var Order = require('payments').Order;
-var Discount = require('payments').Discount;
-var OrderCreateError = require('payments').OrderCreateError;
-var CourseGroup = require('../models/courseGroup');
-var pluralize = require('textUtil/pluralize');
-var _ = require('lodash');
-var log = require('log')();
+"use strict";
+
+const Order = require('payments').Order;
+const OrderCreateError = require('payments').OrderCreateError;
+const CourseGroup = require('../models/courseGroup');
+const getDiscounts = require('../lib/getDiscounts');
+const Discount = require('payments').Discount;
+const pluralize = require('textUtil/pluralize');
+const _ = require('lodash');
+const log = require('log')();
 
 // middleware
 // create order from template,
 // use the incoming data if needed
 module.exports = function*(orderTemplate, user, requestBody) {
 
-  var group = yield CourseGroup.findOne({slug: requestBody.slug}).exec();
+  var group = yield CourseGroup.findOne({slug: requestBody.slug}).populate('course');
 
   var orderData = {
     group: group._id
   };
   orderData.count = +requestBody.count;
 
-  if (group.participantsLimit === 0) {
-    throw new OrderCreateError("Извините, в этой группе уже нет мест.");
-  }
+  var discounts = yield* getDiscounts({
+    user,
+    group,
+    discountCode: requestBody.discountCode
+  });
 
-  if (orderData.count > group.participantsLimit) {
-    throw new OrderCreateError("Извините, уже нет такого количества мест. Уменьшите количество участников до " + group.participantsLimit + '.');
+  // discount not by code
+  if (!discounts.find(d => d.code = requestBody.discountCode)) {
+    if (!group.isOpenForSignup) {
+      throw new OrderCreateError("Запись в эту группу завершена, извините.");
+    }
+
+    if (group.participantsLimit === 0) {
+      throw new OrderCreateError("Извините, в этой группе уже нет мест.");
+    }
+
+    if (orderData.count > group.participantsLimit) {
+      throw new OrderCreateError("Извините, уже нет такого количества мест. Уменьшите количество участников до " + group.participantsLimit + '.');
+    }
   }
 
   orderData.contactName = String(requestBody.contactName);
@@ -45,23 +61,7 @@ module.exports = function*(orderTemplate, user, requestBody) {
   }
 
 
-  var price = group.price;
-  var discount;
-  if (requestBody.discountCode) {
-    discount = yield* Discount.findByCodeAndModule(requestBody.discountCode, 'courses');
-    if (discount && !discount.data.slug.test(group.slug)) {
-      discount = null;
-    }
-
-    if (discount) {
-      price = discount.adjustAmount(price);
-    }
-  }
-
-  if (!group.isOpenForSignup && !discount) {
-    throw new OrderCreateError("Запись в эту группу завершена, извините.");
-  }
-
+  var price = Discount.adjustAmountAll(group.price, discounts);
 
   var order = new Order({
     title:  group.title,

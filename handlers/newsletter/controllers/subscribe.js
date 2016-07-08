@@ -106,7 +106,7 @@ exports.post = function*() {
 
     if (subscription) {
       if (action == ACTION_ADD) {
-        respond(`Вы будете получать уведомления на эту тему на адрес ${email}.`);
+        respond(`Готово! Вы будете получать уведомления на эту тему на адрес ${email}.`);
       }
 
       if (action == ACTION_REPLACE) {
@@ -128,7 +128,16 @@ exports.post = function*() {
           action: 'remove',
           email:  email
         });
-        yield notify(subscriptionAction);
+        try {
+          yield* notify(subscriptionAction);
+        } catch (e) {
+          if (e.name == 'SuppressedError') {
+            respond(e.message);
+            return;
+          } else {
+            throw e;
+          }
+        }
       }
       respond(`На адрес ${email}, если он был подписан, направлен запрос подтверждения.`);
       return;
@@ -140,7 +149,16 @@ exports.post = function*() {
       email:       email
     });
 
-    yield notify(subscriptionAction);
+    try {
+      yield* notify(subscriptionAction);
+    } catch (e) {
+      if (e.name == 'SuppressedError') {
+        respond(e.message);
+        return;
+      } else {
+        throw e;
+      }
+    }
 
     respond(`На адрес ${email} направлен запрос подтверждения.`);
 

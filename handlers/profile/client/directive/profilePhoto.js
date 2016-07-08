@@ -9,7 +9,7 @@ angular.module('profile')
       templateUrl: '/profile/templates/partials/profilePhoto',
       scope: {
         photo: '=',
-        teachesCourses: '='
+        isTeacher: '='
       },
       replace: true,
 

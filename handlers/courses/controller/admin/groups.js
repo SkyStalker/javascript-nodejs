@@ -10,13 +10,17 @@ var CourseGroup = require('../../models/courseGroup');
 
 exports.get = function*() {
 
+  let cutDate = new Date();
+  cutDate.setDate(cutDate.getDate() - 30);
   let groups = this.locals.groups = yield CourseGroup.find({
     dateEnd: {
-      $gt: Date.now()
+      $gt: cutDate
     }
-  }).sort({dateStart: -1});
+  }).sort({dateEnd: -1}).populate('teacher');
 
   let orderCounts = this.locals.orderCounts = {};
+  let amounts = this.locals.amounts = {};
+
   for (let i = 0; i < groups.length; i++) {
     let group = groups[i];
 
@@ -57,6 +61,42 @@ exports.get = function*() {
       pending: pendingCount,
       pendingFiltered: pendingFilteredCount
     };
+
+
+    let participants = yield CourseParticipant.find({
+      group:    group._id,
+      isActive: true
+    }).populate('user invite');
+
+    amounts[group.id] = {
+      amount: 0,
+      missing: []
+    };
+
+    // console.log(participants);
+    //console.log("COUNT GROUP", group.title, participants.length);
+    for(let j=0; j<participants.length; j++) {
+      let participant = participants[j];
+
+      let order;
+      if (participant.invite) {
+        order = yield Order.findById(participant.invite.order);
+      } else {
+        order = yield Order.findOne({
+          'data.group':  group._id,
+          'data.emails': participant.user.email,
+          status:        Order.STATUS_SUCCESS
+        });
+      }
+
+      if (!order) {
+        amounts[group.id].missing.push(participant.user.email);
+      } else {
+        //console.log("ADD", order.amount / order.data.count);
+        amounts[group.id].amount += order.amount / order.data.count;
+      }
+
+    }
 
   }
 

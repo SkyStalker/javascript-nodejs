@@ -1,0 +1,39 @@
+include /blocks/rating-stars/index
+include _inline-control
+
+mixin courses-feedback-slides(feedbacks)
+
+  +b('ul').courses-feedback-slides&attributes(attributes)
+    for feedback in feedbacks
+      +e('li').feedback
+        +e.feedback-inner
+          +e.review
+            +e('h3').title
+              = feedback.course.title
+
+            +rating-stars(feedback.stars).courses-feedback-slides__rating
+            +e('a').more(href=feedback.allReviewsHref) все отзывы о&nbsp;курсе
+
+            +e.content
+              != feedback.content
+              if feedback.isCut
+                +e('a').open-feedback(href='#') весь отзыв
+
+          +e.author
+            +courses-feedback-control(['left', 'only-tablet'])
+            +courses-feedback-control(['right', 'only-tablet'])
+
+            +e.author-inner
+              +e('a').author-link(href=feedback.author.link)
+                +e('img').userpic(src=thumb(feedback.photo, 86, 86))
+
+                +e('p').name
+                  = feedback.author.name
+
+              +e.address
+                +e('span').address-line
+                  = countries[feedback.country].na
+                if feedback.city
+                  +e('span').address-line
+                    = feedback.city
+

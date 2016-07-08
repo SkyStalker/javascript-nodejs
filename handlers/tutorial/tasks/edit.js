@@ -26,11 +26,18 @@ module.exports = function(options) {
       if (urlPath.length == 1) {
         var article = yield Article.findOne({slug: urlPath[0]}).exec();
         if (!article) {
+          console.log("Not found!");
           return;
         }
 
-        var dirName = article.weight + '-' + article.slug;
-        var result = execSync("find /js/javascript-tutorial -path '*/" + dirName + "/article.md'", {encoding: 'utf8'}).trim();
+        let weight = article.weight + '';
+        if (weight.length < 2) weight = 0 + weight;
+
+        var dirName = weight + '-' + article.slug;
+        let cmd = "find /js/javascript-tutorial -path '*/" + dirName + "/article.md'";
+        console.log(cmd);
+
+        var result = execSync(cmd, {encoding: 'utf8'}).trim();
 
         if (!result) {
           return;

@@ -29,6 +29,13 @@ if (process.env.MONGOOSE_DEBUG) {
 
 mongoose.connect(config.mongoose.uri, config.mongoose.options);
 
+if (process.env.MONGOOSE_DEBUG) {
+  mongoose.connection.emit = function(event) {
+    console.log("Mongoose connection: ", event);
+    return require('events').EventEmitter.prototype.emit.apply(this, arguments);
+  };
+}
+
 autoIncrement.initialize(mongoose.connection);
 
 // bind context now for thunkify without bind
@@ -114,7 +121,7 @@ mongoose.plugin(function(schema) {
           // example:
           // err = { path="email", message="Email is not unique", type="notunique", value=model.email }
           valError.errors[field] = new ValidatorError({
-            path: "email",
+            path: field,
             message: errorMessage,
             type: 'notunique',
             value: model[field]
@@ -122,6 +129,7 @@ mongoose.plugin(function(schema) {
 
           valError.code = err.code; // if (err.code == 11000) in the outer code will still work
 
+          // console.log(valError.errors, model.toObject());
           return callback(valError);
         });
 

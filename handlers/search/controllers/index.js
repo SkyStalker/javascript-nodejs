@@ -7,8 +7,6 @@ var config = require('config');
 var _ = require('lodash');
 var sanitizeHtml = require('sanitize-html');
 
-const clsNamespace = require('continuation-local-storage').getNamespace('app');
-
 // known types and methods to convert hits to showable results
 // FIXME: many queries to MongoDB for parents (breadcrumbs) Cache them?
 var searchTypes = {
@@ -186,17 +184,15 @@ function* search(query) {
     });
     */
 
-    // request sequentially for CLS to work
-    // if in parallel, it fails to keep the context
     result[type] = yield function(callback) {
       request({
         url: `${config.elastic.host}/${db}/${type}/_search`,
         method: 'POST',
         json: true,
         body: queryBody
-      }, clsNamespace.bind(function(error, response, body) {
+      }, function(error, response, body) {
         callback(error, body);
-      }));
+      });
     };
 
   }

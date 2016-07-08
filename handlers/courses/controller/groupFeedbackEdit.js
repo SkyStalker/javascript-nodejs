@@ -27,7 +27,7 @@ exports.all = function*() {
     });
 
     if (!participant) {
-      this.throw(403, "Оставлять отзыв могут только участники группы");
+      this.throw(403, {info: "Оставлять отзыв могут только участники группы."});
     }
 
     courseFeedback = yield CourseFeedback.findOne({

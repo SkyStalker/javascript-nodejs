@@ -1,8 +1,12 @@
-var path = require('path');
-var fs = require('fs');
+'use strict';
+
+const path = require('path');
+const fs = require('fs');
+
+const ru = (process.env.NODE_LANG == 'ru' || !process.env.NODE_LANG);
 
 var handlers = [
-  'clsHandler', 'countryCode', 'mongooseHandler', 'requestId', 'requestLog', 'nocache',
+  'countryCode', 'mongooseHandler', 'requestId', 'requestLog', 'nocache',
 
   // this middleware adds this.render method
   // it is *before errorHandler*, because errors need this.render
@@ -34,35 +38,52 @@ var handlers = [
 
   'conditional',
 
-  'session',
+  ru && 'session',
 
-  'passportSession',
+  ru && 'passportSession',
 
-  'passportRememberMe',
+  ru && 'passportRememberMe',
 
-  'lastActivity',
+  ru && 'lastActivity',
 
-  'csrfCheck',
+  ru && 'csrfCheck',
 
-  'flash',
+  ru && 'flash',
 
-  'paymentsMethods',
+  ru && 'paymentsMethods',
 
   process.env.NODE_ENV == 'development' && 'markup',
   process.env.NODE_ENV == 'development' && 'dev',
 
-  'users', 'auth', 'ebook', 'donate', 'cache', 'search',
+  ru && 'users',
+  ru && 'auth',
+  ru && 'ebook',
+  ru && 'donate',
+  ru && 'cache',
+  ru && 'slack',
+  'search',
   'staticPage', // must be before courses & other arbitrary url stuff
-  'profile', 'jb', 'play', 'screencast', 'about', 'imgur',
-  'profileGuest', 'quiz', 'currencyRate', 'payments', 'downloadByLink',
-  'newsletter', 'mailer', 'courses'
+  ru && 'profile',
+  ru && 'jb',
+  ru && 'play',
+  ru && 'screencast',
+  'about',
+  ru && 'imgur',
+  ru && 'profileGuest',
+  ru && 'quiz',
+  ru && 'currencyRate',
+  ru && 'payments',
+  ru && 'downloadByLink',
+  ru && 'newsletter',
+  ru && 'courses',
+  ru && 'admin'
 ];
 
 if (process.env.NODE_ENV == 'development') {
   handlers.push('qa');
 }
 
-var extraHandlersRoot = path.join(process.cwd(), 'extra/handlers');
+var extraHandlersRoot = path.join(process.cwd(), 'extra', 'handlers');
 
 if (fs.existsSync(extraHandlersRoot)) {
   fs.readdirSync(extraHandlersRoot).forEach(function(extraHandler) {
@@ -75,7 +96,7 @@ if (fs.existsSync(extraHandlersRoot)) {
 handlers.push('tutorial');
 
 // filter existing handlers
-handlers = handlers.filter(handler => {
+handlers = handlers.filter(Boolean).filter(handler => {
   try {
     require.resolve(handler);
     return true;

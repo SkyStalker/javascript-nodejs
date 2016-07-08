@@ -41,6 +41,8 @@ exports.CourseGroup = [
     course:            oid('course-js'),
     dateStart:         new Date(2016, 0, 1),
     dateEnd:           new Date(2016, 10, 10),
+    timeStart:         '19:30',
+    timeEnd:           '21:00',
     timeDesc:          "пн/чт 19:30 - 21:00 GMT+3",
     slug:              'js-1',
     price:             1,
@@ -49,12 +51,14 @@ exports.CourseGroup = [
     isListed:          true,
     isOpenForSignup:   false,
     title:             "Курс JavaScript/DOM/интерфейсы (01.01)",
-    teacher:          [oid('user-iliakan')]
+    teacher:           [oid('user-iliakan')]
   },
   {
     course:            oid('course-nodejs'),
     dateStart:         new Date(2016, 6, 22),
     dateEnd:           new Date(2016, 7, 10),
+    timeStart:         '19:30',
+    timeEnd:           '21:00',
     timeDesc:          "пн/ср/сб 19:30 - 21:00 GMT+3",
     slug:              'nodejs-20160722',
     price:             1,
@@ -63,13 +67,15 @@ exports.CourseGroup = [
     isListed:          true,
     isOpenForSignup:   true,
     title:             "Курс по Node.JS (22.07)",
-    teacher:          [oid('user-iliakan')]
+    teacher:           [oid('user-iliakan')]
   },
   {
     course:            oid('course-nodejs'),
     dateStart:         new Date(2016, 6, 1),
     dateEnd:           new Date(2016, 11, 10),
     timeDesc:          "пн/чт 21:30 - 23:00 GMT+3",
+    timeStart:         '21:30',
+    timeEnd:           '23:00',
     slug:              "nodejs-01",
     price:             1,
     webinarId:         '789',
@@ -77,7 +83,7 @@ exports.CourseGroup = [
     isListed:          true,
     isOpenForSignup:   false,
     title:             "Курс по Node.JS",
-    teacher:          [oid('user-iliakan')]
+    teacher:           [oid('user-iliakan')]
   }
 ];
 

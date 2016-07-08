@@ -1,3 +1,5 @@
+"use strict";
+
 var registerParticipants = require('../lib/registerParticipants');
 
 exports.get = function*() {

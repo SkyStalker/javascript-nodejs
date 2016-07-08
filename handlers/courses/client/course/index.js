@@ -1,10 +1,17 @@
 var newsletter = require('newsletter/client');
 var Spinner = require('client/spinner');
 var xhr = require('client/xhr');
+var FeedbackSlider = require('../lib/feedbackSlider');
 
 initNewsletterForm();
 
 initSignupButton();
+
+if (document.querySelector('.courses-feedback-inline')) {
+  new FeedbackSlider({
+    elem: document.querySelector('.courses-feedback-inline')
+  });
+}
 
 function initNewsletterForm() {
 

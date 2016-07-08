@@ -1,0 +1,21 @@
+extends /layouts/main
+
+block append variables
+  - var layout_header_class = "main__header_center"
+  - var title = 'Dropbox: ' + group.title
+  - var sitetoolbar = true
+  - var content_class = '_center'
+  - var siteToolbarCurrentSection = "courses";
+
+block content
+
+  p Введите ниже email, с которым вы зарегистрированы на Dropbox. Вам придёт инвайт (функциональность в бете).
+
+  p "По умолчанию" в поле введён ваш email на этом сайте, но, если вы уже используете Dropbox с другим email, то можете его поменять.
+
+  form(method="POST")
+    input(type="hidden", name="_csrf", value=csrf())
+    input(type="email" name="email" value=user.email)
+    div
+      input(type="submit" value="Запросить доступ к каталогу")
+

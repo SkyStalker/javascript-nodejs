@@ -3,6 +3,7 @@
 const co = require('co');
 const mws = require('../lib/mws');
 const yakassaConfig = require('config').payments.modules.yakassa;
+const parseString = require('xml2js').parseString;
 
 /**
  * Mark TX as paid
@@ -14,19 +15,61 @@ module.exports = function() {
 
     return co(function*() {
 
+
+      var args = require('yargs')
+        .example("gulp payments:yakassa:listOrders --from 2016-01-01 --to 2016-01-31")
+        .demand(['from', 'to'])
+        .argv;
+
       let date = new Date();
+
+      // if a payment is accepted & returned the same day, then it is NOT included in reestr
+      // it will NOT be in the act
+      // but it will be here in listOrders!
+      //
+      // avisoStatus 103, 1020, 1021 denote payment return, 1022 partial return
+      // @see https://tech.yandex.ru/money/doc/payment-solution/reference/notifications-codes-docpage/
+      // avisoRegistryId is not implemented ATM
       let params = {
         requestDT:                          date.toJSON(),
         outputFormat:                       'XML',
         shopId:                             yakassaConfig.shopId,
-        orderCreatedDatetimeLessOrEqual:    date.toJSON(),
-        //orderCreatedDatetimeGreaterOrEqual: new Date(2016, 1, 1).toJSON()
+        orderCreatedDatetimeLessOrEqual:    args.to + 'T23:59:59.999+03:00',
+        orderCreatedDatetimeGreaterOrEqual: args.from + 'T00:00:00.000+03:00',
+        outputFields:                       'shopId;shopName;articleId;articleName;invoiceId;orderNumber;paymentSystemOrderNumber;customerNumber;createdDatetime;paid;orderSumAmount;orderSumCurrencyPaycash;orderSumBankPaycash;paidSumAmount;paidSumCurrencyPaycash;paidSumBankPaycash;receivedSumAmount;receivedSumCurrencyPaycash;receivedSumBankPaycash;shopSumAmount;shopSumCurrencyPaycash;shopSumBankPaycash;paymentDatetime;paymentAuthorizationTime;payerCode;payerAddress;payeeCode;paymentSystemDatetime;avisoReceivedDatetime;avisoStatus;agentId;uniLabel;avisoRegistryId'
       };
 
       let result = yield* mws.sendFormRequest('listOrders', params);
 
       console.log(result);
 
+      let resultObj = yield function(callback) {
+        parseString(result, callback);
+      };
+
+      let orders = resultObj.listOrdersResponse.order;
+
+      orders = orders.map(order => order.$);
+      console.log(orders);
+
+      let sum = 0;
+      for (let i = 0; i < orders.length; i++) {
+        let order = orders[i];
+        if (order.paid != 'true') {
+          console.error(order);
+          throw new Error("Order not paid?");
+        }
+
+        if (order.avisoStatus != '1000') {
+          console.log(`Strange avisoStatus ${order.avisoStatus} for order`, order);
+          continue;
+        }
+
+        sum += ++order.orderSumAmount;
+      }
+
+      console.log("Sum ", sum);
+      // console.log(require('util').inspect(orders, false, null));
 
     });
 

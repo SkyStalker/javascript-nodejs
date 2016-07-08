@@ -1,10 +1,9 @@
 var config = require('config');
-var _ = require('lodash');
 var request = require('request');
 var log = require('log')();
 
 module.exports = function*(serviceName, options) {
-  options = _.merge({
+  options = Object.assign({
     method:  'POST',
     url:     config.imgur.url + serviceName,
     headers: {'Authorization': 'Client-ID ' + config.imgur.clientId},

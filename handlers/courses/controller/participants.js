@@ -1,3 +1,5 @@
+"use strict";
+
 var CourseParticipant = require('../models/courseParticipant');
 var mongoose = require('mongoose');
 

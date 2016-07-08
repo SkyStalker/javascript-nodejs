@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var nib = require('nib');
+var rupture = require('rupture');
 var path = require('path');
 var config = require('config');
 var webpack = require('webpack');
@@ -28,7 +29,7 @@ module.exports = function(config) {
 
   var modulesDirectories = ['node_modules'];
   if (process.env.NODE_PATH) {
-    modulesDirectories = modulesDirectories.concat(process.env.NODE_PATH.split(":").map(p => path.resolve(p)));
+    modulesDirectories = modulesDirectories.concat(process.env.NODE_PATH.split(/[:;]/).map(p => path.resolve(p)));
   }
 
   var webpackConfig = {
@@ -68,6 +69,7 @@ module.exports = function(config) {
       about:                     'about/client',
       //markit: 'markit/basicParser',
       auth:                      'auth/client',
+      markup:                    'markup/client',
       angular:                   'client/angular',
       head:                      'client/head',
       tutorial:                  'tutorial/client',
@@ -117,7 +119,7 @@ module.exports = function(config) {
           // which must not be run in strict mode (global becomes undefined)
           // babel would make all modules strict!
           exclude: /node_modules\/(angular|prismjs|moment|blueimp-canvas-to-blob|codemirror|markdown-it)/,
-          loaders: ['ng-annotate', 'babel'] // babel will work first
+          loaders: ['ng-annotate', 'babel?presets[]=es2015'] // babel will work first
         },
         {
           test:   /\.styl$/,
@@ -151,6 +153,7 @@ module.exports = function(config) {
 
     stylus: {
       use: [
+        rupture(),
         nib(),
         function(style) {
           style.define('lang', config.lang);
@@ -201,7 +204,7 @@ module.exports = function(config) {
 
       new ExtractTextPlugin(extHash('[name]', 'css', '[contenthash]'), {allChunks: true}),
 
-      function generateStylesList() {
+      function() {
         // create config.tmpRoot/styles.styl with common styles & styles from handlers
         let content = `
           @require '~styles/common.styl'
@@ -210,11 +213,11 @@ module.exports = function(config) {
         `;
 
         config.handlers.forEach(handler => {
-          if (fs.existsSync(`${config.projectRoot}/node_modules/${handler}/client/styles/global/common.styl`)) {
+          if (fs.existsSync(`${config.projectRoot}/handlers/${handler}/client/styles/global/common.styl`)) {
             content += `\n@require '~${handler}/client/styles/global/common.styl'`;
           }
 
-          if (fs.existsSync(`${config.projectRoot}/node_modules/${handler}/client/styles/global/${config.lang}.styl`)) {
+          if (fs.existsSync(`${config.projectRoot}/handlers/${handler}/client/styles/global/${config.lang}.styl`)) {
             content += `\n@require('~${handler}/client/styles/global/${config.lang}.styl'`;
           }
         });
@@ -280,4 +283,3 @@ module.exports = function(config) {
 
   return webpackConfig;
 };
-

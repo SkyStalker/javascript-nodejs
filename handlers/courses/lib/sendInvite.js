@@ -1,3 +1,5 @@
+"use strict";
+
 const sendMail = require('mailer').send;
 const path = require('path');
 const CourseInvite = require('../models/courseInvite');
@@ -6,7 +8,7 @@ const User = require('users').User;
 
 module.exports = function*(invite) {
 
-  yield CourseInvite.populate(invite, [{path: 'order'}, {path: 'group'}]);
+  yield CourseInvite.populate(invite, 'order group');
 
   var userExists = yield User.findOne({
     email: invite.email

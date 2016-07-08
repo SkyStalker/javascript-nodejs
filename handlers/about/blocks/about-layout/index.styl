@@ -1,0 +1,25 @@
+.about-layout
+  max-width 1200px
+  margin 0 auto
+  position relative
+
+  &::after
+    content ''
+    position absolute
+    left 50%
+    width 1px
+    top 0
+    bottom 0
+    background #eee
+
+    +below('tablet')
+      display none
+
+  & .columns__col
+    padding 40px 30px
+
+    +below('tablet')
+      display block
+      width auto
+      margin-top 20px
+      border none

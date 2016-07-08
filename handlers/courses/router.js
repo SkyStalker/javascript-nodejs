@@ -1,13 +1,22 @@
 'use strict';
 
-var Router = require('koa-router');
-var mustBeAuthenticated = require('auth').mustBeAuthenticated;
-var mustBeParticipantOrTeacher = require('./lib/mustBeParticipantOrTeacher');
-var mustBeParticipant = require('./lib/mustBeParticipant');
-var mustBeTeacher = require('./lib/mustBeTeacher');
-var mustBeTeacherOrAdmin = require('./lib/mustBeTeacherOrAdmin');
-var mustBeAdmin = require('auth').mustBeAdmin;
-var router = module.exports = new Router();
+const Router = require('koa-router');
+const mustBeAuthenticated = require('auth').mustBeAuthenticated;
+const mustBeParticipantOrTeacher = require('./lib/mustBeParticipantOrTeacher');
+const mustBeParticipant = require('./lib/mustBeParticipant');
+const mustBeTeacher = require('./lib/mustBeTeacher');
+const mustBeTeacherOrAdmin = require('./lib/mustBeTeacherOrAdmin');
+const mustBeAdmin = require('auth').mustBeAdmin;
+const router = module.exports = new Router();
+
+function* hasRoleTeacher(next) {
+  if (this.user && this.user.hasRole('teacher')) {
+    yield* next;
+  } else {
+    this.throw(403);
+  }
+}
+
 
 router.param('userById', require('users').routeUserById);
 router.param('groupBySlug', require('./lib/routeGroupBySlug'));
@@ -27,6 +36,7 @@ router.get('/orders/:orderNumber(\\d+)', require('./controller/signup').get);
 
 router.get('/admin/orders/:orderNumber(\\d+)?', mustBeAdmin, require('./controller/admin/orders').get);
 router.post('/admin/orders/:orderNumber(\\d+)', mustBeAdmin, require('./controller/admin/orders').post);
+router.post('/admin/transactions/:transactionNumber(\\d+)', mustBeAdmin, require('./controller/admin/transactions').post);
 
 router.post('/admin/invites', mustBeAdmin, require('./controller/admin/invites').post);
 router.get('/admin/groups', mustBeAdmin, require('./controller/admin/groups').get);
@@ -58,6 +68,18 @@ router.get('/feedback/:feedbackNumber(\\d+)', require('./controller/groupFeedbac
 router.patch('/participants', require('./controller/participants').patch);
 router.get('/download/participant/:participantId/certificate.jpg', mustBeAuthenticated, require('./controller/participantCertificateDownload').get);
 
+router.post('/groups/:groupBySlug/slack-invite', mustBeAuthenticated, require('./controller/groupSlackInvite').post);
+
+router.get('/groups/dropbox-link', mustBeAuthenticated, require('./controller/groupDropboxLink').get);
+
+router.get('/groups/:groupBySlug/dropbox-share', mustBeParticipant, require('./controller/groupDropboxShare').get);
+router.post('/groups/:groupBySlug/dropbox-share', mustBeParticipant, require('./controller/groupDropboxShare').post);
+
+router.get('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').get);
+router.post('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').post);
+router.get('/teacher/instructions', hasRoleTeacher, require('./controller/teacher/instructions').get);
+
+router.get('/teacher/cron', require('./controller/teacher/cron').get);
 
 router.all('/invite/:inviteToken?', require('./controller/invite').all);
 

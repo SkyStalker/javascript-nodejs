@@ -38,8 +38,8 @@ Strategy.prototype.authenticate = function(req, options) {
 
   var self = this;
 
-  function verified(err, user, info) {
-    if (err) { return self.error(err); }
+  self._verify(token, function verified(err, user, info) {
+    if (err) return self.error(err);
 
     // Express exposes the response to the request.  We need the response to set
     // a cookie, so we'll grab it this way.  This breaks the encapsulation of
@@ -69,16 +69,13 @@ Strategy.prototype.authenticate = function(req, options) {
     // the just-used token should have been invalidated by the application.
     // A new token will be issued and set as the value of the remember me
     // cookie.
-    function issued(err, val) {
-      if (err) { return self.error(err); }
+
+    self._issue(user, function issued(err, val) {
+      if (err) return self.error(err);
       req.cookies.set(self._key, val, self._opts.cookie);
       return self.success(user, info);
-    }
-
-    self._issue(user, issued);
-  }
-
-  self._verify(token, verified);
+    });
+  });
 };
 
 module.exports = Strategy;

@@ -6,7 +6,7 @@
   +e.item._with_cb
     +e('input').cb._invoice-need#invoice-contract(type="checkbox" name="invoiceAgreementRequired" value="1")
     +e('label').cb-label(for="invoice-contract")
-      | Нужен договор
+      | Нужны документы (договор и/или акт)
       +e('span').small-note &nbsp(Договор заключается с компанией, зарегистрированной в РФ)
     +e.item._hidden
       +e('label').label(for="invoice-contract-head") Шапка (для акта и договора):
@@ -30,6 +30,13 @@
         = "\n"
         | к/сч 0000000000
     +e.item_hidden
-      +e('label').label(for="invoice-company-mail") Почтовый адрес (читайте <a href="/courses-mail-flow" target="_blank">регламент обмена документами</a>):
-      +b('textarea').textarea-input.__textarea-addr#invoice-company-mail(name="invoiceCompanyMail" placeholder="заполняйте только если нужен бумажный договор и акт почтой, детали по ссылке выше")
-      +e.small-note Например: 141401, Москва, ул. Чкалова д.11 оф.3, ООО "Ромашка", в бухгалтерию.
+      p Почтовый адрес (сначала почитайте <a href="/courses-mail-flow" target="_blank">регламент обмена документами</a>).
+      +e('label').label Индекс:
+        +b('span').text-input._small
+          +e('input')(name="invoiceCompanyMailIndex" placeholder="123456" type="number").control
+      +e('label').label Кому:
+        +b('span').text-input._small
+          +e('input')(name="invoiceCompanyMailWho" placeholder='ООО "Хороший код", в бухгалтерию').control
+      +e('label').label Адрес:
+        +b('textarea').textarea-input.__textarea-addr(name="invoiceCompanyMailAddress" placeholder="г.Москва, ул.Б.Таганская д.72 офис 1")
+      +e.small-note Заполняйте почтовый адрес только если нужен бумажный договор и акт, детали см. <a href="/courses-mail-flow" target="_blank">в регламенте</a>.

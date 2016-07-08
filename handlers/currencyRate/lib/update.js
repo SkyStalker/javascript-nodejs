@@ -25,6 +25,7 @@ module.exports = function*() {
   money.base = openExchangeRate.base;
 
   // more correct rate, closer to UA exchange offices
-  money.rates.UAH = privatRates.USD.buy * 0.2 + privatRates.USD.sale * 0.8;
+  // cut calculations tail: 25.162000000000003
+  money.rates.UAH = +(privatRates.USD.buy * 0.2 + privatRates.USD.sale * 0.8).toFixed(10);
 
 };

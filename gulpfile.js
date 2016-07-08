@@ -9,15 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const assert = require('assert');
 const runSequence = require('run-sequence');
-
-
-const linkModules = require('./modules/linkModules');
-
-linkModules({
-  src: ['client', 'styles', 'modules/*', 'handlers/*', 'extra/handlers/*']
-});
-
-require('cls'); // init CLS namespace once
+const ll   = require('gulp-ll');
 
 const config = require('config');
 const mongoose = require('lib/mongoose');
@@ -31,6 +23,8 @@ const jsSources = [
   'handlers/**/*.js', 'modules/**/*.js', 'tasks/**/*.js', '*.js'
 ];
 
+
+
 function lazyRequireTask(path) {
   var args = [].slice.call(arguments, 1);
   return function(callback) {
@@ -40,8 +34,7 @@ function lazyRequireTask(path) {
   };
 }
 
-/* the task does nothing, used to run linkModules only */
-gulp.task('init');
+ll.tasks('nodemon', 'client:webpack', 'server');
 
 gulp.task('lint-once', lazyRequireTask('./tasks/lint', { src: jsSources }));
 gulp.task('lint-or-die', lazyRequireTask('./tasks/lint', { src: jsSources, dieOnError: true }));
@@ -57,9 +50,7 @@ gulp.task('migrate:up', lazyRequireTask('migrate/tasks/up'));
 gulp.task('migrate:down', lazyRequireTask('migrate/tasks/down'));
 gulp.task('migrate:create', lazyRequireTask('migrate/tasks/create'));
 
-gulp.task('courses:material:add', lazyRequireTask('courses/tasks/materialAdd'));
 gulp.task('courses:webinar:add', lazyRequireTask('courses/tasks/webinarAdd'));
-gulp.task('courses:group:send', lazyRequireTask('courses/tasks/groupSend'));
 gulp.task('courses:invite:remind', lazyRequireTask('courses/tasks/inviteRemind'));
 
 gulp.task("nodemon", lazyRequireTask('./tasks/nodemon', {
@@ -68,7 +59,7 @@ gulp.task("nodemon", lazyRequireTask('./tasks/nodemon', {
   ext:    "js,jade",
 
   nodeArgs: process.env.NODE_DEBUG  ? ['--debug'] : [],
-  script: "./bin/server",
+  script: "./bin/server.js",
   //ignoreRoot: ['.git', 'node_modules'].concat(glob.sync('{handlers,modules}/**/client')), // ignore handlers' client code
   ignore: ['**/client/', '**/photoCut/'], // ignore handlers' client code
   watch:  ["handlers", "modules"]
@@ -103,10 +94,10 @@ gulp.task("payments:transaction:paid", lazyRequireTask('payments/tasks/transacti
 gulp.task("payments:order:cancelPending", lazyRequireTask('payments/tasks/orderCancelPending'));
 
 gulp.task('payments:yakassa:listOrders', lazyRequireTask('payments/yakassa/tasks/listOrders'));
+gulp.task('payments:yakassa:listReturns', lazyRequireTask('payments/yakassa/tasks/listReturns'));
 gulp.task('payments:yakassa:returnPayment', lazyRequireTask('payments/yakassa/tasks/returnPayment'));
 
 gulp.task("newsletter:send", lazyRequireTask('newsletter/tasks/send'));
-//gulp.task("newsletter:createLetters", lazyRequireTask('newsletter/tasks/createLetters'));
 
 var testSrcs = ['{handlers,modules}/**/test/**/*.js'];
 // on Travis, keys are required for E2E Selenium tests
@@ -181,7 +172,8 @@ gulp.task('build', function(callback) {
 
 gulp.task('server', lazyRequireTask('./tasks/server'));
 
-gulp.task('edit', ['build', 'tutorial:import:watch', "client:sync-resources", 'client:livereload', 'server']);
+// no build
+gulp.task('edit', ['tutorial:import:watch', "client:sync-resources", 'client:livereload', 'server']);
 
 
 gulp.task('dev', function(callback) {

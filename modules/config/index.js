@@ -1,8 +1,5 @@
-
 // make sure Promise is wrapped early,
 // to assign mongoose.Promise = global.Promise the wrapped variant any time later
-require('continuation-local-storage');
-
 var path = require('path');
 var fs = require('fs');
 var env = process.env;
@@ -34,9 +31,16 @@ var config = module.exports = {
 
   server: {
     port:       env.PORT || 3000,
-    host:       env.HOST || '0.0.0.0',
+    host:       env.HOST || '127.0.0.1',
     siteHost:   env.SITE_HOST || '',
     staticHost: env.STATIC_HOST || ''
+  },
+
+
+  aws: {
+    region:          secret.aws.region,
+    accessKeyId:     secret.aws.AWSAccessKeyId,
+    secretAccessKey: secret.aws.AWSSecretKey
   },
 
   ga: {
@@ -46,6 +50,17 @@ var config = module.exports = {
   yandexMetrika: {
     id: lang == 'ru' ? 17649010 : 32184394
   },
+
+  slack: {
+    token: secret.slack.token,
+    org:   secret.slack.org,
+    bot:   secret.slack.bot,
+    email: 'mk@javascript.ru',
+    host:  '127.0.0.1',
+    port:  3001
+  },
+
+  dropbox: secret.dropbox,
 
   test: {
     e2e: {
@@ -62,6 +77,16 @@ var config = module.exports = {
     url:    'https://www.cloudflare.com/api_json.html',
     apiKey: secret.cloudflare.apiKey,
     email:  secret.cloudflare.email
+  },
+
+  recaptcha: {
+    id:     secret.recaptcha.id,
+    secret: secret.recaptcha.secret
+  },
+
+  gmail: {
+    user:     secret.gmail.user,
+    password: secret.gmail.password
   },
 
   xmpp: {
@@ -141,7 +166,7 @@ var config = module.exports = {
     hash: {
       length:     128,
       // may be slow(!): iterations = 12000 take ~60ms to generate strong password
-      iterations: env.NODE_ENV == 'production' ? 12000 : 1
+      iterations: env.NODE_ENV == 'test' ? 1 : 12000
     }
   },
 
@@ -160,7 +185,6 @@ var config = module.exports = {
     address:   'http://ondemand.saucelabs.com:80/wd/hub'
   },
 
-  renderedCacheEnabled:  env.NODE_ENV == 'production',
   projectRoot:           process.cwd(),
   // public files, served by nginx
   publicRoot:            path.join(process.cwd(), 'public'),

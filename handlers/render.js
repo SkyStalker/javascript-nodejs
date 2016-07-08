@@ -41,6 +41,8 @@ function addStandardHelpers(locals, ctx) {
 
   locals.analyticsEnabled = ctx.query.noa ? false : (ctx.host == config.domain.main && process.env.NODE_ENV == 'production');
 
+  locals.livereloadEnabled = process.env.TUTORIAL_EDIT;
+
   locals.js = function(name, options) {
     options = options || {};
 
@@ -73,7 +75,7 @@ function addStandardHelpers(locals, ctx) {
   locals.domain = config.domain;
   locals.ga = config.ga;
   locals.yandexMetrika = config.yandexMetrika;
-
+  locals.recaptcha = config.recaptcha;
 
   // patterns to use in urls
   // no need to escape /
@@ -106,7 +108,8 @@ function addStandardHelpers(locals, ctx) {
     }
   });
 
-  locals.rateUsdRub = money.convert(1, {from: 'USD', to: 'RUB'});
+  // disabled for non-ru locale
+  locals.rateUsdRub = config.lang == 'ru' ? money.convert(1, {from: 'USD', to: 'RUB'}) : 0;
 
   locals.profileTabNames = {
     quiz:          'Тесты',

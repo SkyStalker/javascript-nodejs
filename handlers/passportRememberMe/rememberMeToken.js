@@ -26,7 +26,7 @@ var RememberMeTokenSchema = new mongoose.Schema({
 });
 
 // find user by tokenValue and kill the token after success
-RememberMeTokenSchema.statics.consume = function(tokenValue, done) {
+RememberMeTokenSchema.statics.verify = function(tokenValue, done) {
 
   RememberMeToken.findOne({
     value: tokenValue

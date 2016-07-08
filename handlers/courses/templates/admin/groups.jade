@@ -11,17 +11,26 @@ block content
 
     table
       tr
-        th title
         th slug
-        th dateStart
+        th teacher
+        th dates
         th success
-        th pending
-        th pending (filtered)
+        th pending filtered/all
+        th amount
       each group in groups
         tr
-          td= group.title
           td= group.slug
-          td= moment(group.dateStart).format('DD.MM.YYYY HH:mm')
+          td= group.teacher.displayName
+          td
+            = moment(group.dateStart).format('DD.MM.YYYY')
+            br
+            = moment(group.dateEnd).format('DD.MM.YYYY')
           td= orderCounts[group.id].success
-          td= orderCounts[group.id].pending
-          td= orderCounts[group.id].pendingFiltered
+          td
+            = orderCounts[group.id].pendingFiltered
+            if orderCounts[group.id].pendingFiltered != orderCounts[group.id].pending
+              | (#{orderCounts[group.id].pending})
+          td
+            = amounts[group.id].amount
+            br
+            != amounts[group.id].missing.join('<br>')

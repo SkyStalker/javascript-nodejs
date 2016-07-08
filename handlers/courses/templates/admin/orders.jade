@@ -10,6 +10,11 @@ block append variables
 block content
 
   form(method="GET" action="")
-    input(name="orderNumber" type="number")
+    input(name="orderNumber" type="number" placeholder="Номер заказа")
+    input(type="submit" value="Найти")
+
+
+  form(method="GET" action="")
+    input(name="transactionNumber" type="number" placeholder="Номер счёта")
     input(type="submit" value="Найти")
 

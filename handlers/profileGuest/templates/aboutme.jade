@@ -2,7 +2,7 @@ extends root
 
 block append head
   !=js("profileGuestAboutMe", {defer: true})
-  if user && (user.hasRole('admin') || user.teachesCourses.length)
+  if user && (user.hasRole('admin') || user.hasRole('teacher'))
     !=js("coursesFeedbackShow", {defer: true})
 
 
@@ -65,15 +65,15 @@ block profileContent
         +e.value= profileUser.birthday
 
 
-  if profileUser.teachesCourses && profileUser.teachesCourses.length
+  if teachesCourses.length
     +b.profile-field
       +e.lcell
         +e.name Ведёт курсы
       +e.rcell
         +e.value
-          each course, index in profileUser.teachesCourses
+          each course, index in teachesCourses
             a(href=course.getUrl())= course.title
-            if index < profileUser.teachesCourses.length - 1
+            if index < teachesCourses.length - 1
               = ', '
 
   +b.profile-field
@@ -91,7 +91,7 @@ block profileContent
 
 block profileFeedback
 
-  if profileUser.teachesCourses && profileUser.teachesCourses.length
+  if teachesCourses.length
 
     +e.feedbacks
       +b('section').course-feedbacks.teacher-feedback._loading

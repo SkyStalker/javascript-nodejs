@@ -55,34 +55,20 @@ const schema = new Schema({
 
   title: {
     type:     String,
-    required: true,
+    required: "Не указан заголовок.",
+    minlength: [10, 'Слишком короткий заголовок.'],
     trim:     true
   },
 
   content: {
     type:     String,
-    required: true,
+    required: "Отсутствует содержимое.",
+    minlength: [10, 'Слишком короткое содержимое.'],
     trim:     true
   },
 
   // new style
   to: [toSchema],
-
-  /* DEPRECATED... */
-  newsletters:       {
-    type: [{
-      type: Schema.Types.ObjectId,
-      ref:  'Newsletter'
-    }]
-  },
-  newslettersExcept: {
-    type: [{
-      type: Schema.Types.ObjectId,
-      ref:  'Newsletter'
-    }]
-  },
-
-  /* ...DEPRECATED */
 
   // date when the need for the CRON script to send it
   sendScheduledAt: {

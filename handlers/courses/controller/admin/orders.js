@@ -1,6 +1,5 @@
 'use strict';
 
-var _ = require('lodash');
 var Order = require('payments').Order;
 var Transaction = require('payments').Transaction;
 var User = require('users').User;
@@ -10,15 +9,26 @@ var CourseGroup = require('../../models/courseGroup');
 
 exports.get = function*() {
 
-  if (!this.params.orderNumber && !this.query.orderNumber) {
+  let transactionNumber = this.params.transactionNumber || this.query.transactionNumber;
+  let orderNumber = this.params.orderNumber || this.query.orderNumber;
+
+  if (transactionNumber) {
+    yield this.loadTransaction();
+    if (this.order) {
+      this.redirect('/courses/admin/orders/' + this.order.number);
+      return;
+    }
+  } else if (orderNumber) {
+
+    yield* loadOrderAdmin.call(this);
+
+    if (!this.order) {
+      this.throw(404, 'Нет такого заказа.');
+    }
+
+  } else {
     this.body = this.render('admin/orders');
     return;
-  }
-
-  yield* loadOrderAdmin.call(this);
-
-  if (!this.order) {
-    this.throw(404, 'Нет такого заказа.');
   }
 
   var transactions;
@@ -33,7 +43,7 @@ exports.get = function*() {
   // do we need to show all TX ?
   transactions = yield Transaction.find({
     order:  this.order._id,
-    status: {$in: [Transaction.STATUS_PENDING, Transaction.STATUS_SUCCESS]}
+    status: {$in: [Transaction.STATUS_REFUND, Transaction.STATUS_PENDING, Transaction.STATUS_SUCCESS]}
   });
 
   this.locals.order = this.order;

@@ -9,6 +9,7 @@ const schema = new Schema({
   },
   slug:    {
     type:     String,
+    lowercase: true,
     required: true,
     trim:     true,
     unique:   true

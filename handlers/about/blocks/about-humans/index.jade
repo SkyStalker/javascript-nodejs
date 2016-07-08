@@ -1,0 +1,8 @@
+mixin about-humans(data)
+  +b('ul').about-humans
+    each item in data.items
+      +e('li').human
+        +e('img').human-userpic(src=item.image)
+        +e('h3').human-title
+          +e('a').link(href=item.url)=item.name
+        +e('p').human-role=item.role

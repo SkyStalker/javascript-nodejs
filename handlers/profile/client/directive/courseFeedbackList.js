@@ -10,7 +10,7 @@ angular.module('profile')
 
       link: function(scope, elem) {
         let me = scope.me;
-        if (me.teachesCourses && me.teachesCourses.length) {
+        if (me.isTeacher) {
           new FeedbackLoader({
             elem:   elem[0],
             filter: {teacherId: me.id}

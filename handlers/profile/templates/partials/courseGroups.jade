@@ -19,7 +19,13 @@ include /bem
           +e('span').status._verified(ng-if="group.status == 'accepted'") Участие подтверждено
           +b('a').button._action(ng-href="{{group.inviteUrl}}" ng-if="group.status == 'invite'")
             +e('span').text Подтвердить участие
-          +e('span').status._started(ng-if="group.status == 'started'") Занятия начались
+
+          +e('span')(ng-if="group.status == 'started'")
+            +e('span').status._started(ng-if="group.status == 'started'") Занятия начались
+            +e('ul').info-links
+              +e('li')(ng-if="group.joinUrl").info-links-item
+                +e('a')(ng-href="{{group.joinUrl}}") Зайти в вебинар
+
           +e('span')(ng-if="group.status == 'ended'")
             +e('span').status._ended Курсы завершены
             +e('ul').info-links
@@ -27,4 +33,8 @@ include /bem
                 +e('a').feedback(ng-href="{{group.feedbackLink}}") Оставить отзыв
               +e('li')(ng-if="!group.isTeacher").info-links-item
                 +e('a').feedback(ng-href="{{group.certificateLink}}") Скачать сертификат
+
+          div(ng-if="!group.inSlack")
+            +b('a').button._action(ng-click="slackInvite(group)")
+              +e('span').text Инвайт в Slack
 

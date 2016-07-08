@@ -1,3 +1,5 @@
+"use strict";
+
 const Order = require('payments').Order;
 const assert = require('assert');
 const path = require('path');
@@ -16,7 +18,7 @@ module.exports = function* (order) {
 
   yield Order.populate(order, {path: 'user'});
 
-  var group = yield CourseGroup.findById(order.data.group).exec();
+  var group = yield CourseGroup.findById(order.data.group);
 
   var emails = order.data.emails;
 
@@ -49,15 +51,18 @@ module.exports = function* (order) {
   yield group.persist();
 
   yield sendMail({
-    templatePath: path.join(__dirname, '../templates/email/paymentConfirmation'),
-    from: 'orders',
-    to: order.email,
-    profileOrdersUrl: config.server.siteHost + order.user.getProfileUrl() + '/orders',
-    orderNumber: order.number,
-    subject: "Подтверждение оплаты за курс, заказ " + order.number,
-    orderHasParticipants: orderHasParticipants,
-    orderUserInviteLink: orderUserIsParticipant && (config.server.siteHost + '/courses/invite/' + orderUserInvite.token),
-    orderUserIsParticipant: orderUserIsParticipant,
+    templatePath:              path.join(__dirname, '../templates/email/paymentConfirmation'),
+    from:                      'orders',
+    to:                        order.email,
+    amount:                    order.amount,
+    profileOrdersUrl:          config.server.siteHost + order.user.getProfileUrl() + '/orders',
+    orderNumber:               order.number,
+    subject:                   order.amount ?
+                                 ("Подтверждение оплаты за курс, заказ " + order.number) :
+                                 ("Одобрена запись на курс, заказ " + order.number),
+    orderHasParticipants:      orderHasParticipants,
+    orderUserInviteLink:       orderUserIsParticipant && (config.server.siteHost + '/courses/invite/' + orderUserInvite.token),
+    orderUserIsParticipant:    orderUserIsParticipant,
     orderHasOtherParticipants: orderHasParticipantsExceptUser
   });
 

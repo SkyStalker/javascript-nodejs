@@ -22,6 +22,8 @@ const imgDescToAttrsPlugin = require('./plugins/imgDescToAttrs');
 // (also resolves links)
 const resolveRelativeSrcPlugin = require('./plugins/resolveRelativeSrc');
 
+const resolveMdnSrcPlugin = require('./plugins/resolveMdnSrc');
+
 const imgFiguresPlugin = require('./plugins/imgFigures');
 const headerAnchorPlugin = require('./plugins/headerAnchor');
 const headerLevelShiftPlugin = require('./plugins/headerLevelShift');
@@ -30,6 +32,7 @@ const blockTagsPlugin = require('./plugins/blockTags/plugin');
 const iframePlugin = require('./plugins/blockTags/iframe');
 const editPlugin = require('./plugins/blockTags/edit');
 const cutPlugin = require('./plugins/blockTags/cut');
+const todoPlugin = require('./plugins/blockTags/todo');
 const codeTabsPlugin = require('./plugins/blockTags/codetabs');
 const demoPlugin = require('./plugins/blockTags/demo');
 const charTypographyPlugin = require('./plugins/charTypography');
@@ -60,6 +63,7 @@ module.exports = class ServerParser {
     sourceBlocksPlugin(this.md);
     imgDescToAttrsPlugin(this.md);
     resolveRelativeSrcPlugin(this.md);
+    resolveMdnSrcPlugin(this.md);
     imgFiguresPlugin(this.md);
     headerAnchorPlugin(this.md);
     headerLevelShiftPlugin(this.md);
@@ -68,6 +72,7 @@ module.exports = class ServerParser {
     iframePlugin(this.md);
     editPlugin(this.md);
     cutPlugin(this.md);
+    todoPlugin(this.md);
     codeTabsPlugin(this.md);
     demoPlugin(this.md);
     summaryPlugin(this.md);

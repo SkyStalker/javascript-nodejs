@@ -1,6 +1,6 @@
 var transliterate = require('textUtil/transliterate');
 var validate = require('validate');
-var mongoose = require('mongoose');
+var mongoose = require('lib/mongoose');
 var Schema = mongoose.Schema;
 var hash = require('../lib/hash');
 var mongooseTimestamp = require('lib/mongooseTimestamp');
@@ -39,6 +39,9 @@ var UserSchema = new mongoose.Schema({
       }
     ]
   },
+
+  gotowebinar: { },
+
   email:         {
     type:      String,
     lowercase: true,
@@ -81,6 +84,9 @@ var UserSchema = new mongoose.Schema({
       values:  ['male', 'female'],
       message: "Неизвестное значение для пола."
     }
+  },
+  profileLabel: { // label in profileGuest below the avatar
+    type: String
   },
   profileName:   {
     type:     String,
@@ -167,6 +173,8 @@ var UserSchema = new mongoose.Schema({
   town:                      {
     type: String
   },
+  // Email for teacher communication
+  // NOT hidden unlike `email`
   teacherEmail:              {
     type:      String,
     lowercase: true,
@@ -197,6 +205,8 @@ var UserSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+
+  // DEPRECATED
   teachesCourses:            {
     type:    [{
       type: Schema.Types.ObjectId,
@@ -204,6 +214,11 @@ var UserSchema = new mongoose.Schema({
     }],
     default: []
   },
+  isTeacherFrontpage: {
+    type: Boolean,
+    index: true
+  },
+
   aboutMe:                   {
     type:      String,
     maxlength: 600,
@@ -214,7 +229,7 @@ var UserSchema = new mongoose.Schema({
     default: false
   },
   readOnly:                  Boolean,  // data is not deleted, just flagged as banned
-  roles:                     { // qaModerator?
+  roles:                     { // admin, teacher, qaModerator?
     type:    [{
       type:      String,
       lowercase: true,
@@ -271,6 +286,7 @@ UserSchema.statics.getInfoFields = function(user) {
     country:            user.country,
     town:               user.town,
     teacherEmail:       user.teacherEmail,
+    emailSignature:     user.emailSignature,
     publicEmail:        user.publicEmail,
     interests:          user.interests,
     email:              user.email,
@@ -282,7 +298,8 @@ UserSchema.statics.getInfoFields = function(user) {
     lastActivity:       user.lastActivity,
     profileTabsEnabled: user.profileTabsEnabled,
     aboutMe:            user.aboutMe,
-    teachesCourses:     user.teachesCourses
+    teachesCourses:     user.teachesCourses,
+    isTeacher:          user.hasRole('teacher')
   };
 };
 
@@ -303,7 +320,7 @@ UserSchema.methods.checkPassword = function(password) {
 };
 
 
-UserSchema.methods.softDelete = function(callback) {
+UserSchema.methods.softDelete = function*() {
   // delete this.email does not work
   // need to assign to undefined to $unset
   this.aboutMe = undefined;
@@ -322,6 +339,8 @@ UserSchema.methods.softDelete = function(callback) {
   this.passwordResetRedirect = undefined;
   this.providers = [];
   this.password = undefined;
+  this.verifiedEmailsHistory = [];
+  this.verifiedEmail = false;
   this.teachesCourses = undefined;
   this.teacherEmail = undefined;
   this.photo = undefined;
@@ -330,9 +349,7 @@ UserSchema.methods.softDelete = function(callback) {
 
   this.deleted = true;
 
-  this.save(function(err, user, numberAffected) {
-    callback(err, user);
-  });
+  yield this.persist();
 };
 
 UserSchema.statics.photoDefault = "//i.imgur.com/zSGftLc.png";
@@ -366,6 +383,8 @@ UserSchema.methods.generateProfileName = function*() {
 
   profileName = transliterate(profileName);
 
+  while (profileName.length < 2) profileName += '-';
+
   var existingUser;
   while (true) {
     existingUser = yield User.findOne({profileName: profileName}).exec();
@@ -374,6 +393,7 @@ UserSchema.methods.generateProfileName = function*() {
     // add one more random digit and retry the search
     profileName += Math.random() * 10 ^ 0;
   }
+
 
   this.profileName = profileName;
 };

@@ -1,8 +1,11 @@
+"use strict";
+
 const mongoose = require('mongoose');
 const countries = require('countries');
 const CourseFeedback = require('../models/courseFeedback');
 const CourseParticipant = require('../models/courseParticipant');
 const CourseGroup = require('../models/courseGroup');
+const CourseTeacher = require('../models/courseTeacher');
 const User = require('users').User;
 const renderFeedback = require('../lib/renderFeedback');
 
@@ -20,9 +23,19 @@ exports.get = function*() {
 
   var authorOrAdminOrTeacher = false;
   if (this.user) {
-    if (this.user.hasRole('admin') || this.user._id.equals(courseFeedback.userCache || ~this.user.teachesCourses.indexOf(courseFeedback.group._id))) {
+    if (this.user.hasRole('admin') || this.user._id.equals(courseFeedback.userCache)) {
       authorOrAdminOrTeacher = true;
+    } else {
+      // teaches this course (not exactly same group)
+      let isCourseTeacher = yield CourseTeacher.findOne({
+        teacher: this.user._id,
+        course:  courseFeedback.group.course._id
+      });
+      if (isCourseTeacher) {
+        authorOrAdminOrTeacher = true;
+      }
     }
+
   }
 
   if (!courseFeedback.isPublic && !authorOrAdminOrTeacher) {

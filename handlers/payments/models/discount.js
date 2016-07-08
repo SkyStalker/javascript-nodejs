@@ -44,12 +44,17 @@ var schema = new Schema({
 /**
  * find active discount with the code
  * if discount has onlyModule set, ensure the match
- * @param code
- * @param onlyModule
- * @returns {*}
  */
 schema.statics.findByCodeAndModule = function*(code, module) {
   return yield Discount.findOne({code: code, isActive: true, module: module}).exec();
+};
+
+schema.methods.format = function() {
+  if (this.discount <= 1) {
+    return Math.round((1-this.discount) * 100) + '%';
+  }
+
+  return -this.discount;
 };
 
 schema.methods.adjustAmount = function(amount) {
@@ -57,6 +62,34 @@ schema.methods.adjustAmount = function(amount) {
     this.discount < 1 ? amount * this.discount :
       this.discount;
 };
+
+// apply all discounts to amount, return the minimal cost
+schema.statics.adjustAmountAll = function(amount, discounts) {
+  if (!discounts.length) return amount;
+
+  let amounts = discounts.map(discount => discount.adjustAmount(amount));
+  return Math.min(...amounts);
+};
+
+// get discount object with best discount for the amount
+schema.statics.getBest = function(amount, discounts) {
+  if (!discounts.length) return null;
+
+  let discountBest = null;
+  let amountBest = amount;
+
+  for (let i = 0; i < discounts.length; i++) {
+    let discount = discounts[i];
+    let newAmount = discount.adjustAmount(amount);
+    if (newAmount < amountBest) {
+      discountBest = discount;
+      amountBest = newAmount;
+    }
+  }
+
+  return discountBest;
+};
+
 
 var Discount = module.exports = mongoose.model('Discount', schema);
 

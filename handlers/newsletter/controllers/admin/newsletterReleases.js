@@ -4,11 +4,16 @@ const NewsletterTemplate = require('../../models/newsletterTemplate');
 const NewsletterRelease = require('../../models/newsletterRelease');
 const Newsletter = require('../../models/newsletter');
 const MailList = require('../../models/mailList');
+const mailer = require('mailer');
 const Letter = require('mailer').Letter;
 const CourseGroup = require('courses').CourseGroup;
 const ObjectId = require('mongoose').Types.ObjectId;
-const sendNewsletterReleaseOne = require('../../lib/sendNewsletterReleaseOne');
 const moment = require('momentWithLocale');
+const formatLetter = require('../../lib/formatLetter');
+const formatTestLetter = require('../../lib/formatTestLetter');
+const findRecipients = require('../../lib/findRecipients');
+const admin = require('admin');
+
 require('mdeditor');
 
 function* loadById(id) {
@@ -17,12 +22,12 @@ function* loadById(id) {
   }
 
   let newsletterRelease = yield NewsletterRelease.findById(id)
-    .populate('to.courseGroup to.newsletter to.mailList');
+    .populate('user to.courseGroup to.newsletter to.mailList');
 
   if (!newsletterRelease) {
     this.throw(404);
   }
-  if (!this.isAdmin && !newsletterRelease.user.equals(this.user._id)) {
+  if (!this.isAdmin && !newsletterRelease.user._id.equals(this.user._id)) {
     this.throw(403);
   }
 
@@ -33,22 +38,21 @@ function *getFailedReasons(newsletterRelease) {
   let letters = yield Letter.find({
     labelId: newsletterRelease._id,
     $or:     [{
-      'transportResponse.status': {
-        $ne: 'sent'
+      sent: {
+        $ne: true
       }
     }, {
-      'transportState.state': {
-        $exists: true,
-        $ne: 'sent'
+      'lastSqsNotification.notificationType': {
+        $ne: 'Delivery'
       }
     }]
-  }, {transportResponse: 1, transportState: 1});
+  });
 
   let results = {};
 
   for (let i = 0; i < letters.length; i++) {
     let letter = letters[i];
-    Object.assign(results, letter.getFailureReasons());
+    results[letter.message.to.address] = letter.getFailureDescription();
   }
 
   return results;
@@ -62,16 +66,16 @@ function* getToVariants() {
     for (let i = 0; i < newsletters.length; i++) {
       let newsletter = newsletters[i];
       variants.push({
-        key:   'newsletter:' + newsletter.id,
-        value: newsletter.title
+        value: 'newsletter:' + newsletter.id,
+        text:  newsletter.title
       });
     }
     let mailLists = yield MailList.find().sort({modified: -1});
     for (let i = 0; i < mailLists.length; i++) {
       let mailList = mailLists[i];
       variants.push({
-        key:   'mailList:' + mailList.id,
-        value: mailList.title
+        value: 'mailList:' + mailList.id,
+        text:  mailList.title
       });
     }
   }
@@ -79,7 +83,7 @@ function* getToVariants() {
   let dateGreater = new Date();
   dateGreater.setDate(dateGreater.getDate() - 30);
   let groups = yield CourseGroup.find({
-    teacher: this.user._id,
+    teacher: this.isAdmin ? {$exists: true} : this.user._id,
     dateEnd: {
       $gt: dateGreater // finished not more than 1 month ago
     }
@@ -89,8 +93,8 @@ function* getToVariants() {
     let group = groups[i];
 
     variants.push({
-      key:   'courseGroup:' + group.id,
-      value: group.title
+      value:   'courseGroup:' + group.id,
+      text: group.title
     });
   }
 
@@ -108,6 +112,8 @@ exports.getList = function*() {
   this.locals.newsletterReleases = yield NewsletterRelease.find(query)
     .sort({created: -1})
     .populate('to.courseGroup to.newsletter to.mailList');
+
+  this.locals.sidebar = yield* admin.getUserSidebar(this.user);
 
   this.body = this.render('admin/newsletterReleases');
 
@@ -135,7 +141,14 @@ function* renderForm(newsletterRelease) {
 
   this.locals.toVariants = yield* getToVariants.call(this);
 
-  this.locals.templates = yield NewsletterTemplate.find().sort({created: -1});
+  let templates = yield NewsletterTemplate.find({
+    user: this.user
+  }).sort({created: -1});
+
+  this.locals.templates = templates.map(template => ({
+    value: template.id,
+    text: template.title
+  }));
 
   this.locals.letterSentCount = yield Letter.count({
     labelId: newsletterRelease._id,
@@ -151,6 +164,9 @@ function* renderForm(newsletterRelease) {
     sendFinished:    newsletterRelease.sendFinished,
     sendingPid:      newsletterRelease.sendingPid
   };
+
+
+  this.locals.sidebar = yield* admin.getUserSidebar(this.user);
 
   this.body = this.render('admin/newsletterRelease');
 }
@@ -220,7 +236,7 @@ exports.post = function*() {
 
   // save the data, then apply actions
   try {
-    yield newsletterRelease.persist();
+    yield newsletterRelease.validate();
   } catch (e) {
     if (e.name != 'ValidationError') throw e;
 
@@ -229,15 +245,20 @@ exports.post = function*() {
       errors[key] = e.errors[key].message;
     }
 
-    this.locals.title = "Редактировать шаблон";
-
-    yield* renderForm.call(this, newsletterRelease);
+    this.status = 400;
+    if (this.accepts('html', 'json') == 'html') {
+      this.locals.title = "Редактировать рассылку";
+      yield* renderForm.call(this, newsletterRelease);
+    } else {
+      this.body = {errors};
+    }
     return;
-  }
 
+  }
 
   switch (this.request.body.action) {
   case 'save':
+    yield newsletterRelease.persist();
     this.addFlashMessage('success', 'Рассылка сохранена.');
     // already saved
     break;
@@ -247,32 +268,49 @@ exports.post = function*() {
     throw new Error("Must never reach here");
 
   case 'template':
-    yield NewsletterTemplate.create({
+    let newsletterTemplate = yield NewsletterTemplate.create({
       user:    this.user,
       title:   newsletterRelease.title,
       content: newsletterRelease.content
     });
-    this.addFlashMessage('success', 'Шаблон создан.');
+
+    this.addFlashMessage('success', 'Шаблон готов.');
+    this.redirect('/newsletter/admin/newsletter-templates/edit/' + newsletterTemplate.id);
     break;
 
   case 'send':
-    yield newsletterRelease.persist({
-      sendScheduledAt: new Date()
-    });
+    switch(this.request.body.sendType) {
+    case 'now':
+      yield newsletterRelease.persist({
+        sendScheduledAt: new Date()
+      });
 
-    this.addFlashMessage('success', 'Рассылка будет отослана в ближайшее время.');
+      this.addFlashMessage('success', 'Рассылка будет отослана в ближайшее время.');
+      break;
+    case '5min':
+      let datePlus = new Date();
+      datePlus.setMinutes(datePlus.getMinutes() + 5);
+      yield newsletterRelease.persist({
+        sendScheduledAt: datePlus
+      });
 
-    break;
+      this.addFlashMessage('success', 'Рассылка будет отослана через 5 минут.');
+      break;
+    case 'schedule':
+      let dateStr = this.request.sendDate || moment().format('YYYY-MM-DD');
+      let timeStr = this.request.sendTime || moment().format('HH:mm');
 
-  case 'schedule':
-    newsletterRelease.sendScheduledAt = moment(this.request.body.scheduleAt).toDate();
+      let dateSchedule = new Date(dateStr + 'T' + timeStr);
+      yield newsletterRelease.persist({
+        sendScheduledAt: dateSchedule
+      });
 
-    yield newsletterRelease.persist();
+      this.addFlashMessage('success',
+        'Рассылка будет отослана ' + moment(dateSchedule).format('YYYY-MM-DD HH:mm')
+      );
 
-    this.addFlashMessage('success',
-      `Рассылка запланирована в ${moment(newsletterRelease.sendScheduledAt).format('YYYY-MM-DD HH:mm Z')}.`
-    );
-
+      break;
+    }
     break;
 
   case 'cancelSend':
@@ -313,14 +351,36 @@ exports.post = function*() {
 
     break;
 
+
+  case 'preview':
+    yield NewsletterRelease.populate(newsletterRelease, 'to.courseGroup to.newsletter to.mailList');
+
+
+    let previewLetter = yield* formatTestLetter(newsletterRelease, this.user.email);
+    this.body = previewLetter.message.html;
+    return;
+
   case 'sendOne':
-    let sendOneTo = this.request.body.sendOneTo.toLowerCase();
-    yield NewsletterRelease.populate(newsletterRelease, 'user to.courseGroup to.newsletter to.mailList');
-    yield* sendNewsletterReleaseOne(newsletterRelease, sendOneTo, {noLabel: true});
-    this.addFlashMessage('success', `Письмо отослано ${sendOneTo}.`);
+    // AJAX
+    let email = this.request.body.sendOneEmail.toLowerCase();
+    if (!email) {
+      this.status = 400;
+      this.body = {
+        errors: {
+          email: 'Нет указан email'
+        }
+      };
+      return;
+    }
+    yield NewsletterRelease.populate(newsletterRelease, 'to.courseGroup to.newsletter to.mailList');
 
-    break;
+    let letter = yield* formatTestLetter(newsletterRelease, email);
+    yield* mailer.sendLetter(letter);
 
+    this.body = {
+      message: `Письмо отослано ${email}.`
+    };
+    return;
   }
 
   this.redirect('/newsletter/admin/newsletter-releases/edit/' + newsletterRelease.id);

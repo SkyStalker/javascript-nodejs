@@ -1,3 +1,5 @@
+"use strict";
+
 const sendMail = require('mailer').send;
 const CourseInvite = require('../models/courseInvite');
 const _ = require('lodash');
@@ -26,11 +28,13 @@ module.exports = function*(order) {
   var group = yield CourseGroup.findById(order.data.group);
 
   var participants = yield CourseParticipant.find({
-    group: group._id,
-    isActive: true // is it needed?
+    group: group._id
+    // all participants are filtered out, even inactive (they don't need invite)
   }).populate('user');
 
   var participantsByEmail = _.keyBy(participants.map(p => p.user), 'email');
+
+  // log.debug("participantsByEmail", existingInviteByEmails);
 
   var invites = [];
   for (var i = 0; i < emails.length; i++) {

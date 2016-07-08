@@ -1,3 +1,4 @@
+include ../blocks/newsletter-templates/index
 
 extends /layouts/main
 
@@ -11,20 +12,15 @@ block append variables
       { title: 'Рассылки', url: '/newsletter/admin/newsletter-releases' }
     ]
 
+block sidebar
+  include /blocks/sidebar
+
 block append head
   !=js("newsletterAdmin", {defer: true})
   !=css("newsletterAdmin")
 
 block content
 
-
-  if !templates.length
-    p Шаблонов нет
-  else
-    ul
-      each template in templates
-        li
-          a(href="/newsletter/admin/newsletter-templates/edit/" + template.id)= template.title
-
-
-  +e("a")(href="/newsletter/admin/newsletter-templates/add") Создать новый
+  +newsletter-templates({
+    templates
+  })

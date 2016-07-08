@@ -1,0 +1,20 @@
+extends /layouts/email
+
+block body
+
+  p Здравствуйте,
+
+  p Администратор загрузил для вас документы по заказу #{order.title} на сайте #{site}.
+
+  p
+    | Вы можете скачать их в виде архива по ссылке&nbsp;
+    a(href=documentsUrl)= documentsUrl
+    | .
+
+  p
+    | P.S. Посмотреть информацию о заказе вы также можете в своём личном кабинете, по ссылке&nbsp;
+    a(href=profileOrdersUrl)= profileOrdersUrl
+    | .
+
+
+

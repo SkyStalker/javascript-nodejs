@@ -1,6 +1,5 @@
 var fs = require('fs');
 var path = require('path');
-
 var uploadStream = require('../lib/uploadStream');
 
 describe("imgur", function() {

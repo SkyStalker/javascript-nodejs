@@ -4,6 +4,7 @@ var mountHandlerMiddleware = require('lib/mountHandlerMiddleware');
 exports.init = function(app) {
 
   app.multipartParser.ignore.add('/courses/groups/:groupBySlug/materials');
+  app.multipartParser.ignore.add('/courses/admin/transactions/:transactionNumber');
 
   app.use(mountHandlerMiddleware('/courses', __dirname));
 };
@@ -11,6 +12,7 @@ exports.init = function(app) {
 exports.Course = require('./models/course');
 exports.CourseGroup = require('./models/courseGroup');
 exports.CourseParticipant = require('./models/courseParticipant');
+exports.CourseTeacher = require('./models/courseTeacher');
 exports.CourseInvite = require('./models/courseInvite');
 exports.CourseFeedback = require('./models/courseFeedback');
 

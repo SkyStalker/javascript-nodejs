@@ -1,0 +1,4 @@
+mixin about-list(data)
+  +b('ol').about-list
+    each val in data.items
+      +e('li').item=val

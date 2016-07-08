@@ -189,7 +189,7 @@ ArticleRenderer.prototype.render = function* (article, options) {
 ArticleRenderer.prototype.renderWithCache = function*(article, options) {
   options = options || {};
 
-  var useCache = !options.refreshCache && config.renderedCacheEnabled;
+  var useCache = !options.refreshCache && !process.env.TUTORIAL_EDIT;
 
   if (article.rendered && useCache) return article.rendered;
 

@@ -1,3 +1,5 @@
+"use strict";
+
 var fs = require('fs');
 var Docxtemplater = require('docxtemplater');
 var path = require('path');

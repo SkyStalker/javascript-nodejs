@@ -14,7 +14,7 @@ exports.post = function* (next) {
 
   var user = yield User.findOne({
     email: email
-  }).exec();
+  });
 
   if (!user) {
     this.throw(404, 'Нет такого пользователя.');

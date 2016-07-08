@@ -4,7 +4,9 @@
 
 А это исходный код для движка сайта [https://learn.javascript.ru](https://learn.javascript.ru) на платформе Node.JS.
 
+<!--
 [![Build Status](https://travis-ci.org/iliakan/javascript-nodejs.svg?branch=master)](https://travis-ci.org/iliakan/javascript-nodejs)
+-->
 
 ## Что делаем?
 
@@ -26,7 +28,7 @@
 <li>Элементы e-магазина, включая приём оплаты Paypal/Webmoney/PayAnyWay, через Я.Деньги и другими способами.</li>
 <li>Отправка почты через Mandrill API с обработкой webhook со статусом.</li>
 <li>Транслоадинг и не использующая память/диск (через потоки) загрузка картинок на сервис http://imgur.com.</li>
-<li>Логгер вместе с CLS для получения контекста в не-middleware.</li>
+<li>Логгер.</li>
 <li>Шаблонизация с Jade + BEM.</li>
 <li>Система сборки на Webpack.</li>
 <li>...</li>
