@@ -39,47 +39,49 @@ module.exports = function*({
 
   // Second, discount by previous courses
 
-  let allUserOrders = yield Order.find({
-    user: user._id,
-    module: 'courses',
-    status: Order.STATUS_SUCCESS
-  });
+  if (user) {
+    let allUserOrders = yield Order.find({
+      user:   user._id,
+      module: 'courses',
+      status: Order.STATUS_SUCCESS
+    });
 
-  let allUserGroupIds1 = allUserOrders.map(o => o.data.group);
+    let allUserGroupIds1 = allUserOrders.map(o => o.data.group);
 
-  let allUserParticipants = yield CourseParticipant.find({
-    user: user._id,
-    isActive: true
-  }).populate('group');
+    let allUserParticipants = yield CourseParticipant.find({
+      user:     user._id,
+      isActive: true
+    }).populate('group');
 
-  let allUserGroupIds2 = allUserParticipants.map(p => p.group);
+    let allUserGroupIds2 = allUserParticipants.map(p => p.group);
 
-  let allUserGroupIds = uniqWith([].concat(allUserGroupIds1, allUserGroupIds2), (a, b) => a.equals(b));
+    let allUserGroupIds = uniqWith([].concat(allUserGroupIds1, allUserGroupIds2), (a, b) => a.equals(b));
 
-  // all user groups where he ordered or participanted
-  let allUserGroups = yield CourseGroup.find({
-    _id: {
-      $in: allUserGroupIds
-    }
-  });
+    // all user groups where he ordered or participanted
+    let allUserGroups = yield CourseGroup.find({
+      _id: {
+        $in: allUserGroupIds
+      }
+    });
 
-  // all user courses
-  let allUserCourses = yield Course.find({
-    _id: {
-      $in: allUserGroups.map(g => g.course)
-    }
-  });
+    // all user courses
+    let allUserCourses = yield Course.find({
+      _id: {
+        $in: allUserGroups.map(g => g.course)
+      }
+    });
 
-  if (course.slug == 'angular2' || true) {
-    let slugs = allUserCourses.map(c => c.slug);
-    if (slugs.includes('typescript') || slugs.includes('angular')) {
-      let courseDiscount = new Discount({
-        discount: 0.85,
-        module:   'courses',
-        isActive: true
-      });
+    if (course.slug == 'angular2' || true) {
+      let slugs = allUserCourses.map(c => c.slug);
+      if (slugs.includes('typescript') || slugs.includes('angular')) {
+        let courseDiscount = new Discount({
+          discount: 0.85,
+          module:   'courses',
+          isActive: true
+        });
 
-      discounts.push(courseDiscount);
+        discounts.push(courseDiscount);
+      }
     }
   }
 
