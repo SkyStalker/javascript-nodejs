@@ -139,6 +139,9 @@ exports.get = function*(next) {
     }, {
       url:   `/courses/groups/${group.slug}/participants-info`,
       title: 'Анкеты участников'
+    }, {
+      url:   `/courses/groups/api/participants?key=${group.apiKey}`,
+      title: 'JSON участников (для CORS)'
     }];
 
     groupInfo.status = (groupInfo.dateStart > new Date()) ? 'accepted' :
