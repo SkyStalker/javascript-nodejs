@@ -1,5 +1,6 @@
 'use strict';
 
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const config = require('config');
@@ -25,6 +26,15 @@ const schema = new Schema({
   dateEnd:   {
     type:     Date,
     required: true
+  },
+
+  apiKey: {
+    type: String,
+    required: true,
+    unique: true,
+    default: function() {
+      return parseInt(crypto.randomBytes(4).toString('hex'), 16).toString(36);
+    }
   },
 
   datesSkip: {

@@ -75,6 +75,8 @@ router.get('/groups/dropbox-link', mustBeAuthenticated, require('./controller/gr
 router.get('/groups/:groupBySlug/dropbox-share', mustBeParticipant, require('./controller/groupDropboxShare').get);
 router.post('/groups/:groupBySlug/dropbox-share', mustBeParticipant, require('./controller/groupDropboxShare').post);
 
+router.get('/groups/api/participants', require('./controller/api/participants').get);
+
 router.get('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').get);
 router.post('/teacher/group-create', hasRoleTeacher, require('./controller/teacher/groupCreate').post);
 router.get('/teacher/instructions', hasRoleTeacher, require('./controller/teacher/instructions').get);
