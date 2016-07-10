@@ -71,7 +71,7 @@ module.exports = function*({
       }
     });
 
-    if (course.slug == 'angular2' || true) {
+    if (course.slug == 'angular2') {
       let slugs = allUserCourses.map(c => c.slug);
       if (slugs.includes('typescript') || slugs.includes('angular')) {
         let courseDiscount = new Discount({
