@@ -1,3 +1,5 @@
+include /blocks/price/index
+
 +b.courses-recruitment
   +e('a').anchor#signup
 
@@ -21,9 +23,17 @@
             +e('p').participants-limit Осталось #{group.participantsLimit} #{pluralize(group.participantsLimit, 'место', 'места', 'мест')}
 
         +e.apply
-          +b.price
-            +e('span') #{group.price} RUB
-            +e('span').secondary &nbsp;≈&nbsp;#{Math.round(group.price / rateUsdRub)}$
+          +price({
+            price: group.price,
+            fullPrice: group.fullPrice,
+            withSecondary: true
+          })
           +e.submit
             +b('a')(data-group-signup-link href='/courses/groups/' + group.slug + '/signup' type="button").button._action
               +e('span').text Записаться
+
+  //- - discount = {}
+  //- - discount.description = 'Скидки указаны для <a href="mailto:email@gmail.com">email@gmail.com</a> как участнику предыдущего курса по Angular'
+
+  +e.info_discount
+    != discount.description

@@ -1,0 +1,11 @@
+mixin price(data)
+  +b.price(class={
+    _discount: data.fullPrice
+  })
+    if data.fullPrice
+      +e('span').full-price #{data.fullPrice} RUB
+
+    +e('span') #{data.price} RUB
+
+    if data.withSecondary
+      +e('span').secondary &nbsp;≈&nbsp;#{currencyConvertRound(data.price, 'RUB', 'USD')}$
