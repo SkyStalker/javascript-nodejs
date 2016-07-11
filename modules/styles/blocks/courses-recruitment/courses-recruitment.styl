@@ -1,5 +1,4 @@
 .courses-recruitment
-    background #fff
 
     .main ul&__list,
     .main li&__course,
@@ -15,6 +14,7 @@
     &__list
         display table
         width 100%
+        background background
 
     &__course
         display table-row
@@ -34,6 +34,17 @@
 
     &__info
         width 100%
+
+        &_discount
+            padding-top 10px
+            padding-bottom 10px
+            background rgba(background, .5)
+            font-size 14px
+            color light_gray_color
+
+            a
+              color color_red
+              font-weight bold
 
     &__apply .price
         margin-bottom 5px
@@ -79,6 +90,7 @@
 
     &_no-groups
         padding 20px
+        background background
 
     &_no-groups h3&__info-title
         font 14px font
@@ -111,3 +123,8 @@
 
         &__apply
             margin-top 15px
+
+        &__info
+            &_discount
+                padding 10px 20px
+                box-sizing border-box
