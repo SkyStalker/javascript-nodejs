@@ -14,6 +14,7 @@ const imgDescToAttrsPlugin = require('./plugins/imgDescToAttrs');
 
 const markdownErrorPlugin = require('./plugins/markdownError');
 const blockTagsPlugin = require('./plugins/blockTags/plugin');
+const cutPlugin = require('./plugins/blockTags/cut');
 const deflistPlugin = require('markdown-it-deflist');
 const getPrismLanguage = require('./getPrismLanguage');
 
@@ -24,9 +25,9 @@ module.exports = class BasicParser {
     this.options = options;
 
     this.env = options.env || {};
-    this.md = MarkdownIt(Object.assign({
+    this.md = new MarkdownIt(Object.assign({
       typographer:   true,
-      blockTags:     getPrismLanguage.allSupported,
+      blockTags:     ['cut'].concat(getPrismLanguage.allSupported),
       linkHeaderTag: false,
       html:          false,
       quotes:        LANG == 'ru' ? '«»„“' : '“”‘’'
@@ -38,6 +39,7 @@ module.exports = class BasicParser {
     imgDescToAttrsPlugin(this.md);
     markdownErrorPlugin(this.md);
     blockTagsPlugin(this.md);
+    cutPlugin(this.md);
     charTypographyPlugin(this.md);
     deflistPlugin(this.md);
   }

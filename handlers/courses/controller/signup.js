@@ -163,6 +163,7 @@ exports.get = function*() {
 
   this.locals.groupInfo = {
     price:           price,
+    fullPrice:       (group.price == price) ? null : group.price,
     participantsMax: participantsMax,
     slug:            group.slug
   };

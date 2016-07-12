@@ -11,10 +11,16 @@ var schema = new Schema({
     required: true
   },
 
+  
 
   module: {
     type: String,
     required: true
+  },
+
+
+  description: {
+    type: String
   },
 
   // data for the module

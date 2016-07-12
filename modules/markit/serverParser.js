@@ -46,7 +46,7 @@ module.exports = class ServerParser {
     this.options = options;
 
     this.env = options.env || {};
-    this.md = MarkdownIt(Object.assign({
+    this.md = new MarkdownIt(Object.assign({
       typographer:   true,
       blockTags:     ['iframe', 'edit', 'cut', 'codetabs', 'demo'].concat(require('./getPrismLanguage').allSupported),
       linkHeaderTag: true,

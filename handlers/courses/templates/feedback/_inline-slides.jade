@@ -12,12 +12,12 @@ mixin courses-feedback-slides(feedbacks)
               = feedback.course.title
 
             +rating-stars(feedback.stars).courses-feedback-slides__rating
-            +e('a').more(href=feedback.allReviewsHref) все отзывы о&nbsp;курсе
+            +e('a').more(href=feedback.course.link + '/feedback') все отзывы о&nbsp;курсе
 
             +e.content
               != feedback.content
-              if feedback.isCut
-                +e('a').open-feedback(href='#') весь отзыв
+              if feedback.hasCut
+                +e('a').open-feedback(href=feedback.link) весь отзыв
 
           +e.author
             +courses-feedback-control(['left', 'only-tablet'])

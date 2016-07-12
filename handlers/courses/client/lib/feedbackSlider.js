@@ -4,8 +4,8 @@ module.exports = class FeedbackSlider {
 
     this.list = elem.querySelector('.courses-feedback-slides');
 
-    this.arrowLeft = elem.querySelector('.courses-feedback-inline__control_left');
-    this.arrowRight = elem.querySelector('.courses-feedback-inline__control_right');
+    this.arrowLeft = elem.querySelector('.courses-feedback-control_left');
+    this.arrowRight = elem.querySelector('.courses-feedback-control_right');
     this.pagination = elem.querySelector('.courses-feedback-inline__pagination');
     this.position = 0;
 
@@ -24,6 +24,7 @@ module.exports = class FeedbackSlider {
   }
 
   next() {
+    console.log("WOW");
     this.position++;
     this.render();
   }
@@ -35,7 +36,7 @@ module.exports = class FeedbackSlider {
 
   render() {
     this.list.style.transform = this.position ? `translate3d(-${this.position}00%,0,0)` : '';
-    let hidden = 'courses-feedback-inline__control_hidden';
+    let hidden = 'courses-feedback-control_hidden';
 
     if (this.position === 0) {
       this.arrowLeft.classList.add(hidden);

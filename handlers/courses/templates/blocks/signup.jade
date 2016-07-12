@@ -1,3 +1,5 @@
+include /blocks/price/index
+
 +b.courses-recruitment
   +e('a').anchor#signup
 
@@ -6,10 +8,6 @@
     each group, index in groups
       +e('li').course
         +e.info
-          //if group.discount
-          //  p У вас на эту группу скидка #{group.discount.format()}.
-
-
           +e('h4').title #{formatGroupDate(group.dateStart)} — #{formatGroupDate(group.dateEnd)}
           +e('p').text!= group.timeDesc
           +e.teacher
@@ -21,9 +19,14 @@
             +e('p').participants-limit Осталось #{group.participantsLimit} #{pluralize(group.participantsLimit, 'место', 'места', 'мест')}
 
         +e.apply
-          +b.price
-            +e('span') #{group.price} RUB
-            +e('span').secondary &nbsp;≈&nbsp;#{Math.round(group.price / rateUsdRub)}$
+          +price({
+            price: group.price,
+            fullPrice: group.fullPrice,
+            withSecondary: true
+          })
           +e.submit
             +b('a')(data-group-signup-link href='/courses/groups/' + group.slug + '/signup' type="button").button._action
               +e('span').text Записаться
+
+  if discountDescription
+    +e.info_discount!= discountDescription

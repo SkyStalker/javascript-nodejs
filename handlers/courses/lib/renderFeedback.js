@@ -10,25 +10,25 @@ const _ = require('lodash');
 const BasicParser = require('markit').BasicParser;
 const CacheEntry = require('cache').CacheEntry;
 
-module.exports = function*(courseFeedback, user) {
+module.exports = function*(courseFeedback, {user, cut} = {}) {
 
-  var doRender = renderFeedback.bind(null, courseFeedback, user);
+  var doRender = renderFeedback.bind(null, courseFeedback, {user, cut});
 
   if (user) {
-    if (courseFeedback.userCache.equals(user._id) || courseFeedback.teacherCache.equals(user._id) || user.hasRole('admin')) {
+    if (courseFeedback.userCache.equals(user._id) || user.hasRole('admin') || user.hasRole('teacher')) {
       return yield* doRender();
     }
   }
 
   return yield* CacheEntry.getOrGenerate({
-    key:  'coursefeedback:' + courseFeedback.number,
+    key:  'coursefeedback:' + courseFeedback.number + ':' + Boolean(cut),
     tags: ['coursefeedback']
   }, doRender);
 
 
 };
 
-function* renderFeedback(courseFeedback, user) {
+function* renderFeedback(courseFeedback, {user, cut} = {}) {
   yield CourseFeedback.populate(courseFeedback, 'group participant');
   yield CourseGroup.populate(courseFeedback.group, 'course teacher');
   yield CourseParticipant.populate(courseFeedback.participant, "user");
@@ -64,8 +64,9 @@ function* renderFeedback(courseFeedback, user) {
       link: courseFeedback.group.teacher.getProfileUrl(),
       name: courseFeedback.group.teacher.displayName
     },
-    content:           new BasicParser().render(courseFeedback.content),
-    isTeacherOrAdmin:         isTeacherOrAdmin,
+    hasCut:            courseFeedback.content.includes('[cut]'),
+    content:           new BasicParser().render(cut ? courseFeedback.content.replace(/\[cut\][\s\S]*/, '') : courseFeedback.content),
+    isTeacherOrAdmin:  isTeacherOrAdmin,
     isPublic:          courseFeedback.isPublic,
     number:            courseFeedback.number,
     teacherComment:    courseFeedback.teacherComment ? new BasicParser().render(courseFeedback.teacherComment) : '',

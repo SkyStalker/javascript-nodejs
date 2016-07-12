@@ -1,5 +1,15 @@
 
+var FeedbackSlider = require('../lib/feedbackSlider');
+
 initParticipantsSlider();
+
+
+if (document.querySelector('.courses-feedback-inline')) {
+  new FeedbackSlider({
+    elem: document.querySelector('.courses-feedback-inline')
+  });
+}
+
 
 function initParticipantsSlider() {
   var slider = document.querySelector('[data-participants-slider]');

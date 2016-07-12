@@ -1,5 +1,7 @@
 extends /layouts/main
 
+include ../feedback/_inline
+
 block append variables
   - var layout_main_class = "main_width-limit-wide"
   - var layout_header_class = "main__header_center"
@@ -26,7 +28,7 @@ block content
   include ../blocks/nodejs/how
   include ../blocks/nodejs/result
   include ../blocks/nodejs/systemRequirements
-  //include ../blocks/reviews
+  +courses-feedback-inline({feedbacks: feedbacks})
 
   +b.fixed-tab.phone-only.courses-tab
     a.courses-tab__link(href="#signup") Записаться на курсы
