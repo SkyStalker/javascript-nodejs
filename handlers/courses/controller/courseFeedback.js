@@ -23,8 +23,9 @@ exports.get = function*() {
   this.locals.title = "Отзыв о курсе\n" + this.locals.course.title;
 
   // star => count
+
   let feedbackStats = yield* CacheEntry.getOrGenerate({
-    key:  'courses:feedback:' + this.params.slug,
+    key:  'courses:feedback:' + this.params.course,
     tags: ['courses:feedback']
   }, getFeedbackStats.bind(this, this.locals.course));
 

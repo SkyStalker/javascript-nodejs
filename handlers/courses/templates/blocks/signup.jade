@@ -8,10 +8,6 @@ include /blocks/price/index
     each group, index in groups
       +e('li').course
         +e.info
-          //if group.discount
-          //  p У вас на эту группу скидка #{group.discount.format()}.
-
-
           +e('h4').title #{formatGroupDate(group.dateStart)} — #{formatGroupDate(group.dateEnd)}
           +e('p').text!= group.timeDesc
           +e.teacher
@@ -32,8 +28,5 @@ include /blocks/price/index
             +b('a')(data-group-signup-link href='/courses/groups/' + group.slug + '/signup' type="button").button._action
               +e('span').text Записаться
 
-  //- - discount = {}
-  //- - discount.description = 'Скидки указаны для <a href="mailto:email@gmail.com">email@gmail.com</a> как участнику предыдущего курса по Angular'
-
-  +e.info_discount
-    != discount.description
+  if discountDescription
+    +e.info_discount!= discountDescription

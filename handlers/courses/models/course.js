@@ -55,6 +55,11 @@ var schema = new Schema({
     required: true
   },
 
+  featuredFeedbacks: [{
+    type: Schema.Types.ObjectId,
+    ref: 'CourseFeedback'
+  }],
+
   created: {
     type:    Date,
     default: Date.now

@@ -49,7 +49,7 @@ exports.get = function*() {
 
   this.locals.countries = countries.all;
 
-  var feedbackRendered = this.locals.courseFeedback = yield* renderFeedback(courseFeedback, this.user);
+  var feedbackRendered = this.locals.courseFeedback = yield* renderFeedback(courseFeedback, {user: this.user});
   feedbackRendered.shareEnabled = true;
 
   this.body = this.render('feedback/show');

@@ -77,6 +77,8 @@ module.exports = function*({
         let courseDiscount = new Discount({
           discount: 0.85,
           module:   'courses',
+          description: 'Скидка предоставлена <a href="mailto:EMAIL">EMAIL</a> как участнику предыдущего курса по ' +
+                       (slugs.includes('typescript') ? 'TypeScript' : 'Angular'),
           isActive: true
         });
 

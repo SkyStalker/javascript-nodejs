@@ -60,7 +60,7 @@ exports.get = function*() {
   for (var i = 0; i < feedbacks.length; i++) {
     var feedback = feedbacks[i];
 
-    feedbacksRendered.push(yield* renderFeedback(feedback, this.user));
+    feedbacksRendered.push(yield* renderFeedback(feedback, {user: this.user}));
   }
 
   this.locals.countries = countries.all;
