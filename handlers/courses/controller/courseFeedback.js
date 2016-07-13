@@ -24,10 +24,7 @@ exports.get = function*() {
 
   // star => count
 
-  let feedbackStats = yield* CacheEntry.getOrGenerate({
-    key:  'courses:feedback:' + this.params.course,
-    tags: ['courses:feedback']
-  }, getFeedbackStats.bind(this, this.locals.course));
+  let feedbackStats = yield* CourseFeedback.getFeedbackStats(this.locals.course);
 
   let teachers = yield CourseTeacher.find({
     course: this.locals.course._id
@@ -42,83 +39,3 @@ exports.get = function*() {
 
 };
 
-
-function* getFeedbackStats(course) {
-
-  let groups = yield CourseGroup.find({
-    course: course.id
-  });
-
-  let groupIds = groups.map(group => group._id);
-
-  let stats = yield CourseFeedback.aggregate([
-    {
-      $match: {
-        group: {
-          $in: groupIds
-        },
-        isPublic: true
-      }
-    },
-    {
-      $group: {
-        _id:   '$stars',
-        count: {
-          $sum: 1
-        }
-      }
-    }
-  ]).exec();
-
-  let totalFeedbacks = stats.reduce(function(prev, next) { return prev + next.count; }, 0);
-
-  //console.log(totalFeedbacks);
-  // default stats (if no stars for a star)
-  let starStatsPopulated = {};
-  for(let i=1; i<=5; i++) starStatsPopulated[i] = {
-    count: 0,
-    fraction: 0
-  };
-
-  stats.forEach(function(stat) {
-    starStatsPopulated[stat._id] = {
-      count: stat.count,
-      fraction: stat.count ? +(stat.count / totalFeedbacks).toFixed(2) : 0
-    };
-  });
-
-
-  let recommendStats = yield CourseFeedback.aggregate([
-    {
-      $match: {
-        group: {
-          $in: groupIds
-        },
-        isPublic: true
-      }
-    },
-    {
-      $group: {
-        _id:   '$recommend',
-        count: {
-          $sum: 1
-        }
-      }
-    }
-  ]).exec();
-
-
-  recommendStats = groupBy(recommendStats, '_id');
-
-  if (!recommendStats[true]) recommendStats[true] = [{count: 0}];
-  if (!recommendStats[false]) recommendStats[false] = [{count: 0}];
-
-  // 76% recommend
-  let recommendFraction = recommendStats[true][0].count / (recommendStats[true][0].count + recommendStats[false][0].count) || 0;
-
-  return {
-    stars: starStatsPopulated,
-    recommendFraction: recommendFraction,
-    total: totalFeedbacks
-  };
-}

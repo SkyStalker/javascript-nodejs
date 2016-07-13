@@ -35,13 +35,14 @@ mixin courses-feedback-slides(feedbacks)
                   +e('span').address-line
                     = feedback.city
 
-    if feedbacks.withSummary
+    if feedbackStats
       +e('li').feedback
         +e.feedback-inner_all
           +e('h3').title_all=title
           +feedback-stat({
             mod: 'slider',
             label: 'Пользователей рекомендуют этот курс',
-            stats: stats
+            stats: feedbackStats.stats
           })
-            a(href=feedbacksLink) все отзывы о курсе
+            a(href=feedbackStats.link) все отзывы о курсе
+
