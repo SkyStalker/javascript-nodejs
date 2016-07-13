@@ -20,6 +20,6 @@ mixin courses-feedback-inline(data)
 
         - var page = 0
         +e('ul').pagination
-          while page < feedbacks.length
+          while page < feedbacks.length + (feedbacks.withSummary ? 1 : 0)
             +e('li').page(class=(page === 0) ? 'courses-feedback-inline__page_active' : '')
             - page++

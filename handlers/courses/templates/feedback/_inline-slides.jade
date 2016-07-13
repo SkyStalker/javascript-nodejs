@@ -1,8 +1,9 @@
 include /blocks/rating-stars/index
+include /blocks/pie/index
 include _inline-control
+include stat
 
 mixin courses-feedback-slides(feedbacks)
-
   +b('ul').courses-feedback-slides&attributes(attributes)
     for feedback in feedbacks
       +e('li').feedback
@@ -20,9 +21,6 @@ mixin courses-feedback-slides(feedbacks)
                 +e('a').open-feedback(href=feedback.link) весь отзыв
 
           +e.author
-            +courses-feedback-control(['left', 'only-tablet'])
-            +courses-feedback-control(['right', 'only-tablet'])
-
             +e.author-inner
               +e('a').author-link(href=feedback.author.link)
                 +e('img').userpic(src=thumb(feedback.photo, 86, 86))
@@ -37,3 +35,13 @@ mixin courses-feedback-slides(feedbacks)
                   +e('span').address-line
                     = feedback.city
 
+    if feedbacks.withSummary
+      +e('li').feedback
+        +e.feedback-inner_all
+          +e('h3').title_all=title
+          +feedback-stat({
+            mod: 'slider',
+            label: 'Пользователей рекомендуют этот курс',
+            stats: stats
+          })
+            a(href=feedbacksLink) все отзывы о курсе

@@ -1,0 +1,26 @@
+include /blocks/pie/index
+
+mixin feedback-stat(data)
+  - names = ['Отлично', 'Хорошо', 'Нормально', 'Так себе', 'Плохо']
+  - total = 5
+
+  +b.feedback-stat(class={
+    _slider: data.mod === 'slider'
+  })
+    +e('ul').list
+      each item, index in names
+        +e('li').item(data-stars-title=(total - index))=item
+          +e('span').status
+            +e('span').status-i(style="width: " + data.stats.stars[total - index].fraction * 100 + "%")
+
+    +e.pie
+      +pie({
+        mod: data.mod === 'slider' ? 'small' : '',
+        percent: data.stats.recommendFraction,
+        title: Math.round(data.stats.recommendFraction * 100) + '%',
+        label: data.label || 'Оставивших отзыв рекомендуют этот курс'
+      })
+
+    if block
+      +e.content
+        block
