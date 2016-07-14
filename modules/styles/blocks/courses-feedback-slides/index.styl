@@ -32,6 +32,10 @@ ul.courses-feedback-slides
     height 220px
     display flex
     justify-content space-between
+    flex-wrap wrap
+
+    &_all
+      background-color background_yellow_light
 
     @media desktop_short
       height 250px
@@ -45,6 +49,7 @@ ul.courses-feedback-slides
     @media tablet
       height 100%
       flex-direction column
+      flex-wrap nowrap
 
   &__review
     background-color background_yellow_light
@@ -86,12 +91,17 @@ ul.courses-feedback-slides
 
   h3&__title
     display inline-block
-    vertical-align
     color gray_color
     font-size 16px
     line-height 22px
     font-weight bold
     margin 0 10px 0 0
+
+    &_all
+      width 100%
+      text-align center
+      padding-top 20px
+      margin 0
 
   ul&__rating
     display inline-block

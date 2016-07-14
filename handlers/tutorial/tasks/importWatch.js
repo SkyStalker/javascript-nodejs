@@ -14,11 +14,12 @@ module.exports = function(options) {
 
   return function(callback) {
 
-    if (!options.root) {
-      throw new Error("Import watch root is not provided");
-    }
+    var args = require('yargs')
+      .usage("Path to tutorial root is required.")
+      .demand(['root'])
+      .argv;
 
-    var root = fs.realpathSync(options.root);
+    var root = fs.realpathSync(args.root);
 
     if (!root) {
       throw new Error("Import watch root does not exist " + options.root);

@@ -46,6 +46,12 @@ exports.post = function*() {
   let dateStart = moment(this.request.body.dateStart + ' ' + this.request.body.timeStart, "YYYY-MM-DD HH:mm").toDate();
   let dateEnd = moment(this.request.body.dateEnd + ' ' + this.request.body.timeEnd, "YYYY-MM-DD HH:mm").toDate();
 
+  let datesSkip = this.request.body.dateSkip || [];
+  if (!Array.isArray(datesSkip)) {
+    datesSkip = [datesSkip];
+  }
+  datesSkip = datesSkip.map(d => moment(d, 'YYYY-MM-DD').toDate());
+
   let group = yield CourseGroup.create({
     course:            course,
     dateStart:         dateStart,
@@ -53,7 +59,7 @@ exports.post = function*() {
     participantsLimit: this.request.body.participantsLimit,
     price:             course.price,
     weekDays:          this.request.body.weekday.map(v => +v),
-    datesSkip:         (this.request.body.dateSkip || []).map(d => moment(d, 'YYYY-MM-DD').toDate()),
+    datesSkip:         datesSkip,
     timeStart:         this.request.body.timeStart,
     timeEnd:           this.request.body.timeEnd,
     timeDesc:          this.request.body.weekday.map(n => dayNames[n]).join('/') + ' ' +

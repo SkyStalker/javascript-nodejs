@@ -13,26 +13,10 @@ $courses-feedback-control = '.courses-feedback-control';
     width 50px
 
   @media tablet
-    display none
-
-  &_only-tablet
-    display none
-
-    @media tablet
-      display block
-      bottom 0
-      width 45px
-
-      {$courses-feedback-control}
-        &__button
-          bottom 60px
-
-      &{$courses-feedback-control}
-        &_left
-          left 0
-
-        &_right
-          right 0
+    height: 209px;
+    z-index: 2;
+    top: auto;
+    bottom: 40px;
 
   &_hidden
     opacity 0
@@ -62,6 +46,10 @@ $courses-feedback-control = '.courses-feedback-control';
 
     @media tablet_medium
       right -50px
+
+    @media tablet
+
+      right 0
 
   &__button
     position absolute
