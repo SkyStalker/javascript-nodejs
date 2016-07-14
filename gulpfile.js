@@ -34,6 +34,37 @@ function lazyRequireTask(path) {
   };
 }
 
+function requireModuleTasks(moduleName) {
+
+  let dir = path.join(path.dirname(require.resolve(moduleName)), 'tasks');
+  let taskFiles = fs.readdirSync(dir);
+
+  let hasDeps;
+  try {
+    fs.accessSync(path.join(dir, '.deps.json'));
+    hasDeps = true;
+
+  } catch(e) {
+    hasDeps = false;
+  }
+
+  let deps = hasDeps ? require(path.join(dir, '.deps.json')) : {};
+
+  for(let taskFile of taskFiles) {
+    // migrate:myTask
+
+    let taskName = taskFile.split('.')[0];
+    if (taskName === '') continue; // ignore .files
+
+    let taskNameFull = moduleName.replace(/\//g, ':') + ':' + taskName;
+
+    // console.log("task", taskNameFull, "deps", deps[taskName] || [], "path", path.join(dir, taskFile) );
+
+    gulp.task(taskNameFull, deps[taskName] || [], lazyRequireTask(path.join(dir, taskFile)) );
+  }
+
+}
+
 ll.tasks('nodemon', 'client:webpack', 'server');
 
 gulp.task('lint-once', lazyRequireTask('./tasks/lint', { src: jsSources }));
@@ -42,16 +73,6 @@ gulp.task('lint-or-die', lazyRequireTask('./tasks/lint', { src: jsSources, dieOn
 // usage: gulp db:load --from fixture/init --harmony
 gulp.task('db:load', lazyRequireTask('./tasks/dbLoad'));
 gulp.task('db:clear', lazyRequireTask('./tasks/dbClear'));
-gulp.task('migrate:play', lazyRequireTask('./tasks/migratePlay'));
-gulp.task('migrate:md', lazyRequireTask('./tasks/migrateMd'));
-gulp.task('migrate:tutorial', lazyRequireTask('./tasks/migrateTutorial'));
-
-gulp.task('migrate:up', lazyRequireTask('migrate/tasks/up'));
-gulp.task('migrate:down', lazyRequireTask('migrate/tasks/down'));
-gulp.task('migrate:create', lazyRequireTask('migrate/tasks/create'));
-
-gulp.task('courses:webinar:add', lazyRequireTask('courses/tasks/webinarAdd'));
-gulp.task('courses:invite:remind', lazyRequireTask('courses/tasks/inviteRemind'));
 
 gulp.task("nodemon", lazyRequireTask('./tasks/nodemon', {
   // shared client/server code has require('template.jade) which precompiles template on run
@@ -79,25 +100,15 @@ gulp.task("client:livereload", lazyRequireTask("./tasks/livereload", {
   ]
 }));
 
-gulp.task("tutorial:import:watch", lazyRequireTask('tutorial/tasks/importWatch', {
-  root: process.env.TUTORIAL_ROOT
-}));
 
-gulp.task("tutorial:beautify", lazyRequireTask('tutorial/tasks/beautify', {
-  root: process.env.TUTORIAL_ROOT
-}));
-
-gulp.task("tutorial:edit", lazyRequireTask('tutorial/tasks/edit'));
-
-gulp.task("payments:order:paid", lazyRequireTask('payments/tasks/orderPaid'));
-gulp.task("payments:transaction:paid", lazyRequireTask('payments/tasks/transactionPaid'));
-gulp.task("payments:order:cancelPending", lazyRequireTask('payments/tasks/orderCancelPending'));
-
-gulp.task('payments:yakassa:listOrders', lazyRequireTask('payments/yakassa/tasks/listOrders'));
-gulp.task('payments:yakassa:listReturns', lazyRequireTask('payments/yakassa/tasks/listReturns'));
-gulp.task('payments:yakassa:returnPayment', lazyRequireTask('payments/yakassa/tasks/returnPayment'));
-
-gulp.task("newsletter:send", lazyRequireTask('newsletter/tasks/send'));
+requireModuleTasks('migrate');
+requireModuleTasks('courses');
+requireModuleTasks('tutorial');
+requireModuleTasks('payments');
+requireModuleTasks('payments/yakassa');
+requireModuleTasks('deploy');
+requireModuleTasks('videoKey');
+requireModuleTasks('quiz');
 
 var testSrcs = ['{handlers,modules}/**/test/**/*.js'];
 // on Travis, keys are required for E2E Selenium tests
@@ -125,18 +136,6 @@ gulp.task('watch', lazyRequireTask('./tasks/watch', {
   ]
 }));
 
-// init deploy (kill all and recreate)
-gulp.task('deploy:init', lazyRequireTask('deploy/tasks/init'));
-
-// build on remote
-gulp.task('deploy:build', lazyRequireTask('deploy/tasks/build'));
-
-// apply db migrations
-gulp.task('deploy:migrate', lazyRequireTask('deploy/tasks/migrate'));
-
-// update remote working site & repo
-gulp.task('deploy:update', lazyRequireTask('deploy/tasks/update'));
-
 gulp.task('deploy', function(callback) {
   runSequence("deploy:build", "deploy:update", callback);
 });
@@ -144,8 +143,6 @@ gulp.task('deploy', function(callback) {
 gulp.task("client:sync-resources", lazyRequireTask('./tasks/syncResources', {
   assets: 'public'
 }));
-
-gulp.task("videoKey:load", lazyRequireTask('videoKey/tasks/load'));
 
 // show errors if encountered
 gulp.task('client:compile-css',
@@ -173,25 +170,12 @@ gulp.task('build', function(callback) {
 gulp.task('server', lazyRequireTask('./tasks/server'));
 
 // no build
-gulp.task('edit', ['tutorial:import:watch', "client:sync-resources", 'client:livereload', 'server']);
+gulp.task('edit', ['tutorial:importWatch', "client:sync-resources", 'client:livereload', 'server']);
 
 
 gulp.task('dev', function(callback) {
   runSequence("client:sync-resources", ['nodemon', 'client:livereload', 'client:webpack', 'watch'], callback);
 });
-
-gulp.task('tutorial:import', ['cache:clean'], lazyRequireTask('tutorial/tasks/tutorialImport'));
-
-gulp.task('quiz:import', ['cache:clean'], lazyRequireTask('quiz/tasks/quizImport'));
-
-
-gulp.task('tutorial:remote:update', lazyRequireTask('tutorial/tasks/remoteUpdate'));
-
-gulp.task('figures:import', lazyRequireTask('tutorial/tasks/figuresImport'));
-
-gulp.task('tutorial:kill:content', ['cache:clean'], lazyRequireTask('tutorial/tasks/killContent'));
-
-gulp.task('tutorial:cache:regenerate', lazyRequireTask('tutorial/tasks/cacheRegenerate'));
 
 gulp.task('cloudflare:clean', lazyRequireTask('./tasks/cloudflareClean', {
   domains: [config.domain.main, config.domain.static]

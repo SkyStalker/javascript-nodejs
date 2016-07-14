@@ -17,8 +17,8 @@ module.exports = function(options) {
 
       var args = require('yargs')
         .usage("tutorial url is required.")
-        .example("gulp tutorial:edit --url http://javascript.in/memory-leaks-jquery")
-        .demand(['url'])
+        .example("gulp tutorial:edit --url http://javascript.in/memory-leaks-jquery --root /js/javascript-tutorial")
+        .demand(['url', 'root'])
         .argv;
 
       var urlPath = url.parse(args.url).pathname.split('/').filter(Boolean);
@@ -34,7 +34,7 @@ module.exports = function(options) {
         if (weight.length < 2) weight = 0 + weight;
 
         var dirName = weight + '-' + article.slug;
-        let cmd = "find /js/javascript-tutorial -path '*/" + dirName + "/article.md'";
+        let cmd = "find '" + args.root + "' -path '*/" + dirName + "/article.md'";
         console.log(cmd);
 
         var result = execSync(cmd, {encoding: 'utf8'}).trim();
