@@ -46,6 +46,12 @@ exports.post = function*() {
   let dateStart = moment(this.request.body.dateStart + ' ' + this.request.body.timeStart, "YYYY-MM-DD HH:mm").toDate();
   let dateEnd = moment(this.request.body.dateEnd + ' ' + this.request.body.timeEnd, "YYYY-MM-DD HH:mm").toDate();
 
+  let slug = course.slug + '-' + moment(dateStart).format('YYYYMMDD-HHmm');
+
+  if (yield CourseGroup.findOne({slug})) {
+    this.throw(403, {info: 'Группа ' + slug + ' уже существует'});
+  }
+
   let datesSkip = this.request.body.dateSkip || [];
   if (!Array.isArray(datesSkip)) {
     datesSkip = [datesSkip];
@@ -69,7 +75,7 @@ exports.post = function*() {
     isListed:          true,
     materials:         [],
     teacher:           this.user,
-    slug:              course.slug + '-' + moment(dateStart).format('YYYYMMDD-HHmm'),
+    slug:              slug,
     videoKeyTagCached: course.videoKeyTag
   });
 
@@ -79,5 +85,5 @@ exports.post = function*() {
 
   yield* slackAdd(group);
 
-  this.body = 'OK';
+  this.body = 'Готово. Не забудьте, пожалуйста, отредактировать вебинар.';
 };

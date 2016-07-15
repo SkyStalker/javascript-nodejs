@@ -8,9 +8,20 @@ const slackClient = require('slack').client();
 
 module.exports = function*(group) {
 
-  let response = yield slackClient.groups.create(group.slug);
+  try {
+    let response = yield slackClient.groups.create(group.slug);
+    group.slackGroup = response.group;
 
-  group.slackGroup = response.group;
+  } catch(e) {
+    if (e.message == 'name_taken') {
+      // already exists
+      let response = yield slackClient.groups.info(group.slug);
+      group.slackGroup = response.group;
+    } else {
+      throw e;
+    }
+
+  }
   yield group.persist();
 
   yield slackClient.groups.invite(group.slackGroup.id, config.slack.bot.id);
