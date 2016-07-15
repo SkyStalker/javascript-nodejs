@@ -4,28 +4,32 @@ var Schema = mongoose.Schema;
 var Article = require('tutorial').Article;
 var _ = require('lodash');
 
+const slackClient = require('slack').client();
+
 var router = module.exports = new Router();
+let slug = 'react-20160812-2130';
 
-router.get('/user', function*() {
-  var User = require('users').User;
-
-  var user = new User({
-    email:       'mk@abc.ru',
-    gender:      'male',
-    displayName: 'Tester2'
-  });
-
+router.get('/slack', function*() {
+  console.log("HERE 1");
   try {
-    mongoose.Types.ObjectId("51bb793aca2ab77a3200000d");
+    let response = yield slackClient.groups.create(slug);
+    console.log("HERE 2", response);
 
-    var user = yield User.findById('blabla', function(err, res) {
-      console.log(arguments);
-    });
+  } catch(e) {
+    console.log("HERE 3", e.message);
 
-  } catch (e) {
-    console.log(e.errors);
+    if (e.message == 'name_taken') {
+      // already exists
+      let response = yield slackClient.groups.list();
+      let existingGroup = response.groups.find(g => g.name == slug);
+
+      console.log("HERE 4", existingGroup);
+    } else {
+      console.log("HERE 5");
+      throw e;
+    }
+
   }
-
 });
 
 router.get('/die', function*() {

@@ -15,8 +15,9 @@ module.exports = function*(group) {
   } catch(e) {
     if (e.message == 'name_taken') {
       // already exists
-      let response = yield slackClient.groups.info(group.slug);
-      group.slackGroup = response.group;
+      let response = yield slackClient.groups.list();
+      let existingGroup = response.groups.find(g => g.name == group.slug);
+      group.slackGroup = existingGroup;
     } else {
       throw e;
     }
