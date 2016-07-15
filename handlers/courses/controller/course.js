@@ -60,7 +60,7 @@ exports.get = function*() {
     fullPrice:         (Discount.adjustAmountAll(group.price, discounts) == group.price) ? null : group.price,
     discount:          Discount.getBest(group.price, discounts),
     dateStart:         group.dateStart,
-    dateEnd:           group.groupEnd,
+    dateEnd:           group.dateEnd,
     timeDesc:          group.timeDesc,
     participantsLimit: group.participantsLimit,
     slug:              group.slug
