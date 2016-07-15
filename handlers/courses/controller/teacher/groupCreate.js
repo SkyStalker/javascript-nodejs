@@ -81,9 +81,9 @@ exports.post = function*() {
 
   this.log.debug(group);
 
-  yield* webinarAdd(group);
-
   yield* slackAdd(group);
+
+  yield* webinarAdd(group);
 
   this.body = 'Готово. Не забудьте, пожалуйста, отредактировать вебинар.';
 };
