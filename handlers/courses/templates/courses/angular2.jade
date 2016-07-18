@@ -1,0 +1,38 @@
+extends /layouts/main
+
+include ../feedback/_inline
+
+block append variables
+  - var layout_main_class = "main_width-limit-wide"
+  - var layout_header_class = "main__header_center"
+  - var sitetoolbar = true
+  - var breadcrumbs = [ { title: 'Учебник', url: '/' }, { title: 'Курсы', url: '/courses' }]
+  - var content_class = '_center'
+  - var siteToolbarCurrentSection = "courses"
+  - var comments = true
+
+block append head
+  !=js("coursesCourse", {defer: true})
+
+block content
+
+  p Этот онлайн-курс посвящён профессиональной разработке веб-приложений с помощью AngularJS.
+
+  p
+    b В мае-июне 2016 курс был сильно обновлён, в связи с большими изменениями в Angular 1.5.
+
+  include ../blocks/angular/programAndSignup
+
+  input(type="checkbox" id="phone-toggler").phone-toggler__input.phone-only
+  +b('label').phone-toggler.phone-only(for="phone-toggler")
+    | Более подробная информация о программе курса
+
+  include ../blocks/angular/programDetails
+  include ../blocks/angular/how
+  include ../blocks/angular/result
+  include ../blocks/angular/systemRequirements
+  +courses-feedback-inline({ feedbacks: feedbacks })
+
+  +b.fixed-tab.phone-only.courses-tab
+    a.courses-tab__link(href="#signup") Записаться на курсы
+

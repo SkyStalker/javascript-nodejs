@@ -1,0 +1,36 @@
+extends /layouts/main
+
+
+block append variables
+
+  - var layout_main_class = "main_width-limit"
+  - var title = 'Онлайн-курс: настройка окружения';
+  - var sitetoolbar = true
+  - var siteToolbarCurrentSection = "courses"
+
+block append head
+  !=js("courses", {defer: true})
+
+
+block content
+
+  include block/intro.jade
+  include block/chat.jade
+  include block/gotowebinar.jade
+  include block/questions.jade
+
+  h2 Решение задач
+
+  p.
+    Для обмена решениями задач используется онлайн-песочница.
+    Для учебника взят <a href="http://plnkr.co/edit/?p=preview">Plunker</a>,
+    но вы можете использовать и <a href="http://jsbin.com">jsbin</a> и <a href="http://codepen.io">CodePen</a> и любую другую.
+
+  p.
+    При необходимости мы настроим дополнительные способы разделения кода, используя Git или Dropbox,
+    но для старта песочницы будет вполне достаточно.
+
+  include block/misc.jade
+  include block/problems.jade
+  include block/support.jade
+
