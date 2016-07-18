@@ -124,7 +124,7 @@ module.exports = function(config) {
         {
           test:   /\.styl$/,
           // ExtractTextPlugin breaks HMR for CSS
-          loader: ExtractTextPlugin.extract('style', 'css!autoprefixer?browsers=last 2 version!hover!stylus?linenos=true&resolve url=true')
+          loader: ExtractTextPlugin.extract('style', 'css!autoprefixer!hover!stylus?linenos=true&resolve url=true')
           //loader: 'style!css!autoprefixer?browsers=last 2 version!stylus?linenos=true'
         },
         {
