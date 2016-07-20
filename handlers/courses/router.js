@@ -39,6 +39,7 @@ router.post('/admin/orders/:orderNumber(\\d+)', mustBeAdmin, require('./controll
 router.post('/admin/transactions/:transactionNumber(\\d+)', mustBeAdmin, require('./controller/admin/transactions').post);
 
 router.post('/admin/invites', mustBeAdmin, require('./controller/admin/invites').post);
+router.post('/admin/participants', mustBeAdmin, require('./controller/admin/participants').post);
 router.get('/admin/groups', mustBeAdmin, require('./controller/admin/groups').get);
 
 router.get('/groups/:groupBySlug/info', mustBeParticipantOrTeacher, require('./controller/groupInfo').get);
