@@ -130,12 +130,12 @@ block content
           td
             if invite.participant
               | #{invite.participant.firstName} #{invite.participant.surname}
+              if !invite.participant.isActive
+                div
+                  b НЕАКТИВЕН
             else
               | НЕТ
 
-            if !invite.participant.isActive
-              div
-                b НЕАКТИВЕН
 
           td= invite.group.title
           td
