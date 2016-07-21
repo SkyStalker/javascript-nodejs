@@ -196,6 +196,16 @@ exports.post = function*() {
     }
   }
 
+  let pendingTransaction = yield Transaction.findOne({
+    order:  order._id,
+    status: Transaction.STATUS_PENDING
+  });
+
+  if (pendingTransaction) {
+    pendingTransaction.amount = order.convertAmount(pendingTransaction.currency);
+    yield pendingTransaction.persist();
+  }
+
   yield this.order.persist();
 
   this.redirect(this.originalUrl);
