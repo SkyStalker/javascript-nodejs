@@ -155,10 +155,11 @@ block content
                   | Уведомить о переводе по почте
               div
                 input(type="submit" value="Перевести")
-            div
-              form(action="/courses/admin/participants" method="POST")
-                input(type="hidden", name="_csrf", value=csrf())
-                input(type="hidden", name="id", value=invite.participant.id)
-                input(type="hidden", name="action", value="dismiss")
-                div
-                  input(type="submit" value="Отчислить")
+            if invite.participant
+              div
+                form(action="/courses/admin/participants" method="POST")
+                  input(type="hidden", name="_csrf", value=csrf())
+                  input(type="hidden", name="id", value=invite.participant.id)
+                  input(type="hidden", name="action", value="dismiss")
+                  div
+                    input(type="submit" value="Отчислить")
