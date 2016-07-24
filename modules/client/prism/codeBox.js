@@ -22,6 +22,7 @@ function CodeBox(elem) {
   if (!isNoStrict && isJS) code="'use strict';\n" + code;
 
   var jsFrame;
+  var globalFrame;
   var htmlResult;
   var isFirstRun = true;
 
@@ -174,8 +175,33 @@ function CodeBox(elem) {
 
   function runJS() {
 
-    //console.log(code);
-    if (isTrusted) {
+    if (elem.hasAttribute('data-global')) {
+      if (!globalFrame) {
+        globalFrame = document.createElement('iframe');
+        globalFrame.className = 'js-frame';
+        globalFrame.style.width = 0;
+        globalFrame.style.height = 0;
+        globalFrame.style.border = 'none';
+        globalFrame.name = 'js-global-frame';
+        document.body.appendChild(globalFrame);
+      }
+
+      let form = document.createElement('form');
+      form.style.display = 'none';
+      form.method = 'POST';
+      form.enctype = "multipart/form-data";
+      form.action = "https://ru.lookatcode.com/showhtml";
+      form.target = 'js-global-frame';
+
+      var textarea = document.createElement('textarea');
+      textarea.name = 'code';
+      textarea.value = normalizeHtml('<script>\n' + code + '\n</script>');
+      form.appendChild(textarea);
+
+      globalFrame.parentNode.insertBefore(form, globalFrame.nextSibling);
+      form.submit();
+      form.remove();
+    } else if (isTrusted) {
 
       if (elem.hasAttribute('data-autorun')) {
         // make sure functions from "autorun" go to global scope
@@ -212,8 +238,8 @@ function CodeBox(elem) {
       } else {
         postJSFrame();
       }
-
     }
+
   }
 
   function edit() {
@@ -248,7 +274,7 @@ function CodeBox(elem) {
   }
 
 
-  function normalizeHtml() {
+  function normalizeHtml(code) {
     var codeLc = code.toLowerCase();
     var hasBodyStart = codeLc.match('<body>');
     var hasBodyEnd = codeLc.match('</body>');

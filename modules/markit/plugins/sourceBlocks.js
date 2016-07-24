@@ -50,6 +50,10 @@ module.exports = function(md) {
 
     token.attrPush([ 'data-trusted', (options.html && !attrs.untrusted) ? 1 : 0]);
 
+    if (attrs.global) {
+      token.attrPush(['data-global', 1]);
+    }
+
     token.attrPush([ 'class', 'code-example' ]);
 
     if (attrs['no-strict']) {
