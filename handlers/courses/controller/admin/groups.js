@@ -74,7 +74,7 @@ exports.get = function*() {
     };
 
     // console.log(participants);
-    //console.log("COUNT GROUP", group.title, participants.length);
+    // console.log("COUNT GROUP", group.title, participants.length);
     for(let j=0; j<participants.length; j++) {
       let participant = participants[j];
 
@@ -90,9 +90,10 @@ exports.get = function*() {
       }
 
       if (!order) {
+        // console.log("MISSING", participant.user.email);
         amounts[group.id].missing.push(participant.user.email);
       } else {
-        //console.log("ADD", order.amount / order.data.count);
+        // console.log("ADD", order.amount / order.data.count);
         amounts[group.id].amount += order.amount / order.data.count;
       }
 

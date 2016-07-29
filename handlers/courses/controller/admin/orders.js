@@ -179,6 +179,18 @@ exports.post = function*() {
         });
       }
 
+      let invites = yield CourseInvite.find({
+        order: order._id,
+        accepted: false
+      });
+
+      // delete non-accepted invites
+      for (var i = 0; i < invites.length; i++) {
+        var invite = invites[i];
+        yield invite.remove();
+      }
+
+
       let transaction = yield Transaction.findOne({
         order:  order._id,
         status: Transaction.STATUS_SUCCESS
