@@ -71,7 +71,7 @@ ArticleRenderer.prototype._unmapLibsNames = function(libs) {
   libs.forEach(function(lib) {
     switch (lib) {
     case 'lodash':
-      libsUnmapped.push("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.3.1/lodash.min.js");
+      libsUnmapped.push("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.0/lodash.min.js");
       break;
 
     case 'd3':

@@ -18,7 +18,10 @@ exports.get = function*() {
 
   this.locals.countries = countries.all;
 
-  var participants = yield CourseParticipant.find({group: group.id, isActive: true}).populate('user').sort({created: 1});
+  var participants = yield CourseParticipant.find({
+    group: group.id,
+    isActive: true
+  }).populate('user').sort({created: 1});
 
   this.locals.participants = participants;
 
