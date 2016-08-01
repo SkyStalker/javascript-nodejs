@@ -8,6 +8,8 @@ exports.up = function*() {
   for (let i = 0; i < courseTeachers.length; i++) {
     let teacher = courseTeachers[i];
     yield teacher.persist({
+      teacherAgreementName: undefined,
+      teacherAgreementCompany: undefined,
       teacherAgreement: {
         company: teacher.teacher.profileName,
         name: teacher.teacher.profileName,
