@@ -20,8 +20,11 @@ var schema = new Schema({
     required: true
   },
 
-  teacherAgreementCompany: String,
-  teacherAgreementName: String,
+  teacherAgreement: {
+    company: String,
+    name: String,
+    date: Date
+  },
 
   multipler: {
     type:  Number,
